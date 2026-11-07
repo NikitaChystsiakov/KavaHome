@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
+import { Menu } from "./Menu";
 import s from "./home.module.css";
 
 // Шапка и логотип. На первом экране логотип на всю ширину; при прокрутке он уменьшается
@@ -10,6 +11,8 @@ import s from "./home.module.css";
 export function TopBar() {
   const bar = useRef<HTMLElement>(null);
   const logo = useRef<HTMLAnchorElement>(null);
+  const [menu, setMenu] = useState(false);
+  const closeMenu = useCallback(() => setMenu(false), []);
 
   useEffect(() => {
     const el = logo.current;
@@ -24,11 +27,16 @@ export function TopBar() {
       const mobile = vw < 760;
       const p = Math.min(1, Math.max(0, window.scrollY / (vh * 0.55)));
       const e = 1 - Math.pow(1 - p, 3);
-      const big = Math.min(mobile ? vw * 0.86 : vw * 0.84, 1400);
+      // на десктопе лого вписывается между шапкой и блоком предложения (контур лого ≈ 0.44 его ширины)
+      const offer = document.querySelector<HTMLElement>("[data-hero-offer]");
+      const offerTop = offer ? offer.getBoundingClientRect().top + window.scrollY : vh;
+      const top = (mobile ? 56 : 64) + 20;
+      const avail = Math.max(120, offerTop - 20 - top);
+      const big = Math.min(mobile ? vw * 0.86 : vw * 0.84, 1400, mobile ? 9999 : avail / 0.44);
       const small = mobile ? 84 : 116;
       const scale = 1 + (small / big - 1) * e;
       const hdrH = mobile ? 56 : 64;
-      const yBig = hdrH + (vh - hdrH) * (mobile ? 0.4 : 0.46);
+      const yBig = mobile ? hdrH + (vh - hdrH) * 0.4 : top + avail / 2;
       const y = yBig + (hdrH / 2 - yBig) * e;
       el.style.width = `${big}px`;
       el.style.transform = `translate(-50%, -50%) translateY(${y}px) scale(${scale})`;
@@ -52,7 +60,7 @@ export function TopBar() {
     <>
       <header ref={bar} className={s.bar} data-solid="false">
         <div className={s.barLeft}>
-          <button className={s.burger} aria-label="Открыть меню">
+          <button className={s.burger} type="button" aria-label="Открыть меню" aria-expanded={menu} onClick={() => setMenu(true)}>
             <span />
           </button>
           <a href="/catalog" className={`caps ${s.hideMobile}`}>
@@ -83,6 +91,7 @@ export function TopBar() {
       <Link ref={logo} href="/" className={s.logo} aria-label="KAVA HOME, на главную">
         <Logo />
       </Link>
+      <Menu open={menu} onClose={closeMenu} />
     </>
   );
 }

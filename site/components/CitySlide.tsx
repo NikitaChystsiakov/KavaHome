@@ -1,27 +1,29 @@
 import Image from "next/image";
-import type { Collection, CitySymbol } from "@/lib/collections";
-import { citySymbol } from "./symbols";
-import { Stamp } from "./Stamp";
-import s from "./home.module.css";
+import { legKm, type Collection } from "@/lib/collections";
+import { Postcard } from "./Postcard";
+import s from "./slide.module.css";
 
 type Props = { c: Collection; index: number; all: Collection[] };
 
-// Слайд-открытка коллекции: кадр | панель в тон полотенца.
+// Слайд-остановка тура: кадр полотенца | панель в тон с открыткой, городом и цветами.
 export function CitySlide({ c, index, all }: Props) {
-  const sym = citySymbol(c.slug as CitySymbol);
   const num = String(index + 1).padStart(2, "0");
+  const total = String(all.length).padStart(2, "0");
   const minPrice = Math.min(...c.colors.map((v) => v.priceFrom));
+  const prev = all[index - 1];
+  const km = prev ? legKm[`${prev.slug}-${c.slug}`] : undefined;
 
   return (
     <section
       id={c.slug}
       className={s.slide}
       data-slide
+      data-screen
       data-light={c.light ? "true" : "false"}
       style={{ "--tone": c.tone, "--len": c.city.length } as React.CSSProperties}
       aria-labelledby={`${c.slug}-title`}
     >
-      <div className={s.slidePhoto}>
+      <div className={s.photo}>
         <Image
           src={c.image}
           alt={`Коллекция ${c.city}, полотенца крупным планом`}
@@ -33,26 +35,20 @@ export function CitySlide({ c, index, all }: Props) {
       </div>
 
       <div className={s.panel}>
-        <div className={s.postcard}>
-          <figure className={s.postage} aria-hidden="true">
-            <span className={s.postNum}>№ {num}</span>
-            <svg className={s.symbol} viewBox={sym.viewBox} preserveAspectRatio="xMidYMid meet">
-              <path d={sym.d} pathLength={1} />
-            </svg>
-            <figcaption className={s.postName}>
-              {c.latin}
-              <small>{c.countryLatin}</small>
-            </figcaption>
-          </figure>
-          <Stamp id={c.slug} ru={c.city.toUpperCase()} latin={c.latin} country={c.country.toUpperCase()} className={s.stamp} />
+        <div className={s.visual}>
+          <Postcard c={c} num={num} total={total} />
         </div>
 
-        <div className={s.panelBody}>
+        <div className={s.body}>
           <h2 id={`${c.slug}-title`} className={s.city}>
             {c.city}
           </h2>
           <p className={s.where}>
-            {c.country} <span aria-hidden="true">·</span> <span className={s.coords}>{c.coords}</span>
+            <span>{c.country}</span>
+            <span className={s.coords}>{c.coords}</span>
+            <span className={s.leg}>
+              {prev ? `${km} км от ${prev.from.replace(/^из /, "")}` : "начало маршрута"}
+            </span>
           </p>
           <dl className={s.facts}>
             {c.facts.map((f) => (
@@ -65,7 +61,7 @@ export function CitySlide({ c, index, all }: Props) {
 
           <ul className={s.ribbon} aria-label={`Цвета коллекции ${c.city}`}>
             {c.colors.map((v, i) => (
-              <li key={v.name}>
+              <li key={v.name} style={{ "--i": i } as React.CSSProperties}>
                 <a href={`/catalog/${c.slug}?color=${encodeURIComponent(v.name)}`} className={s.chip} data-on={i === 0}>
                   <span className={s.chipImg}>
                     <Image src={v.image} alt="" fill sizes="96px" style={{ objectFit: "cover", objectPosition: "35% 72%" }} quality={75} />
@@ -77,7 +73,7 @@ export function CitySlide({ c, index, all }: Props) {
           </ul>
 
           <div className={s.buy}>
-            <a href={`/catalog/${c.slug}`} className={s.btnSolid}>
+            <a href={`/catalog/${c.slug}`} className={s.btn}>
               <span>Смотреть «{c.city}»</span>
               <svg viewBox="0 0 18 10" aria-hidden="true">
                 <path d="M0 5h16M12 1l4 4-4 4" />
@@ -90,12 +86,17 @@ export function CitySlide({ c, index, all }: Props) {
           </div>
         </div>
 
-        <ol className={s.route} aria-label="Коллекции">
-          {all.map((x) => (
-            <li key={x.slug} aria-current={x.slug === c.slug ? "true" : undefined}>
-              <a href={`#${x.slug}`}>{x.city}</a>
-            </li>
-          ))}
+        <ol className={s.route} aria-label="Маршрут коллекций">
+          {all.map((x, i) => {
+            const prevX = all[i - 1];
+            const leg = prevX ? legKm[`${prevX.slug}-${x.slug}`] : undefined;
+            return (
+              <li key={x.slug} aria-current={x.slug === c.slug ? "step" : undefined} data-done={i < index}>
+                {leg && <span className={s.routeKm}>{leg} км</span>}
+                <a href={`#${x.slug}`}>{x.city}</a>
+              </li>
+            );
+          })}
         </ol>
       </div>
     </section>

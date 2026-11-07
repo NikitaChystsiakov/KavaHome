@@ -25,11 +25,17 @@ export type Collection = {
   imagePosition?: string;
   facts: { term: string; value: string }[];
   colors: ColorVariant[];
+  /** «из Вероны» — для подписи на обороте открытки */
+  from: string;
+  /** старинная открытка города (общественное достояние, источники в .art-director/postcards/SOURCES.md) */
+  postcard: { src: string; caption: string; year: string };
 };
 
-export const collections: Collection[] = [
+const all: Collection[] = [
   {
     slug: "verona",
+    from: "из Вероны",
+    postcard: { src: "/img/postcards/verona.webp", caption: "Verona — L’Arena", year: "1895" },
     city: "Верона",
     latin: "VERONA",
     country: "Италия",
@@ -52,6 +58,8 @@ export const collections: Collection[] = [
   },
   {
     slug: "rimini",
+    from: "из Римини",
+    postcard: { src: "/img/postcards/rimini.webp", caption: "Rimini — Ponte di Tiberio", year: "1750" },
     city: "Римини",
     latin: "RIMINI",
     country: "Италия",
@@ -75,6 +83,8 @@ export const collections: Collection[] = [
   },
   {
     slug: "venice",
+    from: "из Венеции",
+    postcard: { src: "/img/postcards/venice.webp", caption: "Venezia — Ponte di Rialto", year: "1895" },
     city: "Венеция",
     latin: "VENEZIA",
     country: "Италия",
@@ -96,6 +106,8 @@ export const collections: Collection[] = [
   },
   {
     slug: "florence",
+    from: "из Флоренции",
+    postcard: { src: "/img/postcards/florence.webp", caption: "Firenze — Il Duomo", year: "1895" },
     city: "Флоренция",
     latin: "FIRENZE",
     country: "Италия",
@@ -117,6 +129,8 @@ export const collections: Collection[] = [
   },
   {
     slug: "milan",
+    from: "из Милана",
+    postcard: { src: "/img/postcards/milan.webp", caption: "Milano — Piazza del Duomo", year: "1895" },
     city: "Милан",
     latin: "MILANO",
     country: "Италия",
@@ -138,6 +152,8 @@ export const collections: Collection[] = [
   },
   {
     slug: "lyon",
+    from: "из Лиона",
+    postcard: { src: "/img/postcards/lyon.webp", caption: "Lyon — Fourvière", year: "1900" },
     city: "Лион",
     latin: "LYON",
     country: "Франция",
@@ -159,6 +175,8 @@ export const collections: Collection[] = [
   },
   {
     slug: "naples",
+    from: "из Неаполя",
+    postcard: { src: "/img/postcards/naples.webp", caption: "Napoli — Vesuvio", year: "1895" },
     city: "Неаполь",
     latin: "NAPOLI",
     country: "Италия",
@@ -178,6 +196,20 @@ export const collections: Collection[] = [
     ],
   },
 ];
+
+// Порядок маршрута: по карте с севера на юг, затем перелёт в Милан и Лион.
+const ROUTE = ["verona", "venice", "rimini", "florence", "naples", "milan", "lyon"];
+export const collections: Collection[] = ROUTE.map((slug) => all.find((c) => c.slug === slug)!);
+
+/** расстояние по прямой между соседними городами маршрута, км */
+export const legKm: Record<string, number> = {
+  "verona-venice": 103,
+  "venice-rimini": 155,
+  "rimini-florence": 110,
+  "florence-naples": 408,
+  "naples-milan": 657,
+  "milan-lyon": 340,
+};
 
 export const purposes = [
   { label: "Ванная", href: "/catalog?naznachenie=vannaya" },

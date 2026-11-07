@@ -25,3 +25,5 @@ next-env.d.ts
 !.art-director/photos/drive-tree.json
 .art-director/review/**/*.png
 !.art-director/review/final/*.png
+# сырые кандидаты старинных открыток (источники в .art-director/postcards/SOURCES.md)
+.art-director/postcards/cand/

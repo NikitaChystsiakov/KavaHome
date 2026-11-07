@@ -7,7 +7,7 @@ import s from "./home.module.css";
 
 export function Hero({ count }: { count: number }) {
   return (
-    <section className={s.hero} aria-label="KAVA HOME">
+    <section className={s.hero} aria-label="KAVA HOME" data-screen>
       <div className={`${s.heroPhoto} ${s.heroFirst}`}>
         <Image
           src="/img/hero-florence.webp"
@@ -32,7 +32,7 @@ export function Hero({ count }: { count: number }) {
       </div>
       <div className={s.heroShade} />
       <h1 className="visually-hidden">KAVA HOME — махровые полотенца, коврики и наборы из Минска</h1>
-      <div className={s.heroOffer}>
+      <div className={s.heroOffer} data-hero-offer>
         <p className={s.heroLead}>Махровые полотенца собственного производства</p>
         <p className={s.heroSub}>Минск · доставка по Беларуси</p>
         <a href="#verona" className={s.btnHero}>
@@ -64,7 +64,7 @@ const tiles = [
 
 export function Purposes() {
   return (
-    <section className={s.purposes} aria-labelledby="purposes-title">
+    <section className={s.purposes} aria-labelledby="purposes-title" data-screen>
       <div className={s.purposesHead}>
         <h2 id="purposes-title" className={s.h2}>
           Что ищете
@@ -90,7 +90,7 @@ export function Purposes() {
 
 export function Hotels() {
   return (
-    <section id="hotels" className={s.hotels} aria-labelledby="hotels-title">
+    <section id="hotels" className={s.hotels} aria-labelledby="hotels-title" data-screen>
       <div className={s.hotelsPhoto}>
         <Image src="/img/hotel-main.webp" alt="Белые полотенца отельной линии на тёмном столе" fill sizes="(max-width: 760px) 100vw, 40vw" style={{ objectFit: "cover", objectPosition: "50% 60%" }} quality={75} />
       </div>
@@ -134,7 +134,7 @@ export function Hotels() {
 
 export function Gifts() {
   return (
-    <section className={s.gifts} aria-labelledby="gifts-title">
+    <section className={s.gifts} aria-labelledby="gifts-title" data-screen>
       <div className={s.giftsHead}>
         <h2 id="gifts-title" className={s.h2}>
           Подарить
@@ -153,7 +153,7 @@ export function Gifts() {
         <a href="/certificate" className={s.cert}>
           <span className={s.certTop}>
             <Logo className={s.certLogo} />
-            <Stamp id="cert" ru="ПОДАРОК" latin="REGALO" country="СЕРТИФИКАТ" className={s.certStamp} />
+            <Stamp id="cert" ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·" center="★" sub="МИНСК" className={s.certStamp} />
           </span>
           <span className={s.certTitle}>Подарочный сертификат</span>
           <span className={s.certLines}>
@@ -170,7 +170,7 @@ export function Gifts() {
 
 export function Footer() {
   return (
-    <footer className={s.footer}>
+    <footer className={s.footer} data-screen>
       <div className={s.footCols}>
         <div>
           <h3 className="caps">Покупателям</h3>

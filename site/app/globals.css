@@ -9,6 +9,7 @@
 
   --serif: var(--font-forum), "Times New Roman", serif;
   --sans: var(--font-golos), system-ui, sans-serif;
+  --hand: var(--font-hand), cursive;
 
   --pad: 28px;
   --gap: 2px;
@@ -31,8 +32,15 @@
   padding: 0;
 }
 
+/* листание как у презентации: каждый экран доводится до края окна */
 html {
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
+}
+/* на компьютере листает PresentationScroll, нативная привязка ему мешала бы */
+html[data-paged="true"] {
+  scroll-snap-type: none;
+}
+html {
   -webkit-text-size-adjust: 100%;
   background: var(--paper);
 }

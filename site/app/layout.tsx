@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Forum, Golos_Text } from "next/font/google";
+import { Forum, Golos_Text, Marck_Script } from "next/font/google";
 import "./globals.css";
 
 const forum = Forum({
@@ -11,6 +11,14 @@ const forum = Forum({
 
 const golos = Golos_Text({
   variable: "--font-golos",
+  subsets: ["latin", "cyrillic"],
+  display: "swap",
+});
+
+// почерк для оборота открыток
+const hand = Marck_Script({
+  variable: "--font-hand",
+  weight: "400",
   subsets: ["latin", "cyrillic"],
   display: "swap",
 });
@@ -27,7 +35,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ru" className={`${forum.variable} ${golos.variable}`}>
+    <html lang="ru" className={`${forum.variable} ${golos.variable} ${hand.variable}`}>
       <body>{children}</body>
     </html>
   );
