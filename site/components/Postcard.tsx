@@ -24,18 +24,30 @@ export function Postcard({ c, num, total }: Props) {
         data-back={back}
         onClick={() => setBack(!back)}
         aria-pressed={back}
-        aria-label={back ? `Показать открытку ${c.city}` : `Перевернуть открытку ${c.city}`}
+        aria-label={
+          back
+            ? `Показать открытку ${c.city}`
+            : `Перевернуть открытку ${c.city}`
+        }
       >
         <span className={`${s.face} ${s.front}`}>
           <span className={s.frontImg}>
-            <Image src={c.postcard.src} alt="" fill sizes="(max-width: 760px) 60vw, 40vw" style={{ objectFit: "cover" }} quality={75} />
+            <Image
+              src={c.postcard.src}
+              alt=""
+              fill
+              sizes="(max-width: 760px) 60vw, 40vw"
+              style={{ objectFit: "cover" }}
+              quality={75}
+            />
           </span>
           <span className={s.caption}>{c.postcard.caption}</span>
         </span>
         <span className={`${s.face} ${s.back}`}>
           <span className={s.letter}>
-            <b>Привет {c.from}!</b> {c.facts.map((f) => `${f.term} — ${f.value}`).join(". ")}. Цвета: {colorNames}.
-            <i>KAVA HOME</i>
+            <b>Привет {c.from}!</b>{" "}
+            {c.facts.map((f) => `${f.term} — ${f.value}`).join(". ")}. Цвета:{" "}
+            {colorNames}.<i>KAVA HOME</i>
           </span>
           <span className={s.address}>
             <span>Кому: вам</span>
@@ -46,7 +58,15 @@ export function Postcard({ c, num, total }: Props) {
       </button>
 
       <span className={s.postage} aria-hidden="true">
-        <svg viewBox={sym.viewBox} preserveAspectRatio="xMidYMid meet">
+        <svg
+          viewBox={sym.viewBox}
+          preserveAspectRatio="xMidYMid meet"
+          style={
+            {
+              "--sw": Number(sym.viewBox.split(" ")[2]) / 78,
+            } as React.CSSProperties
+          }
+        >
           <path d={sym.d} pathLength={1} />
         </svg>
         <span>{c.latin}</span>
@@ -57,6 +77,7 @@ export function Postcard({ c, num, total }: Props) {
         center={num}
         sub={`ИЗ ${total}`}
         className={s.postmark}
+        ink
       />
       <span className={s.flipHint} aria-hidden="true">
         {back ? "↺ к виду города" : "↻ перевернуть"}
