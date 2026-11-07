@@ -27,6 +27,8 @@ export const metadata: Metadata = {
   title: "KAVA HOME — махровые полотенца из Минска",
   description:
     "Махровые полотенца, коврики и наборы KAVA HOME. Коллекции Верона, Римини, Венеция, Флоренция, Милан. Доставка по Беларуси, заказы для отелей и с логотипом.",
+  // демо на vercel.app закрыто от поисковиков; снять при запуске на kavahome.by
+  robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {
