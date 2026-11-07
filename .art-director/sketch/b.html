@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B · Витрина</title>
+<link rel="stylesheet" href="base.css">
+<style>
+section{height:100vh;min-height:640px;position:relative;overflow:hidden}
+.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,0) 35%,rgba(0,0,0,.05) 65%,rgba(0,0,0,.4))}
+.hero .big{position:absolute;left:3vw;right:3vw;top:50%;transform:translateY(-55%);color:#fff}
+.hero .line{position:absolute;left:28px;right:28px;bottom:30px;display:flex;justify-content:space-between;align-items:flex-end;color:#fff}
+.hero .line p{font-size:15px;line-height:1.45;max-width:360px}
+.hero .cats{display:flex;gap:26px;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+
+/* слайд: фото на весь экран + полоса товаров коллекции */
+.city{--c:#b5503f;color:#fff}
+.city .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(60,20,12,.55),rgba(60,20,12,.08) 55%,rgba(0,0,0,0))}
+.city .top{position:absolute;left:28px;right:28px;top:78px;display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.city .top span{opacity:.6}.city .top b{font-weight:600}
+.city .top i{flex:1;max-width:40px;border-top:1px solid rgba(255,255,255,.5)}
+.city h2{position:absolute;left:24px;top:118px;font-family:var(--ui);font-weight:700;font-size:clamp(90px,12.5vw,210px);line-height:.82;letter-spacing:-.045em;text-transform:uppercase}
+.city .lead{position:absolute;left:30px;top:calc(118px + clamp(90px,12.5vw,210px)*.9 + 18px);max-width:360px;font-size:15px;line-height:1.45}
+.city .sym{position:absolute;right:8vw;top:12%;width:40vw;height:44%;color:rgba(255,255,255,.92)}
+.city .sym svg{width:100%;height:100%}
+.city .stamp{position:absolute;right:30px;top:84px;color:#fff;transform:rotate(7deg)}
+.strip{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr) 1.1fr;gap:2px;background:rgba(255,255,255,.0)}
+.card{background:#fff;color:var(--ink);display:grid;grid-template-columns:88px 1fr;gap:14px;padding:12px 14px 12px 12px;align-items:center}
+.card img{width:88px;height:110px;object-fit:cover}
+.card h4{font-weight:500;font-size:13px;letter-spacing:.02em}
+.card p{font-size:12px;opacity:.65;margin-top:3px}
+.card .pr{font-size:15px;font-weight:600;margin-top:10px}
+.card .add{font-size:11px;letter-spacing:.12em;text-transform:uppercase;border-bottom:1px solid;display:inline-block;margin-top:6px}
+.more{background:var(--c);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 26px;gap:8px;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.more b{font-family:var(--ui);font-size:24px;letter-spacing:-.01em;text-transform:none;font-weight:600}
+
+@media (max-width:760px){
+  .hero .big{left:14px;right:14px}
+  .hero .line{flex-direction:column;align-items:flex-start;gap:16px;left:16px;right:16px}
+  .hero .cats{gap:16px;overflow:auto;width:100%;font-size:11px}
+  .city h2{font-size:22vw;left:14px;top:120px}
+  .city .lead{left:16px;top:calc(120px + 22vw*.9 + 12px);right:16px;font-size:14px}
+  .city .top{left:16px;overflow:hidden;white-space:nowrap}
+  .city .sym{left:10%;right:10%;width:auto;top:44%;height:22%}
+  .city .stamp{width:92px;height:92px;top:auto;bottom:178px;right:12px}
+  .strip{display:flex;overflow-x:auto;gap:2px}
+  .card{min-width:260px}
+  .more{min-width:180px}
+  .hdr{padding:0 16px}.hdr .search{display:none}
+}
+</style></head>
+<body>
+<header class="hdr">
+  <div class="l"><span class="burger"></span></div>
+  <div></div>
+  <div class="r"><span class="search">Поиск</span><span class="cart">Корзина <b>(0)</b></span></div>
+</header>
+
+<section class="hero">
+  <img class="bg" src="../photos/hi/venice-mint-swirl.jpg" alt="" style="object-position:50% 45%">
+  <div class="shade"></div>
+  <div class="big" data-logo></div>
+  <div class="line">
+    <p>Махровые полотенца нашего производства. 13 коллекций, названных в честь городов. Доставка по Беларуси.</p>
+    <nav class="cats"><a>Ванная</a><a>Кухня</a><a>Баня и пляж</a><a>Халаты</a><a>Коврики</a><a>Подарки</a><a>Для отелей</a></nav>
+  </div>
+</section>
+
+<section class="city" id="milan">
+  <img class="bg" src="../photos/hi/milan-terra-drape.jpg" alt="" style="object-position:50% 40%">
+  <div class="shade"></div>
+  <div class="top"><span>Верона</span><i></i><span>Римини</span><i></i><span>Венеция</span><i></i><span>Флоренция</span><i></i><b>Милан</b><i></i><span>Бергамо</span><i></i><span>Палермо</span><i></i><span>Турин</span><i></i><span>…</span></div>
+  <h2>Милан</h2>
+  <p class="lead">Рельефный жаккард «соты». Шильдик KAVA на бордюре. 4 цвета.</p>
+  <div class="sym" data-symbol="milan"></div>
+  <div class="stamp" data-stamp="МИЛАН|MILANO|05"></div>
+  <div class="strip">
+    <div class="card"><img src="../photos/hi/milan-terra-stack.jpg" alt=""><div><h4>Милан терракот</h4><p>жаккард «соты»</p><div class="pr">от 22 BYN</div><span class="add">В корзину</span></div></div>
+    <div class="card"><img src="../photos/hi/milan-graphite-badge.jpg" alt=""><div><h4>Милан графит</h4><p>жаккард «соты»</p><div class="pr">от 22 BYN</div><span class="add">В корзину</span></div></div>
+    <div class="card"><img src="../photos/hi/milan-mint-stack.jpg" alt=""><div><h4>Милан мятный</h4><p>жаккард «соты»</p><div class="pr">от 22 BYN</div><span class="add">В корзину</span></div></div>
+    <div class="card"><img src="../photos/hi/milan-grey-stack.jpg" alt=""><div><h4>Милан серый</h4><p>жаккард «соты»</p><div class="pr">от 22 BYN</div><span class="add">В корзину</span></div></div>
+    <a class="more"><span>Коллекция 05 / 13</span><b>Вся коллекция →</b><span class="note" style="letter-spacing:.04em;text-transform:none">цены примерные</span></a>
+  </div>
+</section>
+<script src="parts.js"></script>
+</body></html>

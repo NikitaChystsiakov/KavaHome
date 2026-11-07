@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A · Открытка</title>
+<link rel="stylesheet" href="base.css">
+<style>
+section{height:100vh;min-height:640px;position:relative;overflow:hidden}
+/* hero: два кадра встык с зазором 2px, логотип поверх на всю ширину */
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#fff}
+.hero{grid-template-rows:100%}
+.hero img{width:100%;height:100%;object-fit:cover;min-height:0}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 60%,rgba(0,0,0,.35))}
+.hero .big{position:absolute;left:4vw;right:4vw;top:50%;transform:translateY(-58%);color:#fff}
+.hero .cats{position:absolute;left:0;right:0;bottom:34px;display:flex;justify-content:center;gap:34px;color:#fff;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.hero .cats a:first-child{font-weight:600}
+.hero .scroll{position:absolute;right:28px;bottom:34px;color:#fff;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+
+/* слайд коллекции: фото | панель в тон полотенца */
+.city{display:grid;grid-template-columns:1fr 1fr;gap:0;--c:#007e86;--t:#fff}
+.city{grid-template-rows:100%}
+.city .ph{position:relative;min-height:0}
+.city .ph img{position:absolute;inset:0}
+.city .ph img{width:100%;height:100%;object-fit:cover}
+.city .panel{background:var(--c);color:var(--t);position:relative;padding:104px 11vw 52px 5vw;display:flex;flex-direction:column}
+.city .sym{position:absolute;left:-34%;right:16%;top:27%;height:24%;color:rgba(255,255,255,.9);pointer-events:none}
+.city .sym svg{width:100%;height:100%}
+.city .num{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.city h2{font-family:var(--serif);font-weight:400;font-size:clamp(80px,9vw,150px);line-height:.9;margin-top:auto;letter-spacing:-.01em}
+.city .meta{display:flex;gap:28px;margin-top:22px;font-size:13px;line-height:1.5;max-width:520px}
+.city .meta dt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;margin-bottom:4px}
+.city .buy{display:flex;align-items:center;gap:28px;margin-top:34px;flex-wrap:wrap}
+.city .price{font-size:22px;font-weight:500}
+.city .price small{display:block;font-size:10px;font-weight:400;opacity:.7;letter-spacing:.08em;text-transform:uppercase}
+.city .stamp{position:absolute;top:96px;right:7vw;color:rgba(255,255,255,.85);transform:rotate(-8deg)}
+.side-route{position:absolute;right:22px;top:50%;transform:translateY(-50%);color:#fff;z-index:5}
+.btn.fill{--btn-text:var(--c)}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}
+  .hero img:last-child{display:none}
+  .hero .big{left:16px;right:16px}
+  .hero .cats{justify-content:flex-start;gap:18px;overflow:auto;padding:0 16px;font-size:11px}
+  .hero .scroll{display:none}
+  .city{grid-template-columns:1fr;grid-template-rows:46% 54%}
+  .city .panel{padding:22px 20px 26px}
+  .city .sym{left:0;right:0;top:-34%;height:28%}
+  .city h2{font-size:76px;margin-top:8px}
+  .city .meta{gap:18px;font-size:12px}
+  .city .stamp{top:auto;bottom:calc(54% + 14px);right:14px;width:96px;height:96px;z-index:3}
+  .city .buy{gap:16px;margin-top:20px}
+  .side-route{display:none}
+  .hdr{padding:0 16px}.hdr .search{display:none}
+}
+</style></head>
+<body>
+<header class="hdr">
+  <div class="l"><span class="burger"></span></div>
+  <div></div>
+  <div class="r"><span class="search">Поиск</span><span class="cart">Корзина <b>(0)</b></span></div>
+</header>
+
+<section class="hero">
+  <img src="../photos/hi/florence-beige-chair.jpg" alt="" style="object-position:50% 60%">
+  <img src="../photos/hi/verona-emerald-tex.jpg" alt="">
+  <div class="shade"></div>
+  <div class="big" data-logo></div>
+  <nav class="cats"><a>Ванная</a><a>Кухня</a><a>Баня и пляж</a><a>Халаты</a><a>Коврики</a><a>Наборы и подарки</a><a>Для отелей</a></nav>
+  <div class="scroll">13 коллекций ↓</div>
+</section>
+
+<section class="city" id="verona">
+  <div class="ph"><img src="../photos/hi/verona-emerald-stack.jpg" alt="" style="object-position:50% 70%"></div>
+  <div class="panel">
+    <div class="sym" data-symbol="verona"></div>
+    <div class="num">Коллекция 01 / 13 · Италия</div>
+    <div class="stamp" data-stamp="ВЕРОНА|VERONA|01"></div>
+    <h2>Верона</h2>
+    <dl class="meta">
+      <div><dt>Где</dt><dd>ванная и кухня</dd></div>
+      <div><dt>Бордюр</dt><dd>атласные полосы</dd></div>
+      <div><dt>Цвета</dt><dd><div class="sw"><i style="background:#cab9b1"></i><i style="background:#55565b"></i><i class="on" style="background:#00838c"></i><i style="background:#7a5a55"></i><i style="background:#a3a1aa"></i></div></dd></div>
+    </dl>
+    <div class="buy">
+      <div class="price">от 18 BYN<small>полотенце 50×90 · цены примерные</small></div>
+      <a class="btn fill"><span>Смотреть коллекцию →</span></a>
+    </div>
+  </div>
+  <ul class="route side-route">
+    <li class="on">Верона</li><li>Римини</li><li>Венеция</li><li>Флоренция</li><li>Милан</li><li>Бергамо</li><li>Палермо</li><li>Турин</li><li>Неаполь</li><li>Модена</li><li>Ливорно</li><li>Марсель</li><li>Лион</li>
+  </ul>
+</section>
+<script src="parts.js"></script>
+</body></html>

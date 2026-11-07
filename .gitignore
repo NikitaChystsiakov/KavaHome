@@ -1,0 +1,27 @@
+# deps
+node_modules/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# env (ключи WooCommerce, Telegram)
+.env*
+
+# os
+.DS_Store
+
+# локальные копии чужих проектов для референса (1.9 ГБ, свои .git)
+/Готовые проекты из других сфер для референса и копирования кода/
+
+# служебные папки инструментов
+.playwright-mcp/
+
+# тяжёлые рабочие файлы арт-директора: сырые фото клиента перекачиваются
+# scripts/prototype_photos.py по drive-tree.json, промежуточные скриншоты ревью не нужны
+.art-director/photos/*
+!.art-director/photos/drive-tree.json
+.art-director/review/**/*.png
+!.art-director/review/final/*.png

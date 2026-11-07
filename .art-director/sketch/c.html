@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>C · Журнал</title>
+<link rel="stylesheet" href="base.css">
+<style>
+section{height:100vh;min-height:640px;position:relative;overflow:hidden}
+/* hero: триптих из трёх вертикальных кадров с зазором 2px */
+.hero{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:100%;gap:2px;background:#fff}
+.hero img{width:100%;height:100%;object-fit:cover;min-height:0}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 70%,rgba(0,0,0,.3))}
+.hero .big{position:absolute;left:5vw;right:5vw;top:50%;transform:translateY(-55%);color:#fff}
+.hero .cats{position:absolute;left:0;right:0;bottom:32px;display:flex;justify-content:center;gap:32px;color:#fff;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+
+/* слайд-разворот: бумага в тон полотенца, коллаж и текст */
+.city{--c:#e9dccf;background:var(--c);color:var(--ink);display:grid;grid-template-columns:5vw 34vw 1fr 22vw;grid-template-rows:100%;gap:0}
+.city .rail{border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;font-size:10px;letter-spacing:.14em}
+.city .rail span{writing-mode:vertical-rl;transform:rotate(180deg);opacity:.45;text-transform:uppercase}
+.city .rail span.on{opacity:1;font-weight:600}
+.city .main{position:relative;min-height:0}
+.city .main img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.city .text{padding:110px 4vw 48px;display:flex;flex-direction:column;position:relative}
+.city .kick{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+.city h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:clamp(78px,8.6vw,150px);line-height:.9;margin-top:18px;letter-spacing:-.01em}
+.city .story{font-family:'Cormorant Garamond',serif;font-size:24px;line-height:1.3;margin-top:22px;max-width:420px}
+.city .sym{height:200px;margin-top:auto;color:var(--logo);opacity:.8}
+.city .sym svg{width:100%;height:100%}
+.city .buy{display:flex;align-items:center;gap:24px;margin-top:26px}
+.city .price{font-size:20px;font-weight:500}.city .price small{display:block;font-size:10px;opacity:.6;font-weight:400;letter-spacing:.08em;text-transform:uppercase}
+.city .btn{border-color:var(--ink)}
+.city .side{display:grid;grid-template-rows:1fr 1fr;gap:2px;min-height:0;position:relative}
+.city .side img{width:100%;height:100%;object-fit:cover;min-height:0}
+.city .stamp{position:absolute;left:-66px;top:calc(50% - 66px);color:var(--logo);transform:rotate(-10deg);z-index:3}
+.sw i{outline-color:rgba(0,0,0,.2)}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr 1fr}
+  .hero img:nth-child(3){display:none}
+  .hero .big{left:14px;right:14px}
+  .hero .cats{justify-content:flex-start;gap:18px;overflow:auto;padding:0 16px;font-size:11px}
+  .city{grid-template-columns:1fr 1fr;grid-template-rows:44% auto}
+  .city .rail{display:none}
+  .city .main{grid-column:1}
+  .city .side{grid-column:2;grid-row:1}
+  .city .text{grid-column:1/3;grid-row:2;padding:20px 18px 24px}
+  .city h2{font-size:70px;margin-top:8px}
+  .city .story{font-size:19px;margin-top:12px}
+  .city .sym{display:none}
+  .city .stamp{left:auto;right:12px;top:calc(44% - 60px);width:92px;height:92px}
+  .hdr{padding:0 16px}.hdr .search{display:none}
+}
+</style></head>
+<body>
+<header class="hdr">
+  <div class="l"><span class="burger"></span></div>
+  <div></div>
+  <div class="r"><span class="search">Поиск</span><span class="cart">Корзина <b>(0)</b></span></div>
+</header>
+
+<section class="hero">
+  <img src="../photos/hi/florence-beige-vanity.jpg" alt="">
+  <img src="../photos/hi/rimini-pink-badge.jpg" alt="">
+  <img src="../photos/hi/venice-beige-brush.jpg" alt="">
+  <div class="shade"></div>
+  <div class="big" data-logo></div>
+  <nav class="cats"><a>Ванная</a><a>Кухня</a><a>Баня и пляж</a><a>Халаты</a><a>Коврики</a><a>Наборы и подарки</a><a>Для отелей</a></nav>
+</section>
+
+<section class="city" id="florence">
+  <div class="rail"><span>Верона</span><span>Римини</span><span>Венеция</span><span class="on">04 Флоренция</span><span>Милан</span><span>Бергамо</span></div>
+  <div class="main"><img src="../photos/hi/florence-beige-model.jpg" alt=""></div>
+  <div class="text">
+    <div class="kick">Коллекция 04 / 13 · Тоскана</div>
+    <h2>Флоренция</h2>
+    <p class="story">Рельеф «ёлочка», как паркет старых палаццо. Мягкий тёплый цвет, который хочется трогать.</p>
+    <div class="sym" data-symbol="florence"></div>
+    <div class="buy">
+      <div class="sw"><i class="on" style="background:#c9a88f"></i><i style="background:#3f3b40"></i><i style="background:#4a2620"></i><i style="background:#8f8c8e"></i></div>
+      <div class="price">от 24 BYN<small>цены примерные</small></div>
+      <a class="btn">Смотреть →</a>
+    </div>
+  </div>
+  <div class="side">
+    <div class="stamp" data-stamp="ФЛОРЕНЦИЯ|FIRENZE|04"></div>
+    <img src="../photos/hi/florence-beige-chair.jpg" alt="" style="object-position:50% 40%">
+    <img src="../photos/hi/florence-beige-tex.jpg" alt="">
+  </div>
+</section>
+<script src="parts.js"></script>
+<script>
+const h=document.querySelector('.hdr'),c=document.getElementById('florence');
+new IntersectionObserver(e=>h.classList.toggle('dark',e[0].isIntersecting),{rootMargin:'-60px 0px -90% 0px'}).observe(c);
+</script>
+</body></html>
