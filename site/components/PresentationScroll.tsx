@@ -17,6 +17,14 @@ export function PresentationScroll() {
     let busy = false;
     let acc = 0;
     let accTimer = 0;
+    // дошли до края высокого экрана: ждём паузы в прокрутке, чтобы инерция тачпада не перелистнула сама
+    let edge = false;
+    let edgeTimer = 0;
+    const holdEdge = () => {
+      edge = true;
+      clearTimeout(edgeTimer);
+      edgeTimer = window.setTimeout(() => (edge = false), 220);
+    };
 
     const targetOf = (el: HTMLElement) => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -81,8 +89,22 @@ export function PresentationScroll() {
       const list = screens();
       const cur = list[currentIndex(list)].getBoundingClientRect();
       const inside = dir > 0 ? cur.bottom > window.innerHeight + 2 : cur.top < hdr() - 2;
-      if (inside) return; // нативная прокрутка внутри высокого экрана
+      if (inside) {
+        // нативная прокрутка внутри высокого экрана, но не дальше его края
+        const remain = dir > 0 ? cur.bottom - window.innerHeight : hdr() - cur.top;
+        const px = Math.abs(e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY);
+        if (px >= remain) {
+          e.preventDefault();
+          window.scrollTo({ top: window.scrollY + dir * remain, behavior: "instant" });
+          holdEdge();
+        }
+        return;
+      }
       e.preventDefault();
+      if (edge) {
+        holdEdge();
+        return;
+      }
       if (busy) return;
       acc += e.deltaY;
       clearTimeout(accTimer);
@@ -104,6 +126,8 @@ export function PresentationScroll() {
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
+      clearTimeout(accTimer);
+      clearTimeout(edgeTimer);
       delete document.documentElement.dataset.paged;
     };
   }, []);
