@@ -5,7 +5,7 @@ import { TopBar } from "@/components/TopBar";
 export default function NotFound() {
   return (
     <>
-      <TopBar />
+      <TopBar compact />
       <main style={{ minHeight: "100svh", display: "grid", placeItems: "center", padding: "120px 28px", textAlign: "center" }}>
         <div>
           <h1 style={{ fontFamily: "var(--serif)", fontWeight: 400, fontSize: "clamp(40px, 6vw, 72px)", lineHeight: 1 }}>

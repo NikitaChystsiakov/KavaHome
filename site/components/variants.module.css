@@ -1,0 +1,738 @@
+/* ───────── эскизы C, D, E: коллекции с фото полотенца ───────── */
+
+.arrows {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+.arrows button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.arrows button:hover {
+  background: var(--ink);
+  color: var(--milk);
+  border-color: var(--ink);
+}
+.arrows svg,
+.btn svg {
+  width: 18px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  height: 48px;
+  padding: 0 22px;
+  background: var(--ink);
+  color: var(--milk);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+.btn:hover {
+  background: #000;
+}
+.newBadge {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  z-index: 2;
+  padding: 5px 9px;
+  background: var(--ink);
+  color: var(--milk);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ═════════ C. Открытка во весь экран ═════════ */
+.open {
+  background: var(--paper);
+  min-height: calc(100svh - var(--hdr));
+  padding: clamp(20px, 3.4svh, 36px) var(--pad) clamp(24px, 4svh, 44px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.4svh, 26px);
+}
+.openHead {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.openTitle {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(34px, 3.2vw, 48px);
+  line-height: 1;
+  flex: none;
+}
+.tabs {
+  list-style: none;
+  display: flex;
+  gap: 4px 22px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 1;
+  min-width: 0;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.tabs button {
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--ink-3);
+  white-space: nowrap;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.tabs button:hover {
+  color: var(--ink);
+}
+.tabs button[aria-current="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+.bigWrap {
+  flex: 1;
+  min-height: 0;
+  perspective: 2400px;
+  display: flex;
+}
+/* сама открытка: кремовая карточка с полями, лицо и оборот рядом */
+.big {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.12fr 1fr;
+  height: clamp(480px, calc(100svh - var(--hdr) - 150px), 860px);
+  background: var(--card);
+  box-shadow:
+    0 30px 60px -36px rgba(60, 40, 30, 0.55),
+    0 2px 6px rgba(60, 40, 30, 0.12);
+  transform: rotate(-0.4deg);
+  transform-origin: 50% 50%;
+}
+.big[data-turn="out"] {
+  animation: turnOut 0.3s cubic-bezier(0.5, 0, 0.9, 0.5) forwards;
+}
+.big[data-turn="in"] {
+  animation: turnIn 0.46s cubic-bezier(0.15, 0.6, 0.3, 1);
+}
+@keyframes turnOut {
+  to {
+    transform: rotate(-0.4deg) rotateY(-90deg);
+  }
+}
+@keyframes turnIn {
+  from {
+    transform: rotate(-0.4deg) rotateY(90deg);
+  }
+}
+.bigFront {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0 0 16px;
+  min-height: 0;
+}
+.bigPhoto {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.bigCaption {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 4px 14px;
+  color: #3b3030;
+}
+.bigCaption span:first-child {
+  font-family: var(--serif);
+  font-size: clamp(22px, 2vw, 30px);
+  letter-spacing: 0.04em;
+}
+.bigCaption span:last-child {
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: rgba(59, 48, 48, 0.7);
+}
+.bigBack {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(20px, 2.4vw, 40px);
+  padding: clamp(24px, 4svh, 48px) clamp(24px, 2.8vw, 48px);
+  color: #2b2424;
+  min-height: 0;
+}
+/* линия посередине оборота, как на настоящей открытке */
+.bigBack::before {
+  content: "";
+  position: absolute;
+  left: 53%;
+  top: 9%;
+  bottom: 9%;
+  border-left: 1px solid rgba(43, 36, 36, 0.28);
+}
+.bigLetter {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--hand);
+  font-size: clamp(17px, 1.35vw, 21px);
+  line-height: 1.35;
+  min-height: 0;
+}
+.bigHello {
+  font-size: 1.7em;
+  line-height: 1.05;
+}
+.bigPick {
+  margin-top: auto;
+  font-size: 0.9em;
+  color: rgba(43, 36, 36, 0.72);
+}
+/* цвета как почтовые марки с перфорацией */
+.stamps {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 8px;
+}
+.stamps button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: rgba(43, 36, 36, 0.7);
+}
+.stamps i {
+  position: relative;
+  display: block;
+  width: clamp(32px, 2.6vw, 42px);
+  aspect-ratio: 4 / 5;
+  border: 4px solid #fbf7ef;
+  outline: 1px dashed rgba(60, 40, 30, 0.35);
+  outline-offset: 2px;
+  box-shadow: 0 3px 8px -4px rgba(15, 10, 8, 0.45);
+  transform: rotate(-2deg);
+  transition: transform 0.25s var(--ease-out);
+}
+.stamps li:nth-child(even) i {
+  transform: rotate(2deg);
+}
+.stamps button:hover i {
+  transform: rotate(0deg) translateY(-3px);
+}
+.stamps button[aria-pressed="true"] {
+  color: #2b2424;
+}
+.stamps button[aria-pressed="true"] i {
+  outline: 1.5px solid #2b2424;
+  transform: rotate(0deg) translateY(-3px);
+}
+.bigAddr {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.bigPostage {
+  align-self: flex-end;
+  width: clamp(76px, 7vw, 108px);
+  aspect-ratio: 4 / 5;
+  padding: 10px 8px 6px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  background: #fbf7ef;
+  color: var(--tone);
+  outline: 1px dashed rgba(60, 40, 30, 0.35);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px #fbf7ef, 0 6px 14px -8px rgba(15, 10, 8, 0.5);
+  transform: rotate(3deg);
+}
+.bigPostage svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.bigPostage path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--sw, 10);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.bigPostage b {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 40px;
+}
+.bigPostage small {
+  font-family: var(--serif);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+.bigMark {
+  position: absolute;
+  right: clamp(50px, 5vw, 76px);
+  top: 18px;
+  width: clamp(130px, 12vw, 180px);
+  aspect-ratio: 228 / 132;
+  color: #2b2433;
+  mix-blend-mode: multiply;
+  opacity: 0.8;
+  transform: rotate(-9deg);
+  pointer-events: none;
+}
+.big[data-turn="in"] .bigMark {
+  animation: press 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both 0.35s;
+}
+@keyframes press {
+  from {
+    opacity: 0;
+    transform: rotate(-9deg) scale(1.12);
+  }
+}
+.bigLines {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+.bigLines div {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  align-items: baseline;
+  padding: 10px 0 6px;
+  border-bottom: 1px solid rgba(43, 36, 36, 0.28);
+}
+.bigLines dt {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(43, 36, 36, 0.6);
+}
+.bigLines dd {
+  font-family: var(--hand);
+  font-size: clamp(16px, 1.25vw, 20px);
+  white-space: nowrap;
+}
+.bigAddr .btn {
+  margin-top: clamp(16px, 2.6svh, 26px);
+  align-self: flex-start;
+}
+
+/* ═════════ D. Указатель городов ═════════ */
+.idx {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--milk);
+}
+.idxPhoto {
+  position: relative;
+}
+.idxPhotoIn {
+  position: sticky;
+  top: var(--hdr);
+  height: calc(100svh - var(--hdr));
+  overflow: hidden;
+}
+.idxPc {
+  position: absolute;
+  left: clamp(20px, 3vw, 44px);
+  bottom: clamp(20px, 4svh, 44px);
+  width: clamp(220px, 20vw, 320px);
+  z-index: 3;
+  transform: rotate(-3deg);
+  animation: dropIn 0.5s var(--ease-out);
+}
+@keyframes dropIn {
+  from {
+    opacity: 0;
+    transform: rotate(-9deg) translate(-10px, 18px);
+  }
+}
+.idxBody {
+  padding: clamp(32px, 6svh, 64px) var(--pad) clamp(32px, 8svh, 80px) clamp(28px, 4vw, 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100svh - var(--hdr));
+}
+.idxHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.idxList {
+  list-style: none;
+}
+.idxList li {
+  border-bottom: 1px solid var(--line);
+}
+.idxList a {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: clamp(8px, 1.3svh, 14px) 0;
+  color: var(--ink-3);
+  transition: color 0.3s ease;
+}
+.idxList li[data-active="true"] a {
+  color: var(--ink);
+}
+.idxNum {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+}
+.idxCity {
+  font-family: var(--serif);
+  font-size: clamp(34px, 3.6vw, 58px);
+  line-height: 1;
+  transition: transform 0.4s var(--ease-out);
+}
+.idxCity sup {
+  margin-left: 10px;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  vertical-align: top;
+}
+.idxList li[data-active="true"] .idxCity {
+  transform: translateX(10px);
+}
+.idxMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0.35;
+  transition: opacity 0.3s ease;
+}
+.idxList li[data-active="true"] .idxMeta {
+  opacity: 1;
+}
+.idxSw {
+  display: flex;
+  gap: 3px;
+}
+.idxSw i {
+  width: 12px;
+  height: 12px;
+  box-shadow: inset 0 0 0 1px rgba(42, 34, 34, 0.16);
+}
+
+/* ═════════ E. Цвет коллекции ═════════ */
+.tint {
+  --tint: #cdb9ae;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: calc(100svh - var(--hdr));
+  min-height: 600px;
+  overflow: hidden;
+}
+.tintPhoto {
+  position: relative;
+  min-height: 0;
+}
+.tintPanel {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  row-gap: clamp(12px, 2svh, 22px);
+  padding: clamp(18px, 3svh, 32px) clamp(24px, 3.4vw, 56px) clamp(16px, 2.6svh, 28px);
+  /* светлый тон выбранного цвета полотенца: тёмные цвета остаются только у текста */
+  background: color-mix(in srgb, var(--tint) 24%, #fbf8f3);
+  transition: background-color 0.7s ease;
+}
+.tintTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tintTop h2 {
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.tintTop .arrows button {
+  border-color: rgba(42, 34, 34, 0.2);
+}
+/* огромное название через шов: половина на фото, половина на панели */
+.tintCity {
+  position: absolute;
+  left: -0.42em;
+  top: 44%;
+  z-index: 2;
+  font-family: var(--serif);
+  font-size: clamp(84px, min(12.5vw, 19svh), 220px);
+  line-height: 0.8;
+  color: var(--ink);
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(-62%);
+  animation: cityIn 0.6s var(--ease-out);
+  mix-blend-mode: multiply;
+}
+@keyframes cityIn {
+  from {
+    opacity: 0;
+    transform: translate(24px, -62%);
+  }
+}
+.tintPc {
+  grid-row: 2;
+  justify-self: end;
+  align-self: start;
+  width: clamp(200px, 17vw, 290px);
+  transform: rotate(4deg);
+  margin-top: 8px;
+  z-index: 3;
+  animation: dropIn 0.5s var(--ease-out);
+}
+.tintBody {
+  position: relative;
+  z-index: 3;
+}
+.tintMeta {
+  margin-top: 6px;
+  font-size: 15px;
+}
+.tintSw {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.tintSw button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.tintSw i {
+  width: 46px;
+  height: 46px;
+  box-shadow: inset 0 0 0 1px rgba(42, 34, 34, 0.14);
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+  transition: outline-color 0.2s ease;
+}
+.tintSw button[aria-pressed="true"] {
+  color: var(--ink);
+}
+.tintSw button[aria-pressed="true"] i {
+  outline-color: var(--ink);
+}
+.tintBuy {
+  margin-top: clamp(16px, 2.6svh, 26px);
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-size: 16px;
+}
+.tintStrip {
+  list-style: none;
+  display: flex;
+  gap: 4px 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-top: 12px;
+  border-top: 1px solid rgba(42, 34, 34, 0.16);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+}
+.tintStrip button {
+  padding: 4px 0;
+  font-family: var(--serif);
+  font-size: 17px;
+  white-space: nowrap;
+  color: var(--ink-3);
+  border-bottom: 1px solid transparent;
+}
+.tintStrip button[aria-current="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+/* ───────── телефон ───────── */
+@media (max-width: 760px) {
+  .open {
+    padding: 36px var(--pad) 32px;
+  }
+  .openHead {
+    flex-wrap: wrap;
+    gap: 12px 16px;
+  }
+  .openTitle {
+    flex: 1;
+  }
+  .tabs {
+    order: 3;
+    flex-basis: 100%;
+  }
+  .big {
+    grid-template-columns: 1fr;
+    height: auto;
+    transform: none;
+  }
+  @keyframes turnOut {
+    to {
+      transform: rotateY(-90deg);
+    }
+  }
+  @keyframes turnIn {
+    from {
+      transform: rotateY(90deg);
+    }
+  }
+  .bigFront {
+    padding: 10px 10px 0;
+  }
+  .bigPhoto {
+    flex: none;
+    aspect-ratio: 4 / 5;
+  }
+  .bigBack {
+    grid-template-columns: 1fr;
+    padding: 20px 18px 24px;
+    border-top: 1px dashed rgba(43, 36, 36, 0.25);
+  }
+  .bigBack::before {
+    display: none;
+  }
+  .bigAddr {
+    order: -1;
+  }
+  .bigPostage {
+    position: absolute;
+    right: 0;
+    top: -6px;
+    width: 64px;
+  }
+  .bigMark {
+    right: 34px;
+    top: -4px;
+    width: 120px;
+  }
+  .bigLetter {
+    font-size: 17px;
+  }
+  .bigLines {
+    margin-top: 76px;
+  }
+
+  .idx {
+    grid-template-columns: 1fr;
+  }
+  .idxPhoto {
+    position: sticky;
+    top: var(--hdr);
+    z-index: 4;
+    height: 44svh;
+  }
+  .idxPhotoIn {
+    position: relative;
+    top: 0;
+    height: 100%;
+  }
+  .idxPc {
+    width: 150px;
+    left: 12px;
+    bottom: 12px;
+  }
+  .idxBody {
+    min-height: 0;
+    padding: 20px var(--pad) 24svh;
+  }
+  .idxList a {
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 14px 0;
+  }
+  .idxCity {
+    font-size: 30px;
+  }
+  .idxMeta {
+    font-size: 12px;
+  }
+
+  .tint {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 0;
+  }
+  .tintPhoto {
+    aspect-ratio: 4 / 5;
+  }
+  .tintCity {
+    position: absolute;
+    left: var(--pad);
+    top: -0.62em;
+    font-size: 84px;
+    transform: none;
+    animation: none;
+  }
+  .tintBuy {
+    flex-wrap: wrap;
+    gap: 12px 18px;
+  }
+  .tintBuy span {
+    white-space: nowrap;
+  }
+  .tintPanel {
+    grid-template-rows: auto auto auto auto;
+    padding-top: 56px;
+  }
+  .tintPc {
+    position: absolute;
+    grid-row: auto;
+    right: var(--pad);
+    top: -236px;
+    width: 150px;
+    margin: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .big[data-turn],
+  .tintCity,
+  .tintPc,
+  .idxPc,
+  .bigMark {
+    animation: none !important;
+  }
+}

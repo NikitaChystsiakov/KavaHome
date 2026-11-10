@@ -1,0 +1,612 @@
+/* ───────── общие детали эскизов A и B ───────── */
+
+/* фото с мягкой сменой */
+.swap {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: var(--milk);
+  overflow: hidden;
+}
+.under {
+  transition: opacity 0.22s ease;
+}
+.under[data-gone="true"] {
+  opacity: 0;
+}
+.layer {
+  transition: opacity 0.42s ease 0.16s, transform 0.9s var(--ease-out) 0.16s;
+}
+.layer[data-ready="false"] {
+  opacity: 0;
+  transform: scale(1.01);
+}
+
+.newBadge {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 2;
+  padding: 5px 9px;
+  background: var(--ink);
+  color: var(--milk);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.arrows {
+  display: flex;
+  gap: 6px;
+}
+.arrows button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.arrows button:hover {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--milk);
+}
+.arrows svg,
+.stageBtn svg {
+  width: 18px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+
+/* мини-открытка */
+.pc {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  container-type: inline-size;
+  perspective: 1200px;
+}
+.pcInner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.75s var(--ease-out);
+}
+.pc[data-back="true"] .pcInner,
+.pc:focus-within .pcInner {
+  transform: rotateY(180deg);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-pc-host]:hover .pcInner {
+    transform: rotateY(180deg);
+  }
+}
+.pcFace {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: var(--card);
+  box-shadow:
+    0 12px 26px -14px rgba(50, 34, 26, 0.55),
+    0 1px 3px rgba(50, 34, 26, 0.18);
+}
+.pcImg {
+  position: absolute;
+  inset: 3cqw 3cqw 10cqw;
+  overflow: hidden;
+}
+/* новая коллекция без старинной открытки: фото полотенца в тёплом «фотохромном» тоне */
+.pc[data-fallback="true"] .pcImg img {
+  filter: sepia(0.35) saturate(0.85) contrast(1.02);
+}
+.pcCaption {
+  position: absolute;
+  left: 4cqw;
+  bottom: 2.6cqw;
+  font-family: var(--serif);
+  font-size: max(9px, 4.6cqw);
+  letter-spacing: 0.05em;
+  color: #3b3030;
+  white-space: nowrap;
+}
+.pcStamp {
+  position: absolute;
+  right: 5cqw;
+  top: 5cqw;
+  width: 22cqw;
+  aspect-ratio: 5 / 4;
+  padding: 6%;
+  display: grid;
+  place-items: center;
+  background: #fbf7ef;
+  color: var(--tone);
+  transform: rotate(3deg);
+  box-shadow: 0 0 0 max(2px, 1.2cqw) #fbf7ef, 0 3px 8px -4px rgba(15, 10, 8, 0.55);
+  outline: 1px dashed rgba(60, 40, 30, 0.35);
+  outline-offset: max(1px, 0.8cqw);
+}
+.pcStamp svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.pcStamp path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--sw, 10);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pcStamp b {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 10cqw;
+  line-height: 1;
+}
+.pcMark {
+  position: absolute;
+  right: 17cqw;
+  top: 8cqw;
+  width: 30cqw;
+  aspect-ratio: 228 / 132;
+  color: #2b2433;
+  mix-blend-mode: multiply;
+  opacity: 0.78;
+  transform: rotate(-9deg);
+  pointer-events: none;
+}
+.pcBack {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+  padding: 7cqw 7cqw 6cqw;
+  color: #2b2424;
+  font-family: var(--hand);
+}
+.pcHello {
+  font-size: max(15px, 8cqw);
+  line-height: 1.05;
+  margin-bottom: 1cqw;
+}
+.pcLine {
+  font-size: max(12px, 5.2cqw);
+  line-height: 1.25;
+  border-bottom: 1px solid rgba(43, 36, 36, 0.25);
+  padding-bottom: 1cqw;
+}
+.pcSign {
+  margin-top: auto;
+  align-self: flex-end;
+  font-size: max(12px, 5cqw);
+}
+.pcBtn {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  cursor: pointer;
+}
+
+/* ───────── эскиз A: лента коллекций ───────── */
+.rail {
+  background: var(--paper);
+  padding: clamp(40px, 7svh, 72px) 0 clamp(36px, 6svh, 64px);
+}
+.railHead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  column-gap: 32px;
+  padding: 0 var(--pad) clamp(18px, 3svh, 28px);
+}
+.railTitle {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(36px, 4vw, 60px);
+  line-height: 1;
+}
+.railNote {
+  font-size: 14px;
+  color: var(--ink-2);
+  padding-bottom: 6px;
+}
+.track {
+  display: flex;
+  gap: var(--gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--pad);
+  padding-left: var(--pad);
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.track::-webkit-scrollbar {
+  display: none;
+}
+.track::after {
+  content: "";
+  flex: 0 0 var(--pad);
+}
+.rcard {
+  /* по высоте окна: фото 3:4 + подпись помещаются в экран */
+  flex: 0 0 min(calc((100vw - var(--pad)) / 4.3), calc((100svh - var(--hdr) - 300px) * 0.75));
+  position: relative;
+  container-type: inline-size;
+  scroll-snap-align: start;
+  background: var(--milk);
+}
+.rphoto {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+.rphoto img {
+  transition: transform 1.2s var(--ease-out);
+}
+.rcard:hover .rphoto .layer[data-ready="true"] {
+  transform: scale(1.03);
+}
+.rpc {
+  position: absolute;
+  left: 4cqw;
+  top: calc(133.33cqw - 36cqw - 4cqw);
+  width: 54cqw;
+  transform: rotate(-3deg);
+  z-index: 3;
+  transition: transform 0.45s var(--ease-out);
+}
+.rcard:hover .rpc {
+  transform: rotate(0deg) translateY(-4px);
+}
+.rinfo {
+  padding: 14px 14px 18px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "city price"
+    "meta meta"
+    "sw sw";
+  gap: 4px 12px;
+  align-items: baseline;
+}
+.rcity {
+  grid-area: city;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1;
+}
+.rprice {
+  grid-area: price;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.rmeta {
+  grid-area: meta;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.rsw,
+.stageSw {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.rsw {
+  grid-area: sw;
+  margin: 4px 0 0 -3px;
+}
+.rsw button {
+  width: 24px;
+  height: 24px;
+  padding: 3px;
+  border: 1px solid transparent;
+}
+.rsw button[aria-pressed="true"] {
+  border-color: var(--ink);
+}
+.rsw i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0 0 0 1px rgba(42, 34, 34, 0.16);
+}
+.progress {
+  margin: 22px var(--pad) 0;
+  height: 1px;
+  background: var(--line);
+}
+.progress i {
+  display: block;
+  height: 1px;
+  background: var(--ink);
+  transform-origin: 0 50%;
+  transition: transform 0.2s linear;
+}
+
+/* ───────── эскиз B: витрина ───────── */
+.stage {
+  display: grid;
+  grid-template-columns: 11fr 9fr;
+  height: calc(100svh - var(--hdr));
+  min-height: 600px;
+  background: var(--paper);
+}
+.stagePhoto {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+.stagePanel {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  row-gap: clamp(12px, 2.4svh, 26px);
+  padding: clamp(18px, 3svh, 32px) clamp(24px, 3.4vw, 56px) clamp(16px, 2.6svh, 28px);
+}
+.stageTop {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.stageTop h2 {
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.counter {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+.stageTop .arrows {
+  margin-left: auto;
+}
+
+.stack {
+  position: relative;
+  min-height: 0;
+  container-type: size;
+}
+.stackCard {
+  --w: min(78cqw, 100cqh * 1.5 * 0.86, 440px);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--w);
+  transition: transform 0.55s var(--ease-out);
+}
+.stackCard[data-pos="0"] {
+  z-index: 3;
+  transform: translate(-50%, -50%) rotate(-2deg);
+}
+.stackCard[data-pos="1"] {
+  z-index: 2;
+  transform: translate(-46%, -53%) rotate(3.5deg);
+}
+.stackCard[data-pos="2"] {
+  z-index: 1;
+  transform: translate(-54%, -47%) rotate(-5.5deg);
+}
+.stackCard[data-pos="1"] .pcBtn,
+.stackCard[data-pos="2"] .pcBtn {
+  display: none;
+}
+/* верхняя открытка улетает со стопки */
+.stackCard[data-pos="out"] {
+  z-index: 4;
+  pointer-events: none;
+  animation: flyOut 0.55s cubic-bezier(0.5, 0, 0.75, 0.4) forwards;
+}
+@keyframes flyOut {
+  from {
+    transform: translate(-50%, -50%) rotate(-2deg);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-175%, -38%) rotate(-16deg);
+    opacity: 0;
+  }
+}
+.stackCard[data-enter="back"] {
+  animation: flyBack 0.55s var(--ease-out);
+}
+@keyframes flyBack {
+  from {
+    transform: translate(-175%, -38%) rotate(-16deg);
+    opacity: 0;
+  }
+}
+
+.stageText {
+  animation: textIn 0.45s ease both 0.1s;
+}
+@keyframes textIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.stageCountry {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.stageCity {
+  margin-top: 6px;
+  font-family: var(--serif);
+  font-size: clamp(44px, 4.6vw, 72px);
+  line-height: 1;
+}
+.stageMeta {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.stageSw {
+  margin-top: 14px;
+  gap: 4px 6px;
+}
+.stageSw button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 10px 0 6px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.stageSw button[aria-pressed="true"] {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.stageSw i {
+  width: 18px;
+  height: 18px;
+  box-shadow: inset 0 0 0 1px rgba(42, 34, 34, 0.16);
+}
+.stageBuy {
+  margin-top: clamp(14px, 2.4svh, 24px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.stageBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  height: 48px;
+  padding: 0 22px;
+  background: var(--ink);
+  color: var(--milk);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.stagePrice {
+  font-size: 22px;
+  text-align: right;
+  white-space: nowrap;
+}
+.stagePrice small {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+.strip {
+  list-style: none;
+  display: flex;
+  gap: 4px 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+}
+.strip::-webkit-scrollbar {
+  display: none;
+}
+.strip button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 0;
+  font-family: var(--serif);
+  font-size: 17px;
+  white-space: nowrap;
+  color: var(--ink-3);
+  border-bottom: 1px solid transparent;
+}
+.strip button:hover {
+  color: var(--ink);
+}
+.strip button[aria-current="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+.strip i {
+  width: 8px;
+  height: 8px;
+}
+
+/* ───────── телефон ───────── */
+@media (max-width: 760px) {
+  .rail {
+    padding-top: 44px;
+  }
+  .railHead {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "title arrows"
+      "note note";
+    row-gap: 8px;
+  }
+  .railTitle {
+    grid-area: title;
+    font-size: 38px;
+  }
+  .railNote {
+    grid-area: note;
+    font-size: 13px;
+  }
+  .railHead .arrows {
+    grid-area: arrows;
+  }
+  .rcard {
+    flex-basis: 76vw;
+  }
+
+  /* телефон: витрина тоже ровно в экран — фото тянется, открытки и подписи компактнее */
+  .stage {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    height: calc(100svh - var(--hdr));
+    min-height: 600px;
+  }
+  .stagePhoto {
+    min-height: 0;
+  }
+  .stagePanel {
+    grid-template-rows: auto 34vw auto auto;
+    gap: 10px;
+    padding: 12px var(--pad) 14px;
+  }
+  .stackCard {
+    --w: 44vw;
+  }
+  .stageCountry {
+    display: none;
+  }
+  .stageCity {
+    font-size: 34px;
+  }
+  .stageBuy {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+  }
+  .stagePrice {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stackCard[data-pos="out"] {
+    display: none;
+  }
+  .stackCard[data-enter="back"],
+  .stageText {
+    animation: none;
+  }
+}

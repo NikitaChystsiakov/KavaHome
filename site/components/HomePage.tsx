@@ -1,29 +1,59 @@
 import { collections } from "@/lib/collections";
 import { TopBar } from "./TopBar";
-import { CitySlide } from "./CitySlide";
-import { SlidesObserver } from "./SlidesObserver";
+import { Deck } from "./Deck";
+import { CollectionsRail } from "./CollectionsRail";
+import { CollectionsStage } from "./CollectionsStage";
+import { OpenPostcard } from "./OpenPostcard";
+import { CityIndex } from "./CityIndex";
+import { ColorSplit } from "./ColorSplit";
+import { Ring } from "./Ring";
+import { ZaraRow } from "./ZaraRow";
+import { Wheel } from "./Wheel";
+import { Catalog } from "./Catalog";
 import { PresentationScroll } from "./PresentationScroll";
-import { Hero, Purposes, Hotels, Gifts, Footer } from "./Sections";
+import { Hero, Gifts, Hotels, Footer } from "./Sections";
 
-// Главная целиком: первый экран, тур по городам-коллекциям открытками, разделы и подвал.
-export function HomePage() {
+// Главная после звонка 2026-11-09: первый экран → колода открыток-коллекций → каталог по схеме Zara Home →
+// подарочные наборы QD → для отелей → подвал.
+// view: эскизы показа коллекций — deck (колода, текущая), rail (A, лента фото), stage (B, витрина),
+// open (C, открытка во весь экран), index (D, указатель городов), tint (E, цвет коллекции),
+// ring (F, кольцо открыток в пространстве и под ним простой ряд в духе Zara для сравнения)
+// fan (по умолчанию с 2026-11-10): веер-лента открыток, а вторым экраном витрина B — заказчику на выбор
+export type HomeView = "fan" | "deck" | "rail" | "stage" | "open" | "index" | "tint" | "ring";
+export function HomePage({ view = "fan" }: { view?: HomeView }) {
   return (
     <>
       <TopBar />
       <main>
-        <Hero count={collections.length} />
-        <div>
-          {collections.map((c, i) => (
-            <CitySlide key={c.slug} c={c} index={i} all={collections} />
-          ))}
-        </div>
-        <SlidesObserver selector="[data-slide]" />
-        <PresentationScroll />
-        <Purposes />
-        <Hotels />
+        <Hero />
+        {view === "fan" && (
+          <>
+            <section id="kollekcii" aria-label="Коллекции" data-screen>
+              <Wheel items={collections} mode="flow" />
+            </section>
+            <CollectionsStage items={collections} id="vitrina" />
+          </>
+        )}
+        {view === "deck" && <Deck items={collections} />}
+        {view === "rail" && <CollectionsRail items={collections} />}
+        {view === "stage" && <CollectionsStage items={collections} />}
+        {view === "open" && <OpenPostcard items={collections} />}
+        {view === "index" && <CityIndex items={collections} />}
+        {view === "tint" && <ColorSplit items={collections} />}
+        {view === "ring" && (
+          <>
+            <section id="kollekcii" aria-label="Коллекции">
+              <Ring items={collections} />
+            </section>
+            <ZaraRow items={collections} />
+          </>
+        )}
+        <Catalog collections={collections} />
         <Gifts />
+        <Hotels />
       </main>
       <Footer />
+      {view === "fan" && <PresentationScroll />}
     </>
   );
 }

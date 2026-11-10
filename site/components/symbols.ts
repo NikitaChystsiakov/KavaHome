@@ -119,6 +119,7 @@ function naples(): Sym {
 
 const SYMBOLS: Record<CitySymbol, () => Sym> = { verona, rimini, venice, florence, milan, lyon, naples };
 
-export function citySymbol(slug: CitySymbol): Sym {
-  return SYMBOLS[slug]();
+export function citySymbol(slug: string): Sym | null {
+  const f = SYMBOLS[slug as CitySymbol];
+  return f ? f() : null;
 }

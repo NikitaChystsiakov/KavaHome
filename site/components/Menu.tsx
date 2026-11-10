@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { collections, contacts, purposes } from "@/lib/collections";
+import { collections, contacts } from "@/lib/collections";
+import { categories, purposeChips } from "@/lib/catalog";
 import s from "./menu.module.css";
 
 type Props = { open: boolean; onClose: () => void };
@@ -40,7 +41,7 @@ export function Menu({ open, onClose }: Props) {
           <ul className={s.cities}>
             {collections.map((c, i) => (
               <li key={c.slug}>
-                <a href={`/#${c.slug}`} onClick={onClose}>
+                <a href={`/?kol=${c.slug}#catalog`} data-filter-kol={c.slug} onClick={onClose}>
                   <i style={{ background: c.tone }} aria-hidden="true" />
                   <span className={s.cityName}>{c.city}</span>
                   <span className={s.cityMeta}>
@@ -51,13 +52,24 @@ export function Menu({ open, onClose }: Props) {
             ))}
           </ul>
 
+          <p className={s.group}>Каталог</p>
+          <ul className={s.links}>
+            {categories.map((c) => (
+              <li key={c.id}>
+                <a href={`/?kat=${c.id}#catalog`} data-filter-kat={c.id} onClick={onClose}>
+                  {c.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
           <p className={s.group}>Что ищете</p>
           <ul className={s.links}>
-            {purposes
-              .filter((p) => p.label !== "Для отелей")
+            {purposeChips
+              .filter((p) => p.id !== "oteli")
               .map((p) => (
-                <li key={p.label}>
-                  <a href={p.href} onClick={onClose}>
+                <li key={p.id}>
+                  <a href={`/?nazn=${p.id}#catalog`} data-filter-nazn={p.id} onClick={onClose}>
                     {p.label}
                   </a>
                 </li>
@@ -77,9 +89,9 @@ export function Menu({ open, onClose }: Props) {
               </Link>
             </li>
             <li>
-              <a href="/certificate" onClick={onClose}>
+              <Link href="/#gifts" onClick={onClose}>
                 Подарочный сертификат
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>

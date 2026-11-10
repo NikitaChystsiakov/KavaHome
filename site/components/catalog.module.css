@@ -1,0 +1,407 @@
+/* ───────── каталог (схема Zara Home) ─────────
+   Слева липкое меню категорий, справа сетка до правого края окна с зазором 2px. */
+.catalog {
+  --side: clamp(200px, 17vw, 260px);
+  display: grid;
+  grid-template-columns: var(--side) minmax(0, 1fr);
+  background: var(--milk);
+  border-top: 1px solid var(--line);
+}
+
+.side {
+  border-right: 1px solid var(--line);
+}
+.sideInner {
+  position: sticky;
+  top: var(--hdr);
+  max-height: calc(100svh - var(--hdr));
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 28px var(--pad) 40px;
+}
+.title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 22px;
+}
+.cats,
+.cities {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.cats button,
+.cats a,
+.cities button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 5px 0;
+  font-size: 14px;
+  color: var(--ink-2);
+  transition: color 0.15s ease;
+}
+.cats button:hover,
+.cats a:hover,
+.cities button:hover {
+  color: var(--ink);
+}
+.cats button[aria-pressed="true"],
+.cities button[aria-pressed="true"] {
+  color: var(--ink);
+  font-weight: 500;
+}
+.cats button[aria-pressed="true"]::before,
+.cities button[aria-pressed="true"]::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  margin-right: 8px;
+  vertical-align: middle;
+  background: currentColor;
+}
+.cats li:last-child a {
+  margin-top: 6px;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.cities button {
+  font-family: var(--serif);
+  font-size: 18px;
+  padding: 3px 0;
+}
+.group {
+  margin: 26px 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.families {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.families button {
+  width: 28px;
+  height: 28px;
+  padding: 3px;
+  border: 1px solid transparent;
+}
+.families button[aria-pressed="true"] {
+  border-color: var(--ink);
+}
+.families i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0 0 0 1px rgba(42, 34, 34, 0.16);
+}
+
+.main {
+  min-width: 0;
+}
+.mTitle {
+  display: none;
+}
+.bar {
+  position: sticky;
+  top: var(--hdr);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px var(--pad);
+  background: rgba(251, 248, 243, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chips button {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.chips button:hover {
+  border-color: var(--ink);
+}
+.chips button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--milk);
+  border-color: var(--ink);
+}
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex: none;
+}
+.filtersBtn {
+  display: none;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.sort select {
+  appearance: none;
+  padding: 6px 18px 6px 0;
+  font-size: 13px;
+  cursor: pointer;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%232a2222' stroke-width='1.2'/%3E%3C/svg%3E") right center / 10px 6px no-repeat;
+}
+.views {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.views :global(.caps) {
+  margin-right: 6px;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+.views button {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+}
+.views button[aria-pressed="true"],
+.views button:hover {
+  color: var(--ink);
+}
+.views svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  min-height: 46px;
+  padding: 10px var(--pad);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tag {
+  height: 28px;
+  padding: 0 10px;
+  background: var(--paper);
+  font-size: 13px;
+  color: var(--ink);
+}
+.reset {
+  font-size: 13px;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+/* сетка до краёв, зазор 2px */
+.grid {
+  --cols: 4;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: 28px var(--gap);
+}
+.item {
+  display: flex;
+  flex-direction: column;
+}
+.media {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--milk);
+}
+/* мягкая смена фото (fade-through): старый кадр гаснет в молочный, новый проявляется следом —
+   кадры разных цветов сняты не в одной точке, и прямой кроссфейд давал «призрак» */
+.media:has(.layer[data-ready="true"]) .under {
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.layer {
+  transition: opacity 0.42s ease 0.16s, transform 0.9s var(--ease-out) 0.16s;
+}
+.layer[data-ready="false"] {
+  opacity: 0;
+  transform: scale(1.01);
+}
+.layer[data-ready="true"] {
+  opacity: 1;
+  transform: scale(1);
+}
+.badge {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  padding: 4px 8px;
+  background: rgba(251, 248, 243, 0.9);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+.info {
+  padding: 10px 12px 0;
+  display: grid;
+  gap: 4px;
+}
+.name {
+  font-size: 14px;
+  line-height: 1.3;
+}
+.name:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.meta {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.swatches {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: 4px 0 2px -3px;
+}
+.swatches button {
+  width: 22px;
+  height: 22px;
+  padding: 3px;
+  border: 1px solid transparent;
+}
+.swatches button[aria-pressed="true"] {
+  border-color: var(--ink);
+}
+.swatches i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0 0 0 1px rgba(42, 34, 34, 0.16);
+}
+.price {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+/* плотная сетка: только главное */
+.grid[data-cols="6"] .meta,
+.grid[data-cols="6"] .badge {
+  display: none;
+}
+.grid[data-cols="6"] .name {
+  font-size: 13px;
+}
+
+.empty {
+  padding: 80px var(--pad);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 18px;
+}
+.note {
+  padding: 36px var(--pad) clamp(48px, 8svh, 88px);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+/* ───────── планшет и телефон: меню категорий прячется в «Фильтры» ───────── */
+@media (max-width: 1100px) {
+  .catalog {
+    grid-template-columns: 1fr;
+  }
+  .side {
+    border-right: 0;
+    display: none;
+  }
+  .side[data-open="true"] {
+    display: block;
+    border-bottom: 1px solid var(--line);
+  }
+  .sideInner {
+    position: static;
+    max-height: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+    padding: 20px var(--pad) 24px;
+  }
+  .title {
+    display: none;
+  }
+  .sideInner > nav {
+    grid-row: span 4;
+  }
+  .filtersBtn {
+    display: inline;
+  }
+  .mTitle {
+    display: block;
+    padding: 40px var(--pad) 8px;
+    font-family: var(--serif);
+    font-size: 40px;
+    line-height: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 0;
+  }
+  .chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 var(--pad);
+  }
+  .chips::-webkit-scrollbar {
+    display: none;
+  }
+  .tools {
+    justify-content: space-between;
+    padding: 0 var(--pad);
+  }
+  .views :global(.caps) {
+    display: none;
+  }
+  .grid {
+    row-gap: 22px;
+  }
+  .info {
+    padding: 8px 8px 0;
+  }
+  .name {
+    font-size: 13px;
+  }
+  .meta {
+    font-size: 12px;
+  }
+  .grid[data-cols="2"] .badge {
+    display: none;
+  }
+}

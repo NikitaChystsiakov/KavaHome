@@ -3,13 +3,26 @@
 import { useEffect } from "react";
 
 // Листание как у презентации на компьютере: один жест колесом/тачпадом/клавишей — ровно один экран.
-// На телефоне работает нативная привязка (scroll-snap) — свайп и так листает по экрану.
+// На телефоне работает нативная привязка (scroll-snap) — свайп и так листает по экрану; в каталоге она выключена.
 // Экран выше окна (например, «Для отелей» на низком ноутбуке) прокручивается внутри обычным способом.
 export function PresentationScroll() {
   useEffect(() => {
     const desktop = window.matchMedia("(hover: hover) and (pointer: fine)");
-    if (!desktop.matches) return;
-    document.documentElement.dataset.paged = "true";
+    const html = document.documentElement;
+    if (!desktop.matches) {
+      // телефон: нативная привязка к экранам; внутри каталога выключается — он длинный и меняет высоту от фильтров
+      html.dataset.snap = "true";
+      const cat = document.getElementById("catalog");
+      const io = new IntersectionObserver(([e]) => (html.dataset.snap = e.isIntersecting ? "free" : "true"), {
+        rootMargin: "-45% 0px -45% 0px",
+      });
+      if (cat) io.observe(cat);
+      return () => {
+        io.disconnect();
+        delete html.dataset.snap;
+      };
+    }
+    html.dataset.paged = "true";
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const hdr = () => (window.innerWidth < 761 ? 56 : 64);
@@ -78,7 +91,10 @@ export function PresentationScroll() {
       e?.preventDefault();
       if (busy) return true;
       const next = list[i + dir];
-      if (next) go(targetOf(next));
+      // вверх в высокий экран (каталог) — к его нижнему краю, а не в начало
+      if (next && dir < 0 && next.offsetHeight > vh - hdr() + 2) {
+        go(next.getBoundingClientRect().bottom + window.scrollY - vh);
+      } else if (next) go(targetOf(next));
       else if (dir < 0) go(0);
       return true;
     };

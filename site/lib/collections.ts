@@ -27,11 +27,32 @@ export type Collection = {
   colors: ColorVariant[];
   /** «из Вероны» — для подписи на обороте открытки */
   from: string;
-  /** старинная открытка города (общественное достояние, источники в .art-director/postcards/SOURCES.md) */
-  postcard: { src: string; caption: string; year: string };
+  /** старинная открытка города (общественное достояние, источники в .art-director/postcards/SOURCES.md).
+   *  Нет открытки (новая коллекция из админки) — лицевая сторона собирается из фото полотенца. */
+  postcard?: { src: string; caption: string; year: string };
+  /** новинка: бейдж в ленте/витрине */
+  isNew?: boolean;
 };
 
 const all: Collection[] = [
+  {
+    // пример коллекции без старинной открытки: так будут выглядеть новые коллекции из админки
+    slug: "bergamo",
+    from: "из Бергамо",
+    city: "Бергамо",
+    latin: "BERGAMO",
+    country: "Италия",
+    countryLatin: "ITALIA",
+    coords: "45°41′ с. ш. · 9°40′ в. д.",
+    tone: "#7d7368",
+    isNew: true,
+    image: "/img/use-hotel.webp",
+    facts: [
+      { term: "Линия", value: "отельная" },
+      { term: "Где", value: "ванная, гостиница" },
+    ],
+    colors: [{ name: "белый", swatch: "#f6f3ee", image: "/img/use-hotel.webp", priceFrom: 13 }],
+  },
   {
     slug: "verona",
     from: "из Вероны",
@@ -198,7 +219,7 @@ const all: Collection[] = [
 ];
 
 // Порядок маршрута: по карте с севера на юг, затем перелёт в Милан и Лион.
-const ROUTE = ["verona", "venice", "rimini", "florence", "naples", "milan", "lyon"];
+const ROUTE = ["verona", "venice", "rimini", "florence", "naples", "milan", "bergamo", "lyon"];
 export const collections: Collection[] = ROUTE.map((slug) => all.find((c) => c.slug === slug)!);
 
 /** расстояние по прямой между соседними городами маршрута, км */
@@ -210,16 +231,6 @@ export const legKm: Record<string, number> = {
   "naples-milan": 657,
   "milan-lyon": 340,
 };
-
-export const purposes = [
-  { label: "Ванная", href: "/catalog?naznachenie=vannaya" },
-  { label: "Кухня", href: "/catalog?naznachenie=kuhnya" },
-  { label: "Баня и пляж", href: "/catalog?naznachenie=banya-plyazh" },
-  { label: "Халаты", href: "/catalog?naznachenie=halaty" },
-  { label: "Коврики", href: "/catalog?naznachenie=kovriki" },
-  { label: "Наборы и подарки", href: "/catalog?naznachenie=podarki" },
-  { label: "Для отелей", href: "/#hotels" },
-];
 
 export const contacts = {
   phone: "+375 (29) 101-58-58",

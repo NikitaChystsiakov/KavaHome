@@ -1,32 +1,23 @@
 import Image from "next/image";
-import { contacts, purposes } from "@/lib/collections";
+import { contacts } from "@/lib/collections";
+import { giftLines, purposeChips } from "@/lib/catalog";
 import { HotelForm } from "./HotelForm";
 import { Stamp } from "./Stamp";
 import { Logo } from "./Logo";
 import s from "./home.module.css";
 
-export function Hero({ count }: { count: number }) {
+// Первый экран: два самых светлых кадра, логотип на всю ширину (рисует TopBar), предложение и назначения.
+export function Hero() {
   return (
     <section className={s.hero} aria-label="KAVA HOME" data-screen>
-      <div className={`${s.heroPhoto} ${s.heroFirst}`}>
-        <Image
-          src="/img/hero-florence.webp"
-          alt="Бежевое полотенце Флоренция на кресле"
-          fill
-          preload
-          sizes="(max-width: 760px) 100vw, 50vw"
-          style={{ objectFit: "cover", objectPosition: "45% 60%" }}
-          quality={85}
-        />
-      </div>
       <div className={s.heroPhoto}>
         <Image
-          src="/img/hero-verona-tex.webp"
-          alt="Махра полотенца Верона изумруд крупным планом"
+          src="/img/florence-beige.webp"
+          alt="Бежевые полотенца Флоренция с рельефом «ёлочка» на белом комоде"
           fill
           preload
-          sizes="(max-width: 760px) 100vw, 50vw"
-          style={{ objectFit: "cover" }}
+          sizes="100vw"
+          style={{ objectFit: "cover", objectPosition: "50% 80%" }}
           quality={85}
         />
       </div>
@@ -35,54 +26,76 @@ export function Hero({ count }: { count: number }) {
       <div className={s.heroOffer} data-hero-offer>
         <p className={s.heroLead}>Махровые полотенца собственного производства</p>
         <p className={s.heroSub}>Минск · доставка по Беларуси</p>
-        <a href="#verona" className={s.btnHero}>
-          Выбрать коллекцию
-          <svg viewBox="0 0 10 14" aria-hidden="true">
-            <path d="M5 0v12M1 8l4 4 4-4" />
-          </svg>
-        </a>
+        <div className={s.heroBtns}>
+          <a href="#kollekcii" className={s.btnHero}>
+            Смотреть коллекции
+            <svg viewBox="0 0 10 14" aria-hidden="true">
+              <path d="M5 0v12M1 8l4 4 4-4" />
+            </svg>
+          </a>
+          <a href="#catalog" className={s.btnHeroGhost}>
+            Каталог
+          </a>
+        </div>
       </div>
       <nav className={s.heroNav} aria-label="Назначение">
-        {purposes.map((p) => (
-          <a key={p.label} href={p.href} className="caps">
+        {purposeChips.map((p) => (
+          <a key={p.id} href={`?nazn=${p.id}#catalog`} data-filter-nazn={p.id} className="caps">
             {p.label}
           </a>
         ))}
       </nav>
-      <span className={`caps ${s.heroNext}`}>{count} коллекций-городов</span>
     </section>
   );
 }
 
-const tiles = [
-  { label: "Ванная", note: "банные, для рук и лица", img: "/img/use-bath.webp", href: "/catalog?naznachenie=vannaya", big: true },
-  { label: "Кухня", note: "вафельные и махровые", img: "/img/naples-grey.webp", href: "/catalog?naznachenie=kuhnya" },
-  { label: "Коврики", note: "коллекция Лион", img: "/img/use-mats.webp", href: "/catalog?naznachenie=kovriki" },
-  { label: "Наборы", note: "по 3 штуки, подарочные", img: "/img/naples-stack.webp", href: "/catalog?naznachenie=podarki" },
-  { label: "Для отелей", note: "белая линия, ваш логотип", img: "/img/use-hotel.webp", href: "#hotels" },
-];
-
-export function Purposes() {
+// Подарить: две половины на один экран. Слева наборы QD (ведут в каталог на подборку QD), справа сертификат.
+export function Gifts() {
+  const from = Math.min(...giftLines.map((g) => g.from));
+  const dens = giftLines.map((g) => g.density);
   return (
-    <section className={s.purposes} aria-labelledby="purposes-title" data-screen>
-      <div className={s.purposesHead}>
-        <h2 id="purposes-title" className={s.h2}>
-          Что ищете
+    <section id="gifts" className={s.gifts} aria-labelledby="gifts-title" data-screen>
+      <div className={s.giftsHead}>
+        <h2 id="gifts-title" className={s.h2}>
+          Подарить
         </h2>
-        <a href="/catalog" className={`caps ${s.link}`}>
-          Весь каталог
-        </a>
+        <p className={s.giftsLead}>Полотенца дарят на новоселье, свадьбу и просто так. Если не знаете цвет — подарите сертификат.</p>
       </div>
-      <div className={s.mosaic}>
-        {tiles.map((t) => (
-          <a key={t.label} href={t.href} className={s.tile} data-big={t.big ? "true" : undefined}>
-            <Image src={t.img} alt="" fill sizes={t.big ? "(max-width: 760px) 100vw, 50vw" : "(max-width: 760px) 50vw, 25vw"} style={{ objectFit: "cover" }} quality={75} />
-            <span className={s.tileText}>
-              <b>{t.label}</b>
-              <span>{t.note}</span>
+      <div className={s.giftsGrid}>
+        <a href="?kat=gifts#catalog" data-filter-kat="gifts" className={s.giftPhoto}>
+          <Image
+            src="/img/gift-qd.webp"
+            alt="Подарочные полотенца QD: ментол, ваниль, персик, сирень"
+            fill
+            sizes="(max-width: 760px) 100vw, 50vw"
+            style={{ objectFit: "cover", objectPosition: "55% 45%" }}
+            quality={75}
+          />
+          <span className={s.giftCaption}>
+            <span className={s.giftKicker}>
+              {giftLines.length} линий · {Math.min(...dens)}–{Math.max(...dens)} г/м²
             </span>
-          </a>
-        ))}
+            <b>Подарочные наборы QD</b>
+            <span className={s.giftNames}>{giftLines.map((g) => g.name.replace("QD ", "")).join(" · ")}</span>
+            <span className={s.giftBuy}>
+              <span>от {from} BYN</span>
+              <span className={s.btnInk}>Выбрать набор</span>
+            </span>
+          </span>
+        </a>
+        <a href="/certificate" className={s.cert}>
+          <span className={s.certTop}>
+            <Logo className={s.certLogo} />
+            <Stamp id="cert" ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·" center="★" sub="МИНСК" className={s.certStamp} />
+          </span>
+          <span className={s.certTitle}>Подарочный сертификат</span>
+          <span className={s.certLines}>
+            <span>Кому</span>
+            <span>От кого</span>
+            <span>Номинал</span>
+          </span>
+          <span className={s.btnInk}>Заказать сертификат</span>
+        </a>
       </div>
     </section>
   );
@@ -92,7 +105,7 @@ export function Hotels() {
   return (
     <section id="hotels" className={s.hotels} aria-labelledby="hotels-title" data-screen>
       <div className={s.hotelsPhoto}>
-        <Image src="/img/hotel-main.webp" alt="Белые полотенца отельной линии на тёмном столе" fill sizes="(max-width: 760px) 100vw, 40vw" style={{ objectFit: "cover", objectPosition: "50% 60%" }} quality={75} />
+        <Image src="/img/hotel-main.webp" alt="Белые полотенца отельной линии" fill sizes="(max-width: 760px) 100vw, 40vw" style={{ objectFit: "cover", objectPosition: "50% 60%" }} quality={75} />
       </div>
       <div className={s.hotelsBody}>
         <h2 id="hotels-title" className={s.h2}>
@@ -132,49 +145,13 @@ export function Hotels() {
   );
 }
 
-export function Gifts() {
-  return (
-    <section className={s.gifts} aria-labelledby="gifts-title" data-screen>
-      <div className={s.giftsHead}>
-        <h2 id="gifts-title" className={s.h2}>
-          Подарить
-        </h2>
-        <p>Полотенца дарят на новоселье, свадьбу и просто так. Если не знаете цвет — подарите сертификат.</p>
-      </div>
-      <div className={s.giftsGrid}>
-        <a href="/catalog?naznachenie=podarki" className={s.giftPhoto}>
-          <Image src="/img/gift-qd.webp" alt="Подарочные полотенца QD: ментол, ваниль, лаванда, сирень" fill sizes="(max-width: 760px) 100vw, 50vw" style={{ objectFit: "cover" }} quality={75} />
-          <span className={s.giftCaption}>
-            <b>Подарочные наборы</b>
-            <span>QD · ментол · ваниль · лаванда · сирень</span>
-            <span className={`caps ${s.giftLink}`}>Выбрать набор</span>
-          </span>
-        </a>
-        <a href="/certificate" className={s.cert}>
-          <span className={s.certTop}>
-            <Logo className={s.certLogo} />
-            <Stamp id="cert" ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·" center="★" sub="МИНСК" className={s.certStamp} />
-          </span>
-          <span className={s.certTitle}>Подарочный сертификат</span>
-          <span className={s.certLines}>
-            <span>Кому</span>
-            <span>От кого</span>
-            <span>Номинал</span>
-          </span>
-          <span className={s.btnInk}>Заказать сертификат</span>
-        </a>
-      </div>
-    </section>
-  );
-}
-
 export function Footer() {
   return (
     <footer className={s.footer} data-screen>
       <div className={s.footCols}>
         <div>
           <h3 className="caps">Покупателям</h3>
-          <a href="/catalog">Каталог</a>
+          <a href="#catalog">Каталог</a>
           <a href="/dostavka">Доставка и оплата</a>
           <a href="/faq">Вопросы и ответы</a>
           <a href="/o-brende">О бренде</a>

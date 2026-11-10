@@ -1,11 +1,16 @@
 :root {
-  --paper: #f4f1ec;
+  /* светлая палитра (2026-11-09): молочный фон, тёплый бежевый и песочный для секций,
+     тёмный только для текста */
+  --milk: #fbf8f3;
+  --paper: #f3ece2;
+  --sand: #e9dfd2;
+  --card: #f8f2e8;
   --white: #ffffff;
   --ink: #2a2222;
   --ink-2: rgba(42, 34, 34, 0.64);
+  --ink-3: rgba(42, 34, 34, 0.46);
   --logo: #4b3d3d;
-  --line: rgba(42, 34, 34, 0.16);
-  --graphite: #221d1d;
+  --line: rgba(42, 34, 34, 0.14);
 
   --serif: var(--font-forum), "Times New Roman", serif;
   --sans: var(--font-golos), system-ui, sans-serif;
@@ -32,22 +37,16 @@
   padding: 0;
 }
 
-/* листание как у презентации: каждый экран доводится до края окна */
-html {
-  scroll-snap-type: y mandatory;
-}
-/* на компьютере листает PresentationScroll, нативная привязка ему мешала бы */
-html[data-paged="true"] {
-  scroll-snap-type: none;
-}
 html {
   -webkit-text-size-adjust: 100%;
-  background: var(--paper);
+  background: var(--milk);
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--hdr);
 }
 
 body {
   color: var(--ink);
-  background: var(--paper);
+  background: var(--milk);
   font-family: var(--sans);
   font-size: 15px;
   line-height: 1.5;
@@ -67,6 +66,7 @@ a {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
   color: inherit;
@@ -111,12 +111,31 @@ html {
 
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-snap-type: none;
+    scroll-behavior: auto;
   }
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* листание по экранам на главной (PresentationScroll): без промежуточных положений между разделами */
+[data-screen] {
+  scroll-margin-top: var(--hdr);
+}
+html[data-snap="true"] {
+  scroll-snap-type: y mandatory;
+}
+html[data-snap] [data-screen] {
+  scroll-snap-align: start;
+}
+html[data-snap] footer[data-screen] {
+  scroll-snap-align: end;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-snap="true"] {
+    scroll-snap-type: none;
   }
 }

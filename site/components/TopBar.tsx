@@ -6,9 +6,9 @@ import { Logo } from "./Logo";
 import { Menu } from "./Menu";
 import s from "./home.module.css";
 
-// Шапка и логотип. На первом экране логотип на всю ширину; при прокрутке он уменьшается
-// и уезжает в центр шапки, а шапка становится плашкой цвета бумаги.
-export function TopBar() {
+// Шапка и логотип. На первом экране логотип на всю ширину поверх светлых кадров; при прокрутке
+// он уменьшается и уезжает в центр шапки.
+export function TopBar({ compact = false }: { compact?: boolean }) {
   const bar = useRef<HTMLElement>(null);
   const logo = useRef<HTMLAnchorElement>(null);
   const [menu, setMenu] = useState(false);
@@ -25,7 +25,7 @@ export function TopBar() {
       const vh = window.innerHeight;
       const vw = window.innerWidth;
       const mobile = vw < 760;
-      const p = Math.min(1, Math.max(0, window.scrollY / (vh * 0.55)));
+      const p = compact ? 1 : Math.min(1, Math.max(0, window.scrollY / (vh * 0.55)));
       const e = 1 - Math.pow(1 - p, 3);
       // на десктопе лого вписывается между шапкой и блоком предложения (контур лого ≈ 0.44 его ширины)
       const offer = document.querySelector<HTMLElement>("[data-hero-offer]");
@@ -54,7 +54,7 @@ export function TopBar() {
       window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [compact]);
 
   return (
     <>
@@ -63,9 +63,9 @@ export function TopBar() {
           <button className={s.burger} type="button" aria-label="Открыть меню" aria-expanded={menu} onClick={() => setMenu(true)}>
             <span />
           </button>
-          <a href="/catalog" className={`caps ${s.hideMobile}`}>
+          <Link href="/#catalog" className={`caps ${s.hideMobile}`}>
             Каталог
-          </a>
+          </Link>
           <Link href="/#hotels" className={`caps ${s.hideMobile}`}>
             Для отелей
           </Link>
