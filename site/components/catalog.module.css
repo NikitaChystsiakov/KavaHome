@@ -235,23 +235,6 @@
   overflow: hidden;
   background: var(--milk);
 }
-/* мягкая смена фото (fade-through): старый кадр гаснет в молочный, новый проявляется следом —
-   кадры разных цветов сняты не в одной точке, и прямой кроссфейд давал «призрак» */
-.media:has(.layer[data-ready="true"]) .under {
-  opacity: 0;
-  transition: opacity 0.22s ease;
-}
-.layer {
-  transition: opacity 0.42s ease 0.16s, transform 0.9s var(--ease-out) 0.16s;
-}
-.layer[data-ready="false"] {
-  opacity: 0;
-  transform: scale(1.01);
-}
-.layer[data-ready="true"] {
-  opacity: 1;
-  transform: scale(1);
-}
 .badge {
   position: absolute;
   left: 10px;

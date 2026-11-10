@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { warm } from "@/lib/warm";
+import { SwapPhoto } from "./SwapPhoto";
 import type { Collection } from "@/lib/collections";
 import {
   allCards,
@@ -287,48 +288,21 @@ export function Catalog({ collections }: { collections: Collection[] }) {
 }
 
 // Карточка: фото, название, квадраты цветов, цена «от – до».
-// Клик по квадрату: новое фото проявляется поверх старого, когда загрузится (без мигания).
+// Клик по квадрату: новое фото натягивается шторкой поверх старого, когда загрузится (без белой паузы).
+// При наведении на карточку остальные цвета подгружаются заранее.
 function CatalogCard({ card, eager, cols }: { card: Card; eager: boolean; cols: number }) {
   const p = card.product;
   const [cur, setCur] = useState(card.colorIndex);
-  const [prev, setPrev] = useState<number | null>(null);
-  const [ready, setReady] = useState(true);
   const color = p.colors[cur];
   const [min, max] = priceRange(p);
   const href = `/catalog/${p.id}?cvet=${encodeURIComponent(color.name)}`;
   const sizes = cols >= 6 ? "(max-width: 760px) 50vw, 16vw" : cols >= 4 ? "(max-width: 760px) 50vw, 25vw" : "(max-width: 760px) 100vw, 50vw";
-
-  const choose = (i: number) => {
-    if (i === cur) return;
-    setPrev(cur);
-    setCur(i);
-    setReady(false);
-  };
-
-  const img = (i: number, cls: string, extra?: Partial<React.ComponentProps<typeof Image>>) => (
-    <Image
-      key={`${cls}-${i}`}
-      src={p.colors[i].image}
-      alt={i === cur ? `${p.name} ${p.title}, ${p.colors[i].name}` : ""}
-      fill
-      sizes={sizes}
-      className={cls}
-      style={{ objectFit: "cover", objectPosition: p.colors[i].position ?? "50% 50%" }}
-      quality={75}
-      {...extra}
-    />
-  );
+  const prefetch = () => warm(p.colors.map((v) => v.image), sizes);
 
   return (
-    <article className={s.item}>
+    <article className={s.item} onPointerEnter={p.colors.length > 1 ? prefetch : undefined} onFocus={p.colors.length > 1 ? prefetch : undefined}>
       <a href={href} className={s.media} tabIndex={-1} aria-hidden="true">
-        {prev !== null && img(prev, s.under)}
-        {img(cur, s.layer, {
-          loading: eager ? "eager" : "lazy",
-          onLoad: () => setReady(true),
-          onTransitionEnd: () => ready && setPrev(null),
-          "data-ready": ready,
-        } as Partial<React.ComponentProps<typeof Image>>)}
+        <SwapPhoto src={color.image} alt={`${p.name} ${p.title}, ${color.name}`} sizes={sizes} position={color.position ?? "50% 50%"} eager={eager} />
       </a>
       <div className={s.info}>
         <a href={href} className={s.name}>
@@ -341,7 +315,7 @@ function CatalogCard({ card, eager, cols }: { card: Card; eager: boolean; cols: 
           <ul className={s.swatches} aria-label="Цвет">
             {p.colors.map((v, i) => (
               <li key={v.name}>
-                <button type="button" aria-pressed={i === cur} aria-label={v.name} title={v.name} onClick={() => choose(i)}>
+                <button type="button" aria-pressed={i === cur} aria-label={v.name} title={v.name} onClick={() => setCur(i)}>
                   <i style={{ background: v.swatch }} />
                 </button>
               </li>

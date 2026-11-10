@@ -57,12 +57,15 @@ export function PresentationScroll() {
       });
       return best;
     };
+    // у html стоит scroll-behavior: smooth — без behavior: "instant" каждый кадр запускал бы свою
+    // плавную прокрутку и тут же обрывал её, отсюда было дёрганье
+    const jump = (y: number) => window.scrollTo({ top: y, behavior: "instant" });
     const go = (to: number) => {
       const from = window.scrollY;
       if (Math.abs(to - from) < 2) return;
       busy = true;
       if (reduce) {
-        window.scrollTo(0, to);
+        jump(to);
         setTimeout(() => (busy = false), 200);
         return;
       }
@@ -71,7 +74,7 @@ export function PresentationScroll() {
       const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
       const step = (now: number) => {
         const t = Math.min(1, (now - t0) / dur);
-        window.scrollTo(0, from + (to - from) * ease(t));
+        jump(from + (to - from) * ease(t));
         if (t < 1) requestAnimationFrame(step);
         // гасим инерцию тачпада после перелистывания
         else setTimeout(() => (busy = false), 420);
@@ -132,7 +135,7 @@ export function PresentationScroll() {
     };
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
-      if (t.closest("input, textarea, select, [contenteditable]")) return;
+      if (t.closest?.("input, textarea, select, [contenteditable]")) return;
       if (["ArrowDown", "PageDown"].includes(e.key) || (e.key === " " && !e.shiftKey)) page(1, e);
       else if (["ArrowUp", "PageUp"].includes(e.key) || (e.key === " " && e.shiftKey)) page(-1, e);
     };

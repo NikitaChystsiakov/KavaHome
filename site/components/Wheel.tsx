@@ -8,6 +8,7 @@ import { citySymbol } from "./symbols";
 import { Stamp } from "./Stamp";
 import { Cotton, CottonSprig } from "./Cotton";
 import { SwapPhoto } from "./SwapPhoto";
+import { warm } from "@/lib/warm";
 import w from "./wheel.module.css";
 
 // Веер-колесо: открытки с фото полотенец разложены по дуге на всю ширину, как карты в руке.
@@ -20,6 +21,7 @@ const wrap = (x: number, n: number) => ((((x + n / 2) % n) + n) % n) - n / 2;
 // геометрия совпадает с --R в wheel.module.css
 // flow — «веер-лента»: дуга пологая, соседние открытки разворачиваются к центру, фон — выбранное полотенце
 type Mode = "fan" | "flow";
+const CARD_SIZES = "(max-width: 760px) 60vw, 280px";
 const geo = (mode: Mode) => {
   const m = window.innerWidth < 761;
   if (mode === "flow") return m ? { step: 12, R: 1300 } : { step: 6.4, R: 2600 };
@@ -120,6 +122,15 @@ export function Wheel({ items, mode = "fan" }: { items: Collection[]; mode?: Mod
       el?.removeEventListener("wheel", onWheel);
     };
   }, [paint, go, arc]);
+
+  // фон и открытка в центре: заранее грузим все цвета текущей коллекции и первые кадры соседних
+  useEffect(() => {
+    if (mode !== "flow") return;
+    const near = [items[(active + 1) % n], items[(active - 1 + n) % n]].map((x) => photoOf(x).src);
+    const tones = forCollection(items[active].slug).colors.map((x) => x.image);
+    warm([...near, ...tones], "100vw");
+    warm(tones, CARD_SIZES);
+  }, [active, items, n, mode]);
 
   const c = items[active];
   const d = forCollection(c.slug);
@@ -297,7 +308,7 @@ export function Wheel({ items, mode = "fan" }: { items: Collection[]; mode?: Mod
               <div className={w.inner}>
                 <div className={`${w.face} ${w.front}`}>
                   <span className={w.photo}>
-                    <Image src={ph.src} alt={`Коллекция ${x.city}`} fill sizes="(max-width: 760px) 60vw, 280px" style={{ objectFit: "cover", objectPosition: ph.pos }} quality={75} draggable={false} />
+                    <Image src={ph.src} alt={`Коллекция ${x.city}`} fill sizes={CARD_SIZES} style={{ objectFit: "cover", objectPosition: ph.pos }} quality={75} draggable={false} />
                     {x.isNew && <span className={w.isNew}>новинка</span>}
                   </span>
                   <span className={w.cap}>

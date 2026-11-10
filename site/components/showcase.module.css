@@ -8,18 +8,43 @@
   background: var(--milk);
   overflow: hidden;
 }
-.under {
-  transition: opacity 0.22s ease;
+/* кадр проявляется сам по себе только при первой загрузке; смену ведёт шторка ниже */
+.pic {
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
-.under[data-gone="true"] {
+.pic[data-loaded="true"] {
+  opacity: 1;
+}
+/* новый кадр ждёт загрузки невидимым поверх старого */
+.pic[data-phase] {
+  transition: none;
+}
+.pic[data-phase="wait"] {
   opacity: 0;
 }
-.layer {
-  transition: opacity 0.42s ease 0.16s, transform 0.9s var(--ease-out) 0.16s;
+/* мягкая шторка: непрозрачная часть маски с размытым краем проезжает слева направо */
+.pic[data-phase="in"] {
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(90deg, #000 45%, transparent 55%);
+  mask-image: linear-gradient(90deg, #000 45%, transparent 55%);
+  -webkit-mask-size: 250% 100%;
+  mask-size: 250% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: wipe 0.85s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
-.layer[data-ready="false"] {
-  opacity: 0;
-  transform: scale(1.01);
+@keyframes wipe {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+    transform: scale(1.025);
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+    transform: scale(1);
+  }
 }
 
 .newBadge {
@@ -249,7 +274,7 @@
 .rphoto img {
   transition: transform 1.2s var(--ease-out);
 }
-.rcard:hover .rphoto .layer[data-ready="true"] {
+.rcard:hover .rphoto .pic:not([data-phase]) {
   transform: scale(1.03);
 }
 .rpc {

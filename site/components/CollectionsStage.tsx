@@ -5,12 +5,15 @@ import type { Collection } from "@/lib/collections";
 import { products, priceRange } from "@/lib/catalog";
 import { MiniPostcard } from "./MiniPostcard";
 import { SwapPhoto } from "./SwapPhoto";
+import { warm } from "@/lib/warm";
 import { Arrow } from "./CollectionsRail";
 import s from "./showcase.module.css";
 
 // Эскиз B «Витрина»: место одно, меняется содержимое.
 // Слева большое фото полотенца, справа стопка открыток, город, цвета, цена. «Дальше» — верхняя открытка
 // улетает со стопки, фото мягко меняется на следующую коллекцию. Внизу полоса со всеми городами.
+const PHOTO_SIZES = "(max-width: 760px) 100vw, 55vw";
+
 export function CollectionsStage({ items, id = "kollekcii" }: { items: Collection[]; id?: string }) {
   const [i, setI] = useState(0);
   const [color, setColor] = useState(0);
@@ -47,6 +50,15 @@ export function CollectionsStage({ items, id = "kollekcii" }: { items: Collectio
     row.scrollTo({ left: x - (row.clientWidth - el.offsetWidth) / 2, behavior: "smooth" });
   }, [i]);
 
+  // все цвета текущей коллекции и первые кадры соседних — заранее, чтобы смена шла без ожидания
+  useEffect(() => {
+    const first = (k: number) => {
+      const x = items[(k + n) % n];
+      return products.find((p) => p.collection === x.slug)?.colors[0].image ?? x.colors[0]?.image;
+    };
+    warm([first(i + 1), first(i - 1), ...colors.map((v) => v.image)], PHOTO_SIZES);
+  }, [i, n, items, colors]);
+
   // свайп по фото на телефоне
   const touch = useRef<number | null>(null);
 
@@ -75,7 +87,7 @@ export function CollectionsStage({ items, id = "kollekcii" }: { items: Collectio
           if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
         }}
       >
-        <SwapPhoto src={cur.image} alt={`Коллекция ${c.city}, ${cur.name}`} sizes="(max-width: 760px) 100vw, 55vw" position={cur.position ?? "50% 70%"} eager />
+        <SwapPhoto src={cur.image} alt={`Коллекция ${c.city}, ${cur.name}`} sizes={PHOTO_SIZES} position={cur.position ?? "50% 70%"} eager />
         {c.isNew && <span className={s.newBadge}>Новинка</span>}
       </div>
 
