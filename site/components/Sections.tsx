@@ -24,7 +24,7 @@ export function Hero() {
       <div className={s.heroShade} />
       <h1 className="visually-hidden">KAVA HOME — махровые полотенца, коврики и наборы из Минска</h1>
       <div className={s.heroOffer} data-hero-offer>
-        <p className={s.heroLead}>Махровые полотенца собственного производства</p>
+        <p className={s.heroLead}>Махровые полотенца из&nbsp;Узбекистана</p>
         <p className={s.heroSub}>Минск · доставка по Беларуси</p>
         <div className={s.heroBtns}>
           <a href="#kollekcii" className={s.btnHero}>

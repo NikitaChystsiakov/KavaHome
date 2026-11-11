@@ -18,7 +18,7 @@ import { Hero, Gifts, Hotels, Footer } from "./Sections";
 // view: эскизы показа коллекций — deck (колода, текущая), rail (A, лента фото), stage (B, витрина),
 // open (C, открытка во весь экран), index (D, указатель городов), tint (E, цвет коллекции),
 // ring (F, кольцо открыток в пространстве и под ним простой ряд в духе Zara для сравнения)
-// fan (по умолчанию с 2026-11-10): веер-лента открыток, а вторым экраном витрина B — заказчику на выбор
+// fan (по умолчанию с 2026-11-10): веер-лента открыток; 2026-11-11 заказчик выбрал веер, витрина B со второго экрана убрана
 export type HomeView = "fan" | "deck" | "rail" | "stage" | "open" | "index" | "tint" | "ring";
 export function HomePage({ view = "fan" }: { view?: HomeView }) {
   return (
@@ -27,12 +27,9 @@ export function HomePage({ view = "fan" }: { view?: HomeView }) {
       <main>
         <Hero />
         {view === "fan" && (
-          <>
-            <section id="kollekcii" aria-label="Коллекции" data-screen>
-              <Wheel items={collections} mode="flow" />
-            </section>
-            <CollectionsStage items={collections} id="vitrina" />
-          </>
+          <section id="kollekcii" aria-label="Коллекции" data-screen>
+            <Wheel items={collections} mode="flow" />
+          </section>
         )}
         {view === "deck" && <Deck items={collections} />}
         {view === "rail" && <CollectionsRail items={collections} />}
