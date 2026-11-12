@@ -27,3 +27,12 @@ next-env.d.ts
 !.art-director/review/final/*.png
 # сырые кандидаты старинных открыток (источники в .art-director/postcards/SOURCES.md)
 .art-director/postcards/cand/
+
+# Каталог: исходники клиента и результаты импорта (не в git)
+/photos-src/
+/photos-webp/
+/data/
+/import/
+/photos-curated/
+/Фото контент для сайта/
+/backup/
