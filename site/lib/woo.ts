@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { collections } from "./collections";
-import { products as demo, type CategoryId, type Color, type Product, type PurposeId, type Size } from "./catalog";
+import { calmColors, products as demo, type CategoryId, type Color, type Product, type PurposeId, type Size } from "./catalog";
 import { colorInfo, sizeArea, sizeNote, slugify } from "./colors";
 
 // WooCommerce = админка. Витрина читает товары через REST API v3 (ключи в .env: WOO_URL, WOO_KEY, WOO_SECRET)
@@ -281,7 +281,7 @@ export async function getProducts(): Promise<Product[]> {
   } catch (e) {
     console.error("[woo] товары не загрузились, показываю заглушки:", e);
   }
-  if (!live?.length) return demo;
+  if (!live?.length) return calmColors(demo);
   const have = new Set(live.map((p) => p.category));
-  return [...live, ...demo.filter((d) => !have.has(d.category)).map((d) => ({ ...d, source: "demo" as const }))];
+  return calmColors([...live, ...demo.filter((d) => !have.has(d.category)).map((d) => ({ ...d, source: "demo" as const }))]);
 }

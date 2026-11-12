@@ -238,6 +238,37 @@ export function allCards(list: Product[] = products): Card[] {
   return list.map((p) => ({ key: p.id, product: p, colorIndex: 0 }));
 }
 
+/**
+ * Спокойный порядок цветов (просьба Эллы 2026-11-12, «чтобы не было визуального шума» на главной):
+ * первый цвет карточек чередуется бежевый → серый → бежевый…, дальше остальные нейтральные, яркие в конце.
+ * Если нужного семейства у модели нет, берётся ближайший нейтральный, а следующая карточка чередует уже от него.
+ */
+const CALM: FamilyId[][] = [
+  ["beige", "grey", "white", "graphite", "brown"],
+  ["grey", "beige", "graphite", "white", "brown"],
+];
+const NEUTRAL: FamilyId[] = ["beige", "grey", "white", "graphite", "brown"];
+
+export function calmColors(list: Product[]): Product[] {
+  // чередуем от того, что реально встало первым у предыдущей карточки (у Флоренции, например, нет серого)
+  let last: FamilyId = "grey";
+  return list.map((p) => {
+    if (p.colors.length < 2) return p;
+    const want = CALM[last === "beige" ? 1 : 0];
+    const rank = (f: FamilyId) => {
+      const i = want.indexOf(f);
+      return i < 0 ? want.length + NEUTRAL.length : i;
+    };
+    // стабильная сортировка: внутри одного семейства порядок из админки сохраняется
+    const colors = p.colors
+      .map((c, i) => ({ c, i }))
+      .sort((a, b) => rank(a.c.family) - rank(b.c.family) || a.i - b.i)
+      .map((x) => x.c);
+    last = colors[0].family;
+    return { ...p, colors };
+  });
+}
+
 export function priceRange(p: Product): [number, number] {
   const prices = p.sizes.map((s) => s.price);
   return [Math.min(...prices), Math.max(...prices)];
