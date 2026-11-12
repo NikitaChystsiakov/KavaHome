@@ -1,6 +1,7 @@
 // Каталог для прототипа главной. Модели, размеры и плотность — из прайса клиента от 2026-11-09.
 // Цены — розничные заглушки (в прайсе только опт), на витрине помечены «цены примерные».
-// Позже всё приходит из WooCommerce: одна модель = вариативный товар (Цвет × Размер).
+// Это заглушки: настоящие товары приходят из WooCommerce (lib/woo.ts) в тех же типах. Заглушки остаются
+// запасным вариантом, пока раздел (например, халаты или QD) не заведён в админке, и для эскизов /v/*.
 
 export type CategoryId = "bath" | "kitchen" | "mats" | "robes" | "sets" | "gifts" | "hotel"; // hotel — без пункта в меню, через чипсу «Для отелей»
 export type PurposeId = "vannaya" | "kuhnya" | "banya-plyazh" | "halaty" | "kovriki" | "podarki" | "oteli";
@@ -35,8 +36,29 @@ export const families: { id: FamilyId; label: string; swatch: string }[] = [
   { id: "pink", label: "розовый и терракота", swatch: "#c07f8b" },
 ];
 
-export type Size = { label: string; note: string; price: number };
-export type Color = { name: string; swatch: string; image: string; family: FamilyId; position?: string };
+export type Size = {
+  label: string;
+  note: string;
+  price: number;
+  /** id вариации (или простого товара) в WooCommerce — для заказа */
+  id?: number;
+  sku?: string;
+};
+export type Color = {
+  name: string;
+  swatch: string;
+  image: string;
+  family: FamilyId;
+  position?: string;
+  /** товар WooCommerce (один цвет = один товар) */
+  id?: number;
+  slug?: string;
+  images?: string[];
+  /** размеры именно этого цвета: у некоторых цветов не все размеры модели */
+  sizes?: Size[];
+  /** отобранный кадр прототипа для веера на главной (фото из админки бывают с упаковкой) */
+  cover?: { image: string; position?: string };
+};
 export type Product = {
   id: string;
   name: string;
@@ -48,6 +70,10 @@ export type Product = {
   density: number;
   sizes: Size[];
   colors: Color[];
+  /** описание из админки (HTML), одно на модель */
+  description?: string;
+  /** откуда товар: из WooCommerce или заглушка прототипа */
+  source?: "woo" | "demo";
 };
 
 const towel = (p30: number, p50: number, p70: number, big = { a: "30×60", b: "50×80", c: "70×130" }): Size[] => [
@@ -205,20 +231,11 @@ export const products: Product[] = [
   },
 ];
 
-/** Карточка каталога = модель + цвет. Порядок «популярные»: коллекции вперемешку, чтобы сетка не шла одним цветом. */
+/** Карточка каталога = модель (решение 2026-11-12): цвета квадратами под фото, colorIndex — цвет, показанный первым. */
 export type Card = { key: string; product: Product; colorIndex: number };
 
-export function allCards(): Card[] {
-  const out: Card[] = [];
-  const max = Math.max(...products.map((p) => p.colors.length));
-  for (let i = 0; i < max; i++) {
-    for (const p of products) {
-      // QD: одна карточка на линию, цвета переключаются квадратами
-      if (p.category === "gifts" && i > 0) continue;
-      if (i < p.colors.length) out.push({ key: `${p.id}-${i}`, product: p, colorIndex: i });
-    }
-  }
-  return out;
+export function allCards(list: Product[] = products): Card[] {
+  return list.map((p) => ({ key: p.id, product: p, colorIndex: 0 }));
 }
 
 export function priceRange(p: Product): [number, number] {
@@ -375,13 +392,15 @@ for (const g of giftLines) {
 }
 
 /** Данные коллекции для витрины главной: модель, цвета с фото, цена «от», размеры без наборов. */
-export function forCollection(slug: string) {
-  const product = products.find((p) => p.collection === slug);
+export function forCollection(slug: string, list: Product[] = products) {
+  // основная модель коллекции: не набор, если есть что-то кроме наборов
+  const own = list.filter((p) => p.collection === slug);
+  const product = own.find((p) => p.category !== "sets") ?? own[0];
   return {
     product,
     colors: product?.colors ?? [],
     from: product ? priceRange(product)[0] : 0,
     sizes: product?.sizes.filter((z) => !z.label.startsWith("Набор")).map((z) => z.label) ?? [],
-    hasSet: product ? hasSet(product) : false,
+    hasSet: product ? hasSet(product) || own.some((p) => p.category === "sets") : false,
   };
 }

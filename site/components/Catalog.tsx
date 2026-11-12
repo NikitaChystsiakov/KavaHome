@@ -12,6 +12,7 @@ import {
   priceRange,
   purposeChips,
   type Card,
+  type Product,
   type CategoryId,
   type FamilyId,
   type PurposeId,
@@ -32,7 +33,6 @@ type Filters = {
   vid: number | null;
 };
 const EMPTY: Filters = { kat: null, nazn: null, kol: null, cvet: null, sort: "pop", vid: null };
-const CARDS = allCards();
 
 function readUrl(): Filters {
   const q = new URLSearchParams(window.location.search);
@@ -68,11 +68,12 @@ function match(c: Card, f: Filters) {
   if (f.kat && (f.kat === "sets" ? !hasSet(p) : p.category !== f.kat)) return false;
   if (f.nazn && !p.purposes.includes(f.nazn)) return false;
   if (f.kol && p.collection !== f.kol) return false;
-  if (f.cvet && (p.category === "gifts" ? !p.colors.some((x) => x.family === f.cvet) : p.colors[c.colorIndex].family !== f.cvet)) return false;
+  if (f.cvet && !p.colors.some((x) => x.family === f.cvet)) return false;
   return true;
 }
 
-export function Catalog({ collections }: { collections: Collection[] }) {
+export function Catalog({ collections, products }: { collections: Collection[]; products?: Product[] }) {
+  const cards = useMemo(() => allCards(products), [products]);
   const root = useRef<HTMLElement>(null);
   const [f, setF] = useState<Filters>(EMPTY);
   const [panel, setPanel] = useState(false);
@@ -138,11 +139,14 @@ export function Catalog({ collections }: { collections: Collection[] }) {
   }, [f.vid]);
 
   const list = useMemo(() => {
-    const out = CARDS.filter((c) => match(c, f));
+    // при фильтре по цвету карточка сразу показывает цвет этого семейства
+    const out = cards
+      .filter((c) => match(c, f))
+      .map((c) => (f.cvet ? { ...c, colorIndex: Math.max(0, c.product.colors.findIndex((x) => x.family === f.cvet)) } : c));
     if (f.sort === "cheap") out.sort((a, b) => priceRange(a.product)[0] - priceRange(b.product)[0]);
     if (f.sort === "dear") out.sort((a, b) => priceRange(b.product)[0] - priceRange(a.product)[0]);
     return out;
-  }, [f]);
+  }, [f, cards]);
 
   const cols = f.vid ?? (mobile ? 2 : 4);
   const views = mobile ? [1, 2] : [2, 4, 6];
@@ -268,7 +272,7 @@ export function Catalog({ collections }: { collections: Collection[] }) {
         {list.length ? (
           <ul className={s.grid} style={{ "--cols": cols } as React.CSSProperties} data-cols={cols}>
             {list.map((c, i) => (
-              <li key={c.key}>
+              <li key={`${c.key}-${c.colorIndex}`}>
                 <CatalogCard card={c} eager={i < 4} cols={cols} />
               </li>
             ))}

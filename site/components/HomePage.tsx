@@ -1,4 +1,5 @@
 import { collections } from "@/lib/collections";
+import type { Product } from "@/lib/catalog";
 import { TopBar } from "./TopBar";
 import { Deck } from "./Deck";
 import { CollectionsRail } from "./CollectionsRail";
@@ -20,7 +21,8 @@ import { Hero, Gifts, Hotels, Footer } from "./Sections";
 // ring (F, кольцо открыток в пространстве и под ним простой ряд в духе Zara для сравнения)
 // fan (по умолчанию с 2026-11-10): веер-лента открыток; 2026-11-11 заказчик выбрал веер, витрина B со второго экрана убрана
 export type HomeView = "fan" | "deck" | "rail" | "stage" | "open" | "index" | "tint" | "ring";
-export function HomePage({ view = "fan" }: { view?: HomeView }) {
+// products: товары из WooCommerce (app/page.tsx); без них — заглушки прототипа (эскизы /v/*)
+export function HomePage({ view = "fan", products }: { view?: HomeView; products?: Product[] }) {
   return (
     <>
       <TopBar />
@@ -28,7 +30,7 @@ export function HomePage({ view = "fan" }: { view?: HomeView }) {
         <Hero />
         {view === "fan" && (
           <section id="kollekcii" aria-label="Коллекции" data-screen>
-            <Wheel items={collections} mode="flow" />
+            <Wheel items={collections} mode="flow" products={products} />
           </section>
         )}
         {view === "deck" && <Deck items={collections} />}
@@ -45,7 +47,7 @@ export function HomePage({ view = "fan" }: { view?: HomeView }) {
             <ZaraRow items={collections} />
           </>
         )}
-        <Catalog collections={collections} />
+        <Catalog collections={collections} products={products} />
         <Gifts />
         <Hotels />
       </main>

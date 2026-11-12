@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Collection } from "@/lib/collections";
-import { forCollection, products } from "@/lib/catalog";
+import { forCollection, products as demo, type Product } from "@/lib/catalog";
 import { citySymbol } from "./symbols";
 import { Stamp } from "./Stamp";
 import { Cotton, CottonSprig } from "./Cotton";
@@ -28,12 +28,17 @@ const geo = (mode: Mode) => {
   return m ? { step: 17, R: 760 } : { step: 10.5, R: 1400 };
 };
 
-function photoOf(c: Collection) {
-  const first = forCollection(c.slug).colors[0];
+// в веере — отобранные кадры прототипа, если для цвета он есть; цены, цвета и размеры — из каталога
+const withCovers = (list: Product[]) =>
+  list.map((p) => ({ ...p, colors: p.colors.map((c) => (c.cover ? { ...c, image: c.cover.image, position: c.cover.position } : c)) }));
+
+function photoOf(c: Collection, products: Product[]) {
+  const first = forCollection(c.slug, products).colors[0];
   return { src: first?.image ?? c.image, pos: first?.position ?? c.imagePosition ?? "50% 70%" };
 }
 
-export function Wheel({ items, mode = "fan" }: { items: Collection[]; mode?: Mode }) {
+export function Wheel({ items, mode = "fan", products: list }: { items: Collection[]; mode?: Mode; products?: Product[] }) {
+  const products = useMemo(() => withCovers(list ?? demo), [list]);
   const n = items.length;
   const [active, setActive] = useState(0);
   const [flip, setFlip] = useState(false);
@@ -126,17 +131,17 @@ export function Wheel({ items, mode = "fan" }: { items: Collection[]; mode?: Mod
   // фон и открытка в центре: заранее грузим все цвета текущей коллекции и первые кадры соседних
   useEffect(() => {
     if (mode !== "flow") return;
-    const near = [items[(active + 1) % n], items[(active - 1 + n) % n]].map((x) => photoOf(x).src);
-    const tones = forCollection(items[active].slug).colors.map((x) => x.image);
+    const near = [items[(active + 1) % n], items[(active - 1 + n) % n]].map((x) => photoOf(x, products).src);
+    const tones = forCollection(items[active].slug, products).colors.map((x) => x.image);
     warm([...near, ...tones], "100vw");
     warm(tones, CARD_SIZES);
-  }, [active, items, n, mode]);
+  }, [active, items, n, mode, products]);
 
   const c = items[active];
-  const d = forCollection(c.slug);
+  const d = forCollection(c.slug, products);
   const ci = pick?.slug === c.slug ? Math.min(pick.i, Math.max(0, d.colors.length - 1)) : 0;
   const tone = d.colors[ci];
-  const tonePhoto = tone ? { src: tone.image, pos: tone.position ?? "50% 70%" } : photoOf(c);
+  const tonePhoto = tone ? { src: tone.image, pos: tone.position ?? "50% 70%" } : photoOf(c, products);
 
   return (
     <div className={w.wheel} data-mode={mode}>
@@ -292,10 +297,11 @@ export function Wheel({ items, mode = "fan" }: { items: Collection[]; mode?: Mod
         }}
       >
         {items.map((x, k) => {
-          const ph = mode === "flow" && k === active ? tonePhoto : photoOf(x);
+          const ph = mode === "flow" && k === active ? tonePhoto : photoOf(x, products);
           const sym = citySymbol(x.slug);
-          const product = products.find((p) => p.collection === x.slug);
-          const sizes = product?.sizes.map((z) => z.label.replace("Набор 3 шт", "набор")).join(" · ");
+          const fc = forCollection(x.slug, products);
+          const product = fc.product;
+          const sizes = product && [...fc.sizes, ...(fc.hasSet ? ["набор"] : [])].join(" · ");
           return (
             <article
               key={x.slug}
@@ -335,7 +341,7 @@ export function Wheel({ items, mode = "fan" }: { items: Collection[]; mode?: Mod
                   {sizes && <p className={w.letter}>{sizes}</p>}
                   <Stamp id={`wh-${x.slug}`} ring="ЧИСТЫЙ ХЛОПОК · KAVA HOME ·" center="100%" sub="ХЛОПОК" waves={false} className={w.cottonMark} ink />
                   <a href={`/?kol=${x.slug}#catalog`} className={w.backLink}>
-                    от {forCollection(x.slug).from} BYN · смотреть
+                    от {forCollection(x.slug, products).from} BYN · смотреть
                   </a>
                 </div>
               </div>
