@@ -111,7 +111,7 @@ export default function FaqPage() {
     <Shell>
       <section className={s.section} style={{ paddingTop: "calc(var(--hdr) + clamp(40px, 7svh, 88px))" }} aria-labelledby="faq-title">
         <div className={s.split}>
-          <div className={s.stack} style={{ position: "sticky", top: "calc(var(--hdr) + 32px)" }}>
+          <div className={`${s.stack} ${s.faqIntro}`}>
             <p className={`caps ${s.kicker}`} style={{ marginBottom: 0 }}>
               Покупателям
             </p>

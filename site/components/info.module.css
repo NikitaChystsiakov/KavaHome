@@ -381,6 +381,11 @@
 }
 
 /* ───────── вопросы ───────── */
+.faqIntro {
+  position: sticky;
+  top: calc(var(--hdr) + 32px);
+}
+
 .faq {
   max-width: 880px;
   border-top: 1px solid var(--ink);
@@ -467,6 +472,10 @@
 }
 
 @media (max-width: 960px) {
+  .faqIntro {
+    position: static;
+  }
+
   .hero,
   .split,
   .splitEven,

@@ -72,7 +72,7 @@ function haystack(p: Product, city?: string) {
     .join(" ")
     .toLowerCase()
     .replace(/ё/g, "е")
-    .replace(/[xх*]/g, "×");
+    .replace(/(\d)\s*[xх*]\s*(\d)/g, "$1×$2");
 }
 
 function match(c: Card, f: Filters, hay?: string) {

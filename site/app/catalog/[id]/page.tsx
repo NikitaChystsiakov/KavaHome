@@ -44,7 +44,7 @@ async function Product({ params }: { params: PageProps<"/catalog/[id]">["params"
       {more.length > 0 && (
         <section className={s.related} aria-labelledby="related-title">
           <div className={s.relatedHead}>
-            <h2 id="related-title">{same.length ? `Ещё из коллекции ${collection?.city ?? p.title}` : "Вам может подойти"}</h2>
+            <h2 id="related-title">{same.length && !near.length ? `Ещё из коллекции ${collection?.city ?? p.title}` : "Вам может подойти"}</h2>
             <Link href="/catalog" className="caps">
               Весь каталог
             </Link>

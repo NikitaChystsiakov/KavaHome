@@ -166,7 +166,7 @@ export function CartPage() {
                   <dd>{delivery === "pickup" ? "д. Волковичи" : "назовёт менеджер"}</dd>
                 </div>
                 <div className={s.total}>
-                  <dt>Итого</dt>
+                  <dt>{delivery === "pickup" ? "Итого" : "Итого без доставки"}</dt>
                   <dd>{total} BYN</dd>
                 </div>
               </dl>
