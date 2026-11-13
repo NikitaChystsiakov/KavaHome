@@ -1,0 +1,1 @@
+"IMG https://plissa.by/assets/templates/img/logo.png\n=====\nIMG https://plissa.by/assets/templates/img/logo-dark.svg"

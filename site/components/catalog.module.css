@@ -151,6 +151,46 @@
   gap: 22px;
   flex: none;
 }
+.find {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  padding: 4px 0;
+}
+.find:focus-within {
+  border-bottom-color: var(--ink);
+}
+.find svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  flex: none;
+}
+.find input {
+  width: 170px;
+  font-size: 13px;
+  outline: none;
+}
+.find input::placeholder {
+  color: var(--ink-3);
+}
+@media (max-width: 1100px) {
+  .find input {
+    width: 130px;
+  }
+}
+@media (max-width: 760px) {
+  .find {
+    order: -1;
+    flex: 1 1 100%;
+  }
+  .find input {
+    width: 100%;
+  }
+}
 .filtersBtn {
   display: none;
   font-size: 13px;
@@ -367,6 +407,8 @@
   }
   .tools {
     justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 10px;
     padding: 0 var(--pad);
   }
   .views :global(.caps) {

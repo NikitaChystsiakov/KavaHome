@@ -1,0 +1,1 @@
+"IMG https://www.hoteleurope.by/local/templates/.default/dist/images/logo.svg"

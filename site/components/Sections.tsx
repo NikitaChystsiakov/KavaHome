@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { contacts } from "@/lib/collections";
 import { giftLines, purposeChips } from "@/lib/catalog";
 import { HotelForm } from "./HotelForm";
@@ -83,7 +84,7 @@ export function Gifts() {
             </span>
           </span>
         </a>
-        <a href="/certificate" className={s.cert}>
+        <a href="/biznes#certificate" className={s.cert}>
           <span className={s.certTop}>
             <Logo className={s.certLogo} />
             <Stamp id="cert" ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·" center="★" sub="МИНСК" className={s.certStamp} />
@@ -151,17 +152,18 @@ export function Footer() {
       <div className={s.footCols}>
         <div>
           <h3 className="caps">Покупателям</h3>
-          <a href="#catalog">Каталог</a>
-          <a href="/dostavka">Доставка и оплата</a>
-          <a href="/faq">Вопросы и ответы</a>
-          <a href="/o-brende">О бренде</a>
+          <Link href="/catalog">Каталог</Link>
+          <Link href="/dostavka">Доставка и оплата</Link>
+          <Link href="/faq">Вопросы и ответы</Link>
+          <Link href="/o-nas">О бренде</Link>
+          <Link href="/korzina">Корзина</Link>
         </div>
         <div>
           <h3 className="caps">Бизнесу</h3>
-          <a href="#hotels">Для отелей</a>
-          <a href="#hotels">Опт</a>
-          <a href="#hotels">Полотенца с логотипом</a>
-          <a href="/certificate">Подарочный сертификат</a>
+          <Link href="/biznes">Для отелей и санаториев</Link>
+          <Link href="/biznes#opt">Опт</Link>
+          <Link href="/biznes#logo">Полотенца с логотипом</Link>
+          <Link href="/biznes#certificate">Подарочные сертификаты</Link>
         </div>
         <div>
           <h3 className="caps">Контакты</h3>
@@ -170,10 +172,13 @@ export function Footer() {
           </a>
           <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
           <span>{contacts.hours}</span>
+          <Link href="/kontakty">Шоурум: {contacts.pickupShort}</Link>
         </div>
       </div>
       <Logo className={s.footLogo} />
-      <p className={s.legal}>{contacts.company}</p>
+      <p className={s.legal}>
+        {contacts.company} · <Link href="/privacy">Политика обработки персональных данных</Link>
+      </p>
     </footer>
   );
 }

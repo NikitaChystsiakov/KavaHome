@@ -1,0 +1,328 @@
+/* ───────── логотипы: маска в цвет логотипа KAVA ───────── */
+.logo,
+.word {
+  display: block;
+  width: var(--w);
+  height: var(--h);
+  max-width: 100%;
+}
+.logo {
+  background: var(--logo);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+.word {
+  width: auto;
+  display: grid;
+  place-items: center;
+  font-family: var(--serif);
+  font-size: calc(var(--h) * 0.62);
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--logo);
+  white-space: nowrap;
+}
+
+.kicker {
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 4.4vw, 64px);
+  line-height: 1;
+}
+.lead {
+  max-width: 460px;
+  color: var(--ink-2);
+}
+
+/* ───────── «Нам доверяют» ───────── */
+.partners {
+  padding: clamp(56px, 9svh, 104px) var(--pad) clamp(40px, 6svh, 72px);
+  background: var(--milk);
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 32px;
+  margin-bottom: clamp(28px, 4svh, 44px);
+}
+.hotels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+.hotels[data-photo] {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+}
+/* без фото — шесть отелей одной строкой */
+.hotels:not([data-photo]) .grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.photo {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  background: var(--sand);
+}
+.photo figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  gap: 2px;
+  padding: 48px 24px 20px;
+  background: linear-gradient(to top, rgba(42, 34, 34, 0.62), rgba(42, 34, 34, 0));
+  color: var(--milk);
+}
+.photo figcaption b {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 1;
+}
+.photo figcaption span:last-child {
+  font-size: 14px;
+  opacity: 0.86;
+}
+.grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+.cell {
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  justify-items: center;
+  gap: 4px;
+  padding: clamp(18px, 3svh, 32px) 16px clamp(16px, 2.6svh, 26px);
+  background: var(--card);
+  text-align: center;
+  transition: background 0.25s;
+}
+.cell:hover {
+  background: var(--white);
+}
+.mark {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  place-items: center;
+  min-height: 96px;
+  margin-bottom: clamp(8px, 1.6svh, 16px);
+}
+.name {
+  font-family: var(--serif);
+  font-size: 24px;
+  line-height: 1.1;
+}
+.kind {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.stores {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--gap);
+  align-items: stretch;
+  margin-top: clamp(20px, 3svh, 32px);
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+.storesTitle {
+  align-self: center;
+  padding: 18px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.row {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.row li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  min-height: 96px;
+  padding: 12px 10px;
+  border-left: 1px solid var(--line);
+}
+
+/* ───────── маркетплейсы: песочный блок ───────── */
+.market {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+  padding: clamp(56px, 9svh, 104px) var(--pad);
+  background: var(--sand);
+}
+.big {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 18px 0 14px;
+  font-family: var(--serif);
+  font-size: clamp(88px, 9vw, 140px);
+  line-height: 0.9;
+  color: var(--logo);
+}
+.stars {
+  display: flex;
+  gap: 4px;
+}
+.stars svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--logo);
+}
+.shops {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+.shop {
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  height: 100%;
+  background: var(--milk);
+  transition: background 0.25s;
+}
+.shopPhoto {
+  position: relative;
+  min-height: clamp(200px, 38svh, 420px);
+  overflow: hidden;
+  background: var(--paper);
+}
+.shopPhoto img {
+  transition: transform 0.8s var(--ease-out);
+}
+.shop:hover .shopPhoto img {
+  transform: scale(1.03);
+}
+.shop:hover {
+  background: var(--white);
+}
+.shopLogo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  height: clamp(64px, 9svh, 84px);
+  padding: 0 20px;
+  border-top: 1px solid var(--line);
+}
+.shopText {
+  display: grid;
+  gap: 2px;
+  padding: 16px 20px 18px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.shopGo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.shopGo svg {
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  transition: transform 0.25s var(--ease-out);
+}
+.shop:hover .shopGo svg {
+  transform: translate(2px, -2px);
+}
+
+/* главная листается по экранам на компьютере: блоки ровно в экран */
+@media (min-width: 761px) {
+  .partners[data-screen],
+  .market[data-screen] {
+    min-height: calc(100svh - var(--hdr));
+  }
+  .partners[data-screen] {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 960px) {
+  .head {
+    flex-direction: column;
+    align-items: start;
+    gap: 16px;
+  }
+  .hotels[data-photo],
+  .stores,
+  .market {
+    grid-template-columns: 1fr;
+  }
+  .hotels:not([data-photo]) .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .photo {
+    aspect-ratio: 4 / 3;
+  }
+  .storesTitle br {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .grid,
+  .hotels:not([data-photo]) .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mark {
+    min-height: 72px;
+    transform: scale(0.86);
+  }
+  .name {
+    font-size: 20px;
+  }
+  .row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .row li {
+    min-height: 80px;
+    border-left: 0;
+  }
+  .row li > * {
+    transform: scale(0.82);
+  }
+  .shops {
+    grid-template-columns: 1fr;
+  }
+  .shopPhoto {
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+  }
+  .shopLogo {
+    padding: 28px 20px;
+  }
+}

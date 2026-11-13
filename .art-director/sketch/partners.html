@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Партнёры — эскизы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Forum&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --milk:#fbf8f3; --paper:#f3ece2; --sand:#e9dfd2; --card:#f8f2e8; --ink:#2a2222; --ink2:rgba(42,34,34,.64); --ink3:rgba(42,34,34,.46); --logo:#4b3d3d; --line:rgba(42,34,34,.14); }
+  * { box-sizing:border-box; margin:0; padding:0 }
+  body { background:var(--milk); color:var(--ink); font:15px/1.5 "Golos Text", system-ui, sans-serif; }
+  .tag { position:sticky; top:0; z-index:5; background:var(--ink); color:var(--milk); font:600 12px/1 "Golos Text"; letter-spacing:.12em; text-transform:uppercase; padding:12px 28px; }
+  section { padding:96px 28px; }
+  .caps { font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink2) }
+  h2 { font:400 64px/1 Forum, serif; }
+  .lead { max-width:560px; color:var(--ink2); margin-top:16px }
+
+  /* A: стена логотипов */
+  .a { background:var(--milk) }
+  .a .head { display:flex; justify-content:space-between; align-items:end; gap:32px; margin-bottom:48px }
+  .wall { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; background:var(--line); border:1px solid var(--line) }
+  .wall div { background:var(--milk); height:120px; display:grid; place-items:center; text-align:center; padding:12px; font:600 17px/1.2 "Golos Text"; color:var(--logo); letter-spacing:.02em }
+  .wall small { display:block; font:400 11px/1.3 "Golos Text"; color:var(--ink3); letter-spacing:.08em; text-transform:uppercase; margin-top:6px }
+  .wall .wide { grid-column:span 2 }
+  .rate { display:flex; gap:12px; align-items:baseline }
+  .rate b { font:400 72px/1 Forum, serif }
+
+  /* B: багажные бирки */
+  .b { background:var(--paper) }
+  .b .grid { display:grid; grid-template-columns: 1.1fr 2fr; gap:56px; align-items:start }
+  .labels { display:grid; grid-template-columns:repeat(3,1fr); gap:28px 24px; }
+  .label { aspect-ratio:1; display:grid; place-items:center; }
+  .label svg { width:100%; height:auto; filter: drop-shadow(0 1px 0 rgba(42,34,34,.08)); }
+  .label:nth-child(odd) svg { transform:rotate(-3deg) } .label:nth-child(even) svg { transform:rotate(2.5deg) }
+  .shelf { margin-top:40px; border-top:1px solid var(--line) }
+  .shelf li { list-style:none; display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line); }
+  .shelf li span:first-child { font:400 28px/1.1 Forum, serif }
+  .shelf li span:last-child { color:var(--ink3); font-size:13px }
+  .mp { display:flex; gap:24px; align-items:center; margin-top:36px }
+
+  /* C: указатель */
+  .c { background:var(--milk) }
+  .c .cols { display:grid; grid-template-columns: 1fr 1.6fr; gap:56px }
+  .index { border-top:1px solid var(--ink) }
+  .index li { list-style:none; display:grid; grid-template-columns:48px 1fr auto; gap:16px; align-items:baseline; padding:18px 0; border-bottom:1px solid var(--line) }
+  .index .n { font-size:12px; color:var(--ink3); font-variant-numeric:tabular-nums }
+  .index .name { font:400 44px/1 Forum, serif }
+  .index .kind { color:var(--ink2); font-size:13px; text-align:right }
+  .index h3 { font:600 11px/1 "Golos Text"; letter-spacing:.14em; text-transform:uppercase; color:var(--ink2); padding:28px 0 12px }
+  .facts { margin-top:40px; display:grid; gap:0; border-top:1px solid var(--line) }
+  .facts div { display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line) }
+  .facts b { font:400 32px/1 Forum, serif }
+</style>
+</head>
+<body>
+
+<div class="tag">A · Стена логотипов</div>
+<section class="a">
+  <div class="head">
+    <div>
+      <p class="caps">Нам доверяют</p>
+      <h2>Где уже есть KAVA&nbsp;HOME</h2>
+      <p class="lead">Полотенца продаются в крупнейших сетях Беларуси и на маркетплейсах, ими пользуются гости отелей, санаториев и фитнес-клубов.</p>
+    </div>
+    <div class="rate"><b>4,9</b><span class="caps">средняя оценка<br>Wildberries · Ozon · Emall</span></div>
+  </div>
+  <div class="wall">
+    <div>КОРОНА<small>логотип</small></div><div>GREEN<small>логотип</small></div><div>ProStore<small>логотип</small></div><div>ГИППО<small>логотип</small></div><div>ЦУМ<small>логотип</small></div><div>Wildberries<small>логотип</small></div><div>OZON<small>логотип</small></div>
+    <div>Emall<small>логотип</small></div><div>Европа<small>логотип</small></div><div>Минск<small>логотип</small></div><div>Веста<small>логотип</small></div><div>Альфа Радон<small>логотип</small></div><div>Плисса<small>логотип</small></div><div>World Class<small>логотип</small></div>
+  </div>
+</section>
+
+<div class="tag">B · Багажные бирки отелей (продолжение «путешествия»)</div>
+<section class="b">
+  <div class="grid">
+    <div>
+      <p class="caps">Нам доверяют</p>
+      <h2>Полотенца, которые встречают гостей</h2>
+      <p class="lead">Плотность 500 г/м² выдерживает ежедневную стирку в прачечной отеля. KAVA HOME выбирают гостиницы, курорты и фитнес-клубы.</p>
+      <ul class="shelf">
+        <li><span>«Корона»</span><span>сеть гипермаркетов</span></li>
+        <li><span>Green</span><span>сеть гипермаркетов</span></li>
+        <li><span>ProStore</span><span>сеть гипермаркетов</span></li>
+        <li><span>«Гиппо»</span><span>сеть гипермаркетов</span></li>
+        <li><span>ЦУМ</span><span>универмаг, Минск</span></li>
+      </ul>
+      <div class="mp">
+        <svg width="132" height="132" viewBox="-66 -66 132 132" aria-hidden="true">
+          <defs><path id="r" d="M0 0m-50 0a50 50 0 1 1 100 0a50 50 0 1 1 -100 0"/></defs>
+          <circle r="62" fill="none" stroke="#4b3d3d" stroke-width="1.6"/><circle r="40" fill="none" stroke="#4b3d3d" stroke-width="1"/>
+          <text font-family="Golos Text" font-size="9.5" font-weight="600" letter-spacing="2.4" fill="#4b3d3d"><textPath href="#r">WILDBERRIES · OZON · EMALL · ОЦЕНКА ·</textPath></text>
+          <text y="12" text-anchor="middle" font-family="Forum" font-size="34" fill="#4b3d3d">4,9</text>
+        </svg>
+        <p class="lead" style="margin:0">Средняя оценка покупателей на&nbsp;маркетплейсах</p>
+      </div>
+    </div>
+    <div class="labels">
+      <!-- овальная -->
+      <div class="label"><svg viewBox="0 0 220 160"><ellipse cx="110" cy="80" rx="106" ry="76" fill="#8a5a4a"/><ellipse cx="110" cy="80" rx="96" ry="66" fill="none" stroke="#f8f2e8" stroke-width="1.5"/><text x="110" y="52" text-anchor="middle" font-family="Golos Text" font-size="10" letter-spacing="3" fill="#f8f2e8">ГОСТИНИЦА</text><text x="110" y="92" text-anchor="middle" font-family="Forum" font-size="40" fill="#f8f2e8">Европа</text><text x="110" y="118" text-anchor="middle" font-family="Golos Text" font-size="10" letter-spacing="3" fill="#f8f2e8">★ ★ ★ ★ ★</text></svg></div>
+      <!-- прямоугольная с вырезами -->
+      <div class="label"><svg viewBox="0 0 220 160"><path d="M14 8h192v24a12 12 0 0 0 0 24v48a12 12 0 0 0 0 24v24H14v-24a12 12 0 0 0 0-24V56a12 12 0 0 0 0-24z" fill="#f8f2e8" stroke="#4b3d3d" stroke-width="1.5"/><rect x="26" y="20" width="168" height="120" fill="none" stroke="#4b3d3d" stroke-width=".8"/><text x="110" y="58" text-anchor="middle" font-family="Golos Text" font-size="10" letter-spacing="3" fill="#4b3d3d">ОТЕЛЬ</text><text x="110" y="98" text-anchor="middle" font-family="Forum" font-size="42" fill="#4b3d3d">Минск</text><line x1="60" y1="114" x2="160" y2="114" stroke="#4b3d3d" stroke-width=".8"/></svg></div>
+      <!-- круглая -->
+      <div class="label"><svg viewBox="0 0 220 160"><circle cx="110" cy="80" r="76" fill="#6f7d6a"/><circle cx="110" cy="80" r="66" fill="none" stroke="#f8f2e8" stroke-width="1" stroke-dasharray="2 4"/><text x="110" y="58" text-anchor="middle" font-family="Golos Text" font-size="9" letter-spacing="2.6" fill="#f8f2e8">ЗАГОРОДНЫЙ</text><text x="110" y="70" text-anchor="middle" font-family="Golos Text" font-size="9" letter-spacing="2.6" fill="#f8f2e8">КОМПЛЕКС</text><text x="110" y="104" text-anchor="middle" font-family="Forum" font-size="38" fill="#f8f2e8">Веста</text></svg></div>
+      <!-- ромб -->
+      <div class="label"><svg viewBox="0 0 220 160"><path d="M110 4L216 80 110 156 4 80z" fill="#d9c3ae"/><path d="M110 16L200 80 110 144 20 80z" fill="none" stroke="#4b3d3d" stroke-width="1"/><text x="110" y="62" text-anchor="middle" font-family="Golos Text" font-size="8.5" letter-spacing="2.4" fill="#4b3d3d">СПА-КУРОРТ</text><text x="110" y="92" text-anchor="middle" font-family="Forum" font-size="28" fill="#4b3d3d">Альфа Радон</text></svg></div>
+      <!-- щит / арка -->
+      <div class="label"><svg viewBox="0 0 220 160"><path d="M30 150V60a80 52 0 0 1 160 0v90z" fill="#4b3d3d"/><path d="M42 140V62a68 42 0 0 1 136 0v78z" fill="none" stroke="#f3ece2" stroke-width="1"/><text x="110" y="78" text-anchor="middle" font-family="Golos Text" font-size="8.5" letter-spacing="2.4" fill="#f3ece2">САНАТОРИЙ</text><text x="110" y="114" text-anchor="middle" font-family="Forum" font-size="38" fill="#f3ece2">Плисса</text></svg></div>
+      <!-- лента -->
+      <div class="label"><svg viewBox="0 0 220 160"><rect x="8" y="34" width="204" height="92" fill="#f8f2e8" stroke="#4b3d3d" stroke-width="1.5"/><path d="M8 34l-0 92M8 34h204" stroke="#4b3d3d"/><rect x="8" y="34" width="34" height="92" fill="#4b3d3d"/><text x="25" y="80" text-anchor="middle" transform="rotate(-90 25 80)" font-family="Golos Text" font-size="9" letter-spacing="2.4" fill="#f8f2e8">ФИТНЕС</text><text x="128" y="92" text-anchor="middle" font-family="Forum" font-size="34" fill="#4b3d3d">World Class</text></svg></div>
+    </div>
+  </div>
+</section>
+
+<div class="tag">C · Указатель (редакционный список)</div>
+<section class="c">
+  <div class="cols">
+    <div>
+      <p class="caps">Нам доверяют</p>
+      <h2>Нас выбирают отели и&nbsp;магазины</h2>
+      <p class="lead">Более трёх лет на рынке. Полотенца KAVA HOME продаются в крупнейших торговых сетях Беларуси, на маркетплейсах и работают в отелях.</p>
+      <div class="facts">
+        <div><span>Средняя оценка на маркетплейсах</span><b>4,9</b></div>
+        <div><span>На рынке</span><b>3+ года</b></div>
+        <div><span>Плотность для отелей</span><b>500 г/м²</b></div>
+      </div>
+    </div>
+    <div>
+      <ul class="index">
+        <h3>Отели, курорты, спорт</h3>
+        <li><span class="n">01</span><span class="name">Европа</span><span class="kind">гостиница</span></li>
+        <li><span class="n">02</span><span class="name">Минск</span><span class="kind">отель</span></li>
+        <li><span class="n">03</span><span class="name">Веста</span><span class="kind">загородный комплекс</span></li>
+        <li><span class="n">04</span><span class="name">Альфа Радон</span><span class="kind">медицинский спа-курорт</span></li>
+        <li><span class="n">05</span><span class="name">Плисса</span><span class="kind">санаторно-курортный комплекс</span></li>
+        <li><span class="n">06</span><span class="name">World Class</span><span class="kind">фитнес-клуб</span></li>
+        <h3>Магазины и маркетплейсы</h3>
+        <li><span class="n">07</span><span class="name">Корона · Green · ProStore · Гиппо · ЦУМ</span><span class="kind"></span></li>
+        <li><span class="n">08</span><span class="name">Wildberries · Ozon · Emall</span><span class="kind">4,9</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+</body>
+</html>

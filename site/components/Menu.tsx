@@ -41,7 +41,7 @@ export function Menu({ open, onClose }: Props) {
           <ul className={s.cities}>
             {collections.map((c, i) => (
               <li key={c.slug}>
-                <a href={`/?kol=${c.slug}#catalog`} data-filter-kol={c.slug} onClick={onClose}>
+                <a href={`/catalog?kol=${c.slug}`} data-filter-kol={c.slug} onClick={onClose}>
                   <i style={{ background: c.tone }} aria-hidden="true" />
                   <span className={s.cityName}>{c.city}</span>
                   <span className={s.cityMeta}>
@@ -56,7 +56,7 @@ export function Menu({ open, onClose }: Props) {
           <ul className={s.links}>
             {categories.map((c) => (
               <li key={c.id}>
-                <a href={`/?kat=${c.id}#catalog`} data-filter-kat={c.id} onClick={onClose}>
+                <a href={`/catalog?kat=${c.id}`} data-filter-kat={c.id} onClick={onClose}>
                   {c.label}
                 </a>
               </li>
@@ -69,7 +69,7 @@ export function Menu({ open, onClose }: Props) {
               .filter((p) => p.id !== "oteli")
               .map((p) => (
                 <li key={p.id}>
-                  <a href={`/?nazn=${p.id}#catalog`} data-filter-nazn={p.id} onClick={onClose}>
+                  <a href={`/catalog?nazn=${p.id}`} data-filter-nazn={p.id} onClick={onClose}>
                     {p.label}
                   </a>
                 </li>
@@ -79,18 +79,42 @@ export function Menu({ open, onClose }: Props) {
           <p className={s.group}>Бизнесу</p>
           <ul className={s.links}>
             <li>
-              <Link href="/#hotels" onClick={onClose}>
+              <Link href="/biznes" onClick={onClose}>
                 Для отелей и опт
               </Link>
             </li>
             <li>
-              <Link href="/#hotels" onClick={onClose}>
+              <Link href="/biznes#logo" onClick={onClose}>
                 Полотенца с логотипом
               </Link>
             </li>
             <li>
-              <Link href="/#gifts" onClick={onClose}>
+              <Link href="/biznes#certificate" onClick={onClose}>
                 Подарочный сертификат
+              </Link>
+            </li>
+          </ul>
+
+          <p className={s.group}>Покупателям</p>
+          <ul className={s.links}>
+            <li>
+              <Link href="/o-nas" onClick={onClose}>
+                О бренде
+              </Link>
+            </li>
+            <li>
+              <Link href="/dostavka" onClick={onClose}>
+                Доставка и оплата
+              </Link>
+            </li>
+            <li>
+              <Link href="/faq" onClick={onClose}>
+                Вопросы и ответы
+              </Link>
+            </li>
+            <li>
+              <Link href="/kontakty" onClick={onClose}>
+                Контакты
               </Link>
             </li>
           </ul>

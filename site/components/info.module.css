@@ -1,0 +1,543 @@
+/* Внутренние страницы: О бренде, Доставка, Для бизнеса, Контакты, Вопросы, Политика.
+   Тот же язык, что на главной: Forum для заголовков, строки с линиями вместо карточек-иконок,
+   секции разделяются тоном (молочный → бумага → песок), фото встык с зазором 2px. */
+
+.kicker {
+  margin-bottom: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(44px, 5.2vw, 84px);
+  line-height: 0.98;
+}
+.h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(36px, 4vw, 60px);
+  line-height: 1;
+}
+.h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(26px, 2.2vw, 32px);
+  line-height: 1.05;
+}
+.lead {
+  max-width: 560px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.text {
+  max-width: 600px;
+  color: var(--ink-2);
+}
+.text p + p {
+  margin-top: 12px;
+}
+.text a,
+.link {
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+.text a:hover,
+.link:hover {
+  border-bottom-color: var(--ink);
+}
+
+/* ───────── первый экран страницы: текст | фото ───────── */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: min(86svh, 820px);
+  padding-top: var(--hdr);
+  background: var(--milk);
+}
+.heroText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  padding: clamp(40px, 7svh, 88px) clamp(24px, 5vw, 80px) clamp(40px, 7svh, 88px) var(--pad);
+}
+.heroPhoto {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.heroBtns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+/* строки фактов с линиями */
+.lines {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 32px;
+  border-top: 1px solid var(--line);
+}
+.lines div {
+  display: grid;
+  gap: 2px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.lines dt {
+  font-family: var(--serif);
+  font-size: 34px;
+  line-height: 1;
+}
+.lines dd {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+/* ───────── секции ───────── */
+.section {
+  padding: clamp(64px, 10svh, 120px) var(--pad);
+  background: var(--milk);
+}
+.paper {
+  background: var(--paper);
+}
+.sand {
+  background: var(--sand);
+}
+.secHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 32px;
+  margin-bottom: clamp(32px, 5svh, 56px);
+}
+
+/* почему выбирают: 2×2, фото + текст */
+.reasons {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.reason {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  background: var(--card);
+}
+.reasonPhoto {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.reasonBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(22px, 2.6vw, 36px);
+}
+.num {
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.reasonBody p {
+  color: var(--ink-2);
+  font-size: 15px;
+}
+.palette {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  height: 100%;
+  min-height: 300px;
+}
+.palette li {
+  display: flex;
+  align-items: end;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+/* кто покупает: три колонки с фото */
+.who {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+.whoItem {
+  display: flex;
+  flex-direction: column;
+  background: var(--milk);
+}
+.whoPhoto {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--paper);
+}
+.whoPhoto img {
+  transition: transform 0.8s var(--ease-out);
+}
+.whoItem:hover .whoPhoto img {
+  transform: scale(1.03);
+}
+.whoBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  padding: 22px 22px 26px;
+}
+.whoBody p {
+  color: var(--ink-2);
+  font-size: 15px;
+}
+.more {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ───────── кнопки ───────── */
+.btnInk,
+.btnLine {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 24px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--ink);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.btnInk {
+  background: var(--ink);
+  color: var(--milk);
+}
+.btnInk:hover {
+  background: transparent;
+  color: var(--ink);
+}
+.btnLine:hover {
+  background: var(--ink);
+  color: var(--milk);
+}
+.phone {
+  font-family: var(--serif);
+  font-size: 26px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ───────── шаги заказа ───────── */
+.steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--ink);
+}
+.steps li {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 24px 8px 0;
+}
+.steps li + li {
+  padding-left: 24px;
+  border-left: 1px solid var(--line);
+}
+.steps b {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 54px;
+  line-height: 1;
+  color: var(--logo);
+}
+.steps span {
+  font-weight: 500;
+}
+.steps p {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+/* ───────── две колонки: текст | карта/фото ───────── */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: clamp(28px, 5vw, 80px);
+  align-items: start;
+}
+.splitEven {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.map {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.map iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  filter: grayscale(0.35) sepia(0.12);
+}
+.rows {
+  border-top: 1px solid var(--line);
+}
+.rows div {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.rows dt {
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.rows dd a {
+  border-bottom: 1px solid var(--line);
+}
+
+/* ───────── бизнес: направления ───────── */
+.offers {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.offer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  background: var(--card);
+  scroll-margin-top: calc(var(--hdr) + 16px);
+}
+.offerBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(22px, 2.6vw, 36px);
+}
+.offerBody p {
+  color: var(--ink-2);
+  font-size: 15px;
+}
+.offerPhoto {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+.tags li {
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  font-size: 12px;
+}
+.formWrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 80px);
+  align-items: start;
+  scroll-margin-top: var(--hdr);
+}
+
+/* ───────── вопросы ───────── */
+.faq {
+  max-width: 880px;
+  border-top: 1px solid var(--ink);
+}
+.faqGroup {
+  padding: 28px 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.faq details {
+  border-bottom: 1px solid var(--line);
+}
+.faq summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 0;
+  font-family: var(--serif);
+  font-size: clamp(22px, 2vw, 28px);
+  line-height: 1.15;
+  cursor: pointer;
+  list-style: none;
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq summary::after {
+  content: "+";
+  flex: none;
+  font-family: var(--sans);
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--ink-2);
+}
+.faq details[open] summary::after {
+  content: "−";
+}
+.answer {
+  max-width: 680px;
+  padding: 0 0 24px;
+  color: var(--ink-2);
+}
+.answer p + p {
+  margin-top: 10px;
+}
+.answer a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+
+/* ───────── юридический текст ───────── */
+.legal {
+  max-width: 760px;
+  color: var(--ink-2);
+}
+.legal h2 {
+  margin: 36px 0 12px;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 28px;
+  color: var(--ink);
+}
+.legal p,
+.legal li {
+  margin-top: 8px;
+}
+.legal ul {
+  padding-left: 20px;
+}
+
+/* полоса-призыв в конце страницы */
+.cta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: clamp(48px, 7svh, 80px) var(--pad);
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 960px) {
+  .hero,
+  .split,
+  .splitEven,
+  .formWrap {
+    grid-template-columns: 1fr;
+  }
+  .heroPhoto {
+    order: -1;
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+  .reasons,
+  .offers {
+    grid-template-columns: 1fr;
+  }
+  .who {
+    grid-template-columns: 1fr;
+  }
+  .whoPhoto {
+    aspect-ratio: 16 / 10;
+  }
+  .steps {
+    grid-template-columns: 1fr 1fr;
+  }
+  .steps li:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .steps li:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+  .secHead {
+    flex-direction: column;
+    align-items: start;
+    gap: 14px;
+  }
+}
+@media (max-width: 760px) {
+  .heroText {
+    padding: 28px var(--pad) 40px;
+  }
+  .reason,
+  .offer {
+    grid-template-columns: 1fr;
+  }
+  .reasonPhoto,
+  .offerPhoto,
+  .palette {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
+  .lines dt {
+    font-size: 28px;
+  }
+  .steps {
+    grid-template-columns: 1fr;
+  }
+  .steps li,
+  .steps li + li {
+    padding: 18px 0 14px;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .steps li:first-child {
+    border-top: 0;
+  }
+  .rows div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .map {
+    aspect-ratio: 1 / 1;
+  }
+}

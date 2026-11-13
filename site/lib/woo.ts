@@ -259,6 +259,7 @@ export async function getWooProducts(): Promise<Product[] | null> {
       sizes: [...bySize.values()].sort((a, b) => sizeArea(a.label) - sizeArea(b.label)),
       colors: sellable,
       description: items[0].p.description,
+      composition: attr(items[0].p, "Состав")[0],
       source: "woo",
     });
   }

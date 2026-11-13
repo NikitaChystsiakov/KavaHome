@@ -1,22 +1,26 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { TopBar } from "@/components/TopBar";
+import { Shell } from "@/components/Shell";
 
-// В прототипе готова только главная: остальные ссылки ведут сюда.
+export const metadata: Metadata = { title: "Страница не найдена — KAVA HOME" };
+
 export default function NotFound() {
   return (
-    <>
-      <TopBar compact />
-      <main style={{ minHeight: "100svh", display: "grid", placeItems: "center", padding: "120px 28px", textAlign: "center" }}>
+    <Shell>
+      <div style={{ minHeight: "80svh", display: "grid", placeItems: "center", padding: "120px 28px", textAlign: "center" }}>
         <div>
-          <h1 style={{ fontFamily: "var(--serif)", fontWeight: 400, fontSize: "clamp(40px, 6vw, 72px)", lineHeight: 1 }}>
-            Эта страница будет в полной версии
+          <p className="caps" style={{ color: "var(--ink-2)", fontSize: 11, fontWeight: 600 }}>
+            Ошибка 404
+          </p>
+          <h1 style={{ marginTop: 14, fontFamily: "var(--serif)", fontWeight: 400, fontSize: "clamp(40px, 6vw, 72px)", lineHeight: 1 }}>
+            Такой страницы нет
           </h1>
-          <p style={{ marginTop: 18, color: "var(--ink-2)" }}>Сейчас готова главная: каталог, карточка и корзина — следующим шагом.</p>
-          <Link href="/" className="caps" style={{ display: "inline-block", marginTop: 28, borderBottom: "1px solid", paddingBottom: 3 }}>
-            На главную
+          <p style={{ marginTop: 18, color: "var(--ink-2)" }}>Возможно, товар сняли с продажи или ссылка устарела.</p>
+          <Link href="/catalog" className="caps" style={{ display: "inline-block", marginTop: 28, borderBottom: "1px solid", paddingBottom: 3 }}>
+            Перейти в каталог
           </Link>
         </div>
-      </main>
-    </>
+      </div>
+    </Shell>
   );
 }

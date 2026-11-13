@@ -72,6 +72,8 @@ export type Product = {
   colors: Color[];
   /** описание из админки (HTML), одно на модель */
   description?: string;
+  /** состав из админки («100% хлопок») */
+  composition?: string;
   /** откуда товар: из WooCommerce или заглушка прототипа */
   source?: "woo" | "demo";
 };

@@ -5,10 +5,11 @@ import s from "./home.module.css";
 
 const NEEDS = ["Отель", "Опт", "Логотип", "Сертификаты"];
 
-// Заявка для бизнеса. В прототипе отправка имитируется; в рабочей версии уходит в Telegram менеджеру.
-export function HotelForm({ phone, phoneHref, hours }: { phone: string; phoneHref: string; hours: string }) {
-  const [needs, setNeeds] = useState<string[]>(["Отель"]);
+// Заявка для бизнеса: уходит менеджеру в Telegram (app/api/lead).
+export function HotelForm({ phone, phoneHref, hours, initial = "Отель" }: { phone: string; phoneHref: string; hours: string; initial?: string }) {
+  const [needs, setNeeds] = useState<string[]>([initial]);
   const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   if (sent) {
@@ -22,16 +23,29 @@ export function HotelForm({ phone, phoneHref, hours }: { phone: string; phoneHre
   return (
     <form
       className={s.form}
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
-        const data = new FormData(e.currentTarget);
-        const tel = String(data.get("phone") || "").replace(/\D/g, "");
+        const data = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+        const tel = String(data.phone || "").replace(/\D/g, "");
         if (tel.length < 9) {
           setError("Проверьте телефон: нужен номер, по которому перезвонить.");
           return;
         }
         setError("");
-        setSent(true);
+        setBusy(true);
+        try {
+          const res = await fetch("/api/lead", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...data, needs }),
+          });
+          if (!(await res.json()).ok) throw new Error();
+          setSent(true);
+        } catch {
+          setError(`Заявка не отправилась. Позвоните, пожалуйста: ${phone}.`);
+        } finally {
+          setBusy(false);
+        }
       }}
     >
       <fieldset className={s.needs}>
@@ -60,8 +74,8 @@ export function HotelForm({ phone, phoneHref, hours }: { phone: string; phoneHre
       </label>
       {error && <p className={s.formError}>{error}</p>}
       <div className={s.formFoot}>
-        <button type="submit" className={s.btnLight}>
-          Отправить заявку
+        <button type="submit" className={s.btnLight} disabled={busy}>
+          {busy ? "Отправляем…" : "Отправить заявку"}
         </button>
         <a href={phoneHref} className={s.formPhone}>
           или позвоните {phone}

@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { cartCount, plural, useCart } from "@/lib/cart";
 import { Logo } from "./Logo";
 import { Menu } from "./Menu";
+import { CartAdded } from "./CartAdded";
 import s from "./home.module.css";
 
 // Шапка и логотип. На первом экране логотип на всю ширину поверх светлых кадров; при прокрутке
@@ -12,6 +14,7 @@ export function TopBar({ compact = false }: { compact?: boolean }) {
   const bar = useRef<HTMLElement>(null);
   const logo = useRef<HTMLAnchorElement>(null);
   const [menu, setMenu] = useState(false);
+  const count = cartCount(useCart());
   const closeMenu = useCallback(() => setMenu(false), []);
 
   useEffect(() => {
@@ -63,35 +66,38 @@ export function TopBar({ compact = false }: { compact?: boolean }) {
           <button className={s.burger} type="button" aria-label="Открыть меню" aria-expanded={menu} onClick={() => setMenu(true)}>
             <span />
           </button>
-          <Link href="/#catalog" className={`caps ${s.hideMobile}`}>
+          <Link href="/catalog" className={`caps ${s.hideMobile}`}>
             Каталог
           </Link>
-          <Link href="/#hotels" className={`caps ${s.hideMobile}`}>
-            Для отелей
+          <Link href="/biznes" className={`caps ${s.hideMobile}`}>
+            Для бизнеса
           </Link>
         </div>
         <div className={s.barRight}>
-          <a href="/search" className={`${s.barLink} ${s.search}`} aria-label="Поиск">
+          <Link href="/catalog?poisk=1" className={`${s.barLink} ${s.search}`} aria-label="Поиск">
             <svg className={s.icon} viewBox="0 0 20 20" aria-hidden="true">
               <circle cx="8.5" cy="8.5" r="6" />
               <path d="M13 13l5 5" />
             </svg>
             <span className={s.hideMobile}>Найти полотенце</span>
-          </a>
-          <a href="/cart" className={`caps ${s.barLink}`} aria-label="Корзина, 0 товаров">
+          </Link>
+          <Link href="/korzina" className={`caps ${s.barLink}`} aria-label={`Корзина, ${count} ${plural(count, "товар", "товара", "товаров")}`}>
             <svg className={s.icon} viewBox="0 0 20 20" aria-hidden="true">
               <path d="M3.5 6.5h13l-1 11h-11z" />
               <path d="M7 6.5V5a3 3 0 0 1 6 0v1.5" />
             </svg>
             <span className={s.hideMobile}>Корзина</span>
-            <b className={s.count}>0</b>
-          </a>
+            <b className={s.count} data-empty={count === 0}>
+              {count}
+            </b>
+          </Link>
         </div>
       </header>
       <Link ref={logo} href="/" className={s.logo} aria-label="KAVA HOME, на главную">
         <Logo />
       </Link>
       <Menu open={menu} onClose={closeMenu} />
+      <CartAdded />
     </>
   );
 }

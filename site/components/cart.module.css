@@ -1,0 +1,356 @@
+/* ───────── кнопки корзины ───────── */
+.btnInk,
+.btnLine {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 22px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--ink);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.btnInk {
+  background: var(--ink);
+  color: var(--milk);
+}
+.btnInk:hover {
+  background: transparent;
+  color: var(--ink);
+}
+.btnInk:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+.btnLine:hover {
+  background: var(--ink);
+  color: var(--milk);
+}
+.muted {
+  color: var(--ink-2);
+}
+
+/* ───────── «Добавлено в корзину» ───────── */
+.added {
+  position: fixed;
+  top: calc(var(--hdr) + 8px);
+  right: var(--pad);
+  z-index: 45;
+  width: min(380px, calc(100vw - 2 * var(--pad)));
+  padding: 18px 20px 20px;
+  background: var(--milk);
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 40px -24px rgba(42, 34, 34, 0.35);
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition:
+    opacity 0.25s,
+    transform 0.35s var(--ease-out);
+}
+.added[data-open="true"] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.addedHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.addedHead button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+.addedItem {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.addedItem > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+.addedItem b {
+  font-weight: 500;
+}
+.addedPhoto {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: var(--paper);
+  overflow: hidden;
+}
+.addedSum {
+  margin: 14px 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.addedBtns {
+  display: grid;
+  gap: 8px;
+}
+
+/* ───────── страница корзины ───────── */
+.page {
+  padding: calc(var(--hdr) + 40px) var(--pad) 96px;
+  min-height: 70svh;
+}
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 1;
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: start;
+}
+.list {
+  list-style: none;
+}
+.row {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) auto;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.rowPhoto {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: var(--paper);
+  overflow: hidden;
+}
+.rowInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.rowName {
+  font-weight: 500;
+}
+.rowName:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.rowTools {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.qty {
+  display: inline-grid;
+  grid-template-columns: 36px 40px 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+}
+.qty button,
+.qty span {
+  display: grid;
+  place-items: center;
+}
+.qty button:hover {
+  background: var(--paper);
+}
+.remove {
+  font-size: 13px;
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--line);
+}
+.remove:hover {
+  color: var(--ink);
+}
+.rowPrice {
+  text-align: right;
+  white-space: nowrap;
+}
+.rowPrice small {
+  display: block;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+/* оформление: бумажная карточка справа */
+.checkout {
+  position: sticky;
+  top: calc(var(--hdr) + 20px);
+  margin-top: 20px;
+  padding: 28px;
+  background: var(--paper);
+}
+.checkout h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.lead {
+  color: var(--ink-2);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+.form {
+  display: grid;
+  gap: 16px;
+}
+.field {
+  display: grid;
+  gap: 4px;
+}
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(42, 34, 34, 0.32);
+  outline: none;
+  background: transparent;
+}
+.field textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+.field input:focus,
+.field textarea:focus {
+  border-bottom-color: var(--ink);
+}
+.field [aria-invalid="true"] {
+  border-bottom-color: #a2453a;
+}
+.field > span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.ways {
+  display: grid;
+  gap: 8px;
+  border: 0;
+}
+.ways legend {
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.way {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  background: var(--milk);
+  cursor: pointer;
+}
+.way:has(input:checked) {
+  border-color: var(--ink);
+}
+.way input {
+  margin-top: 3px;
+  accent-color: var(--ink);
+}
+.way small {
+  display: block;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+.sum {
+  display: grid;
+  gap: 6px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.sum div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.sum dd {
+  text-align: right;
+}
+.total {
+  font-family: var(--serif);
+  font-size: 30px;
+  line-height: 1.1;
+}
+.error {
+  color: #a2453a;
+  font-size: 14px;
+}
+.fine {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.fine a {
+  border-bottom: 1px solid var(--line);
+}
+
+.empty {
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+  padding: 56px 0;
+  max-width: 560px;
+}
+.empty p {
+  color: var(--ink-2);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .checkout {
+    position: static;
+  }
+}
+@media (max-width: 760px) {
+  .page {
+    padding-top: calc(var(--hdr) + 24px);
+  }
+  .row {
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .rowPrice {
+    grid-column: 2;
+    text-align: left;
+  }
+  .checkout {
+    margin: 20px calc(-1 * var(--pad)) 0;
+    padding: 24px var(--pad);
+  }
+}

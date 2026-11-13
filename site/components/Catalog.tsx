@@ -25,6 +25,7 @@ import s from "./catalog.module.css";
 
 type Sort = "pop" | "cheap" | "dear";
 type Filters = {
+  q: string;
   kat: CategoryId | null;
   nazn: PurposeId | null;
   kol: string | null;
@@ -32,7 +33,7 @@ type Filters = {
   sort: Sort;
   vid: number | null;
 };
-const EMPTY: Filters = { kat: null, nazn: null, kol: null, cvet: null, sort: "pop", vid: null };
+const EMPTY: Filters = { q: "", kat: null, nazn: null, kol: null, cvet: null, sort: "pop", vid: null };
 
 function readUrl(): Filters {
   const q = new URLSearchParams(window.location.search);
@@ -42,6 +43,7 @@ function readUrl(): Filters {
   };
   const vid = Number(q.get("vid"));
   return {
+    q: q.get("q") ?? "",
     kat: pick<CategoryId>("kat", categories.map((c) => c.id)),
     nazn: pick<PurposeId>("nazn", purposeChips.map((c) => c.id)),
     kol: q.get("kol"),
@@ -53,6 +55,7 @@ function readUrl(): Filters {
 
 function writeUrl(f: Filters) {
   const q = new URLSearchParams();
+  if (f.q.trim()) q.set("q", f.q.trim());
   if (f.kat) q.set("kat", f.kat);
   if (f.nazn) q.set("nazn", f.nazn);
   if (f.kol) q.set("kol", f.kol);
@@ -63,8 +66,21 @@ function writeUrl(f: Filters) {
   window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`);
 }
 
-function match(c: Card, f: Filters) {
+// поиск: каждое слово запроса должно найтись в названии, коллекции, цвете или размере
+function haystack(p: Product, city?: string) {
+  return [p.name, p.title, city, ...p.colors.map((x) => x.name), ...p.sizes.map((z) => `${z.label} ${z.note}`), categories.find((c) => c.id === p.category)?.label]
+    .join(" ")
+    .toLowerCase()
+    .replace(/ё/g, "е")
+    .replace(/[xх*]/g, "×");
+}
+
+function match(c: Card, f: Filters, hay?: string) {
   const p = c.product;
+  if (f.q.trim() && hay) {
+    const words = f.q.toLowerCase().replace(/ё/g, "е").replace(/(\d)\s*[xх*]\s*(\d)/g, "$1×$2").split(/\s+/).filter(Boolean);
+    if (!words.every((w) => hay.includes(w))) return false;
+  }
   if (f.kat && (f.kat === "sets" ? !hasSet(p) : p.category !== f.kat)) return false;
   if (f.nazn && !p.purposes.includes(f.nazn)) return false;
   if (f.kol && p.collection !== f.kol) return false;
@@ -72,8 +88,14 @@ function match(c: Card, f: Filters) {
   return true;
 }
 
-export function Catalog({ collections, products }: { collections: Collection[]; products?: Product[] }) {
+// page — отдельная страница /catalog: заголовок H1 и поле поиска (в шапке «Найти полотенце» ведёт сюда с ?poisk=1)
+export function Catalog({ collections, products, page = false }: { collections: Collection[]; products?: Product[]; page?: boolean }) {
   const cards = useMemo(() => allCards(products), [products]);
+  const hay = useMemo(
+    () => new Map(cards.map((c) => [c.key, haystack(c.product, collections.find((x) => x.slug === c.product.collection)?.city)])),
+    [cards, collections],
+  );
+  const search = useRef<HTMLInputElement>(null);
   const root = useRef<HTMLElement>(null);
   const [f, setF] = useState<Filters>(EMPTY);
   const [panel, setPanel] = useState(false);
@@ -83,7 +105,11 @@ export function Catalog({ collections, products }: { collections: Collection[]; 
     // фильтры из адреса читаются после гидрации (сервер отдаёт каталог без фильтров)
     // адрес читаем сразу: эффект синхронизации ниже может успеть переписать его до следующего кадра
     const initial = readUrl();
-    const raf = requestAnimationFrame(() => setF(initial));
+    const wantSearch = new URLSearchParams(window.location.search).has("poisk");
+    const raf = requestAnimationFrame(() => {
+      setF(initial);
+      if (wantSearch) search.current?.focus();
+    });
     const mq = window.matchMedia("(max-width: 760px)");
     const onMq = () => setMobile(mq.matches);
     onMq();
@@ -141,12 +167,18 @@ export function Catalog({ collections, products }: { collections: Collection[]; 
   const list = useMemo(() => {
     // при фильтре по цвету карточка сразу показывает цвет этого семейства
     const out = cards
-      .filter((c) => match(c, f))
-      .map((c) => (f.cvet ? { ...c, colorIndex: Math.max(0, c.product.colors.findIndex((x) => x.family === f.cvet)) } : c));
+      .filter((c) => match(c, f, hay.get(c.key)))
+      .map((c) => {
+        if (f.cvet) return { ...c, colorIndex: Math.max(0, c.product.colors.findIndex((x) => x.family === f.cvet)) };
+        // поиск по цвету: карточка сразу показывает найденный цвет
+        const words = f.q.toLowerCase().replace(/ё/g, "е").split(/\s+/).filter((w) => w.length > 2);
+        const i = words.length ? c.product.colors.findIndex((x) => words.some((w) => x.name.toLowerCase().replace(/ё/g, "е").includes(w))) : -1;
+        return i > 0 ? { ...c, colorIndex: i } : c;
+      });
     if (f.sort === "cheap") out.sort((a, b) => priceRange(a.product)[0] - priceRange(b.product)[0]);
     if (f.sort === "dear") out.sort((a, b) => priceRange(b.product)[0] - priceRange(a.product)[0]);
     return out;
-  }, [f, cards]);
+  }, [f, cards, hay]);
 
   const cols = f.vid ?? (mobile ? 2 : 4);
   const views = mobile ? [1, 2] : [2, 4, 6];
@@ -154,15 +186,22 @@ export function Catalog({ collections, products }: { collections: Collection[]; 
     f.kat && { key: "kat", label: categories.find((c) => c.id === f.kat)!.label },
     f.kol && { key: "kol", label: collections.find((c) => c.slug === f.kol)?.city ?? f.kol },
     f.cvet && { key: "cvet", label: families.find((x) => x.id === f.cvet)!.label },
+    f.q.trim() && { key: "q", label: `«${f.q.trim()}»` },
   ].filter(Boolean) as { key: keyof Filters; label: string }[];
 
   return (
     <section id="catalog" ref={root} className={s.catalog} aria-labelledby="catalog-title" data-screen>
       <aside className={s.side} data-open={panel}>
         <div className={s.sideInner}>
-          <h2 id="catalog-title" className={s.title}>
-            Каталог
-          </h2>
+          {page ? (
+            <h1 id="catalog-title" className={s.title}>
+              Каталог
+            </h1>
+          ) : (
+            <h2 id="catalog-title" className={s.title}>
+              Каталог
+            </h2>
+          )}
           <nav aria-label="Категории">
             <ul className={s.cats}>
               <li>
@@ -225,6 +264,20 @@ export function Catalog({ collections, products }: { collections: Collection[]; 
             ))}
           </ul>
           <div className={s.tools}>
+            <label className={s.find}>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <circle cx="8.5" cy="8.5" r="6" />
+                <path d="M13 13l5 5" />
+              </svg>
+              <span className="visually-hidden">Поиск по каталогу</span>
+              <input
+                ref={search}
+                type="search"
+                value={f.q}
+                placeholder="Цвет, коллекция, размер"
+                onChange={(e) => setF((prev) => ({ ...prev, q: e.target.value }))}
+              />
+            </label>
             <button type="button" className={s.filtersBtn} aria-expanded={panel} onClick={() => setPanel(!panel)}>
               Фильтры{active.length ? ` (${active.length})` : ""}
             </button>
@@ -252,7 +305,7 @@ export function Catalog({ collections, products }: { collections: Collection[]; 
             {list.length} {plural(list.length, "товар", "товара", "товаров")}
           </span>
           {active.map((a) => (
-            <button key={a.key} type="button" className={s.tag} onClick={() => update({ [a.key]: null })}>
+            <button key={a.key} type="button" className={s.tag} onClick={() => update({ [a.key]: a.key === "q" ? "" : null })}>
               {a.label} <span aria-hidden="true">×</span>
               <span className="visually-hidden">убрать фильтр</span>
             </button>
@@ -263,7 +316,7 @@ export function Catalog({ collections, products }: { collections: Collection[]; 
             </button>
           )}
           {f.nazn === "oteli" && (
-            <a href="#hotels" className={s.reset}>
+            <a href="/biznes" className={s.reset}>
               Опт и полотенца с логотипом — заявка ниже
             </a>
           )}
@@ -285,7 +338,10 @@ export function Catalog({ collections, products }: { collections: Collection[]; 
             </button>
           </div>
         )}
-        <p className={s.note}>Цены примерные: розничные цены уточняются. Размер выбирается в карточке товара.</p>
+        <p className={s.note}>
+          Размер выбирается в карточке товара.
+          {list.some((c) => c.product.source !== "woo") && " Цены подарочных наборов и халатов уточняются."}
+        </p>
       </div>
     </section>
   );
@@ -294,7 +350,7 @@ export function Catalog({ collections, products }: { collections: Collection[]; 
 // Карточка: фото, название, квадраты цветов, цена «от – до».
 // Клик по квадрату: новое фото натягивается шторкой поверх старого, когда загрузится (без белой паузы).
 // При наведении на карточку остальные цвета подгружаются заранее.
-function CatalogCard({ card, eager, cols }: { card: Card; eager: boolean; cols: number }) {
+export function CatalogCard({ card, eager, cols }: { card: Card; eager: boolean; cols: number }) {
   const p = card.product;
   const [cur, setCur] = useState(card.colorIndex);
   const color = p.colors[cur];
