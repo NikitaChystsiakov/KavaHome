@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { contacts } from "@/lib/collections";
-import { giftLines, purposeChips } from "@/lib/catalog";
+import { giftLines, purposeChips, type Product } from "@/lib/catalog";
 import { Stamp } from "./Stamp";
 import { Logo } from "./Logo";
 import s from "./home.module.css";
@@ -59,9 +59,27 @@ export function Hero() {
   );
 }
 
-// Подарить: две половины на один экран. Слева наборы QD (ведут в каталог на подборку QD), справа сертификат.
-export function Gifts() {
-  const dens = giftLines.map((g) => g.density);
+// Подарить (2026-11-16): слева фото QD во всю высоту, справа заголовок, все подарочные линии списком
+// (цвета квадратами, плотность; строка ведёт на карточку линии) и сертификат открыткой внизу.
+// items: подарочные товары каталога (категория gifts); без них строки ведут на подборку QD в каталоге.
+export function Gifts({ items = [] }: { items?: Product[] }) {
+  const lines =
+    items.length > 0
+      ? items.map((p) => ({
+          key: p.id,
+          name: p.title,
+          density: p.density,
+          swatches: p.colors.map((c) => ({ name: c.name, swatch: c.swatch })),
+          href: `/catalog/${p.id}`,
+        }))
+      : giftLines.map((g) => ({
+          key: g.name,
+          name: g.name,
+          density: g.density,
+          swatches: g.colors,
+          href: "/catalog?kat=gifts",
+        }));
+  const dens = lines.map((l) => l.density).filter(Boolean);
   return (
     <section
       id="gifts"
@@ -69,63 +87,78 @@ export function Gifts() {
       aria-labelledby="gifts-title"
       data-screen
     >
-      <div className={s.giftsHead}>
-        <h2 id="gifts-title" className={s.h2}>
-          Подарить
-        </h2>
-        <p className={s.giftsLead}>
-          Полотенца дарят на новоселье, свадьбу и просто так. Если не знаете
-          цвет — подарите сертификат.
-        </p>
-      </div>
-      <div className={s.giftsGrid}>
-        <a
-          href="?kat=gifts#catalog"
-          data-filter-kat="gifts"
-          className={s.giftPhoto}
-        >
-          <Image
-            src="/img/gift-qd.webp"
-            alt="Подарочные полотенца QD: ментол, ваниль, персик, сирень"
-            fill
-            sizes="(max-width: 760px) 100vw, 50vw"
-            style={{ objectFit: "cover", objectPosition: "55% 45%" }}
-            quality={75}
+      <a
+        href="?kat=gifts#catalog"
+        data-filter-kat="gifts"
+        className={s.giftPhoto}
+      >
+        <Image
+          src="/img/gift-qd.webp"
+          alt="Подарочные полотенца QD: ментол, ваниль, персик, сирень"
+          fill
+          sizes="(max-width: 760px) 100vw, 55vw"
+          style={{ objectFit: "cover", objectPosition: "0% 50%" }}
+          quality={75}
+        />
+        <span className={s.giftTag}>
+          <span className={s.giftKicker}>
+            {lines.length} линий
+            {dens.length > 0 &&
+              ` · ${Math.min(...dens)}–${Math.max(...dens)} г/м²`}
+          </span>
+          <b>Подарочные наборы QD</b>
+          <span className={s.giftMore}>
+            Смотреть все
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M1 6h10M7 2l4 4-4 4" />
+            </svg>
+          </span>
+        </span>
+      </a>
+      <div className={s.giftsSide}>
+        <div className={s.giftsHead}>
+          <h2 id="gifts-title" className={s.h2}>
+            Подарить
+          </h2>
+          <p className={s.giftsLead}>
+            Полотенца дарят на новоселье, свадьбу и просто так. Если не знаете
+            цвет — подарите сертификат.
+          </p>
+        </div>
+        <ul className={s.giftList} aria-label="Подарочные линии QD">
+          {lines.map((l) => (
+            <li key={l.key}>
+              <Link href={l.href}>
+                <b>{l.name}</b>
+                <span className={s.giftSwatches} aria-hidden="true">
+                  {l.swatches.slice(0, 6).map((c) => (
+                    <i key={c.name} style={{ background: c.swatch }} />
+                  ))}
+                </span>
+                <span className={s.giftDensity}>
+                  {l.density ? `${l.density} г/м²` : ""}
+                </span>
+                <svg viewBox="0 0 12 12" aria-hidden="true">
+                  <path d="M1 6h10M7 2l4 4-4 4" />
+                </svg>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <Link href="/biznes#certificate" className={s.cert}>
+          <span className={s.certText}>
+            <span className={s.giftKicker}>Не знаете цвет или размер?</span>
+            <span className={s.certTitle}>Подарочный сертификат</span>
+            <span className={s.btnInk}>Заказать сертификат</span>
+          </span>
+          <Stamp
+            id="cert"
+            ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·"
+            center="★"
+            sub="МИНСК"
+            className={s.certStamp}
           />
-          <span className={s.giftCaption}>
-            <span className={s.giftKicker}>
-              {giftLines.length} линий · {Math.min(...dens)}–{Math.max(...dens)}{" "}
-              г/м²
-            </span>
-            <b>Подарочные наборы QD</b>
-            <span className={s.giftNames}>
-              {giftLines.map((g) => g.name.replace("QD ", "")).join(" · ")}
-            </span>
-            <span className={s.giftBuy}>
-              <span>Цена по запросу</span>
-              <span className={s.btnInk}>Выбрать набор</span>
-            </span>
-          </span>
-        </a>
-        <a href="/biznes#certificate" className={s.cert}>
-          <span className={s.certTop}>
-            <Logo className={s.certLogo} />
-            <Stamp
-              id="cert"
-              ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·"
-              center="★"
-              sub="МИНСК"
-              className={s.certStamp}
-            />
-          </span>
-          <span className={s.certTitle}>Подарочный сертификат</span>
-          <span className={s.certLines}>
-            <span>Кому</span>
-            <span>От кого</span>
-            <span>Номинал</span>
-          </span>
-          <span className={s.btnInk}>Заказать сертификат</span>
-        </a>
+        </Link>
       </div>
     </section>
   );

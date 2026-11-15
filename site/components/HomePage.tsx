@@ -21,7 +21,7 @@ export function HomePage({ products }: { products: Product[] }) {
           <Wheel items={collections} mode="flow" products={products} />
         </section>
         <Catalog collections={collections} products={products} />
-        <Gifts />
+        <Gifts items={products.filter((p) => p.category === "gifts")} />
         <Trust />
         <Hotels />
       </main>

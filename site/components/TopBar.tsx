@@ -128,6 +128,7 @@ export function TopBar({ compact = false }: { compact?: boolean }) {
       <Link
         ref={logo}
         href="/"
+        data-top
         className={`${s.logo} ${compact ? s.compactLogo : ""}`}
         aria-label="KAVA HOME, на главную"
       >

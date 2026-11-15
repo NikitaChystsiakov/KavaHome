@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Forum, Golos_Text, Marck_Script } from "next/font/google";
 import "./globals.css";
 import { INDEXABLE, SITE_URL } from "@/lib/site";
+import { ScrollTop } from "@/components/ScrollTop";
 
 const forum = Forum({
   variable: "--font-forum",
@@ -47,7 +48,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ru" className={`${forum.variable} ${golos.variable} ${hand.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ScrollTop />
+      </body>
     </html>
   );
 }

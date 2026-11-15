@@ -355,11 +355,24 @@ div.trustLabel :global(.caps) {
   .trust[data-screen] {
     min-height: calc(100svh - var(--hdr));
   }
-  .partners[data-screen],
-  .trust[data-screen] {
+  .partners[data-screen] {
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+  /* «Нам доверяют» на главной: заголовок сверху, таблица растягивается на остаток экрана —
+     раньше блок стоял по центру, и на высоких экранах сверху оставалась пустая полоса */
+  .trust[data-screen] {
+    display: flex;
+    flex-direction: column;
+    padding-top: clamp(28px, 6svh, 64px);
+    padding-bottom: clamp(24px, 4svh, 48px);
+  }
+  .trust[data-screen] .trustRow {
+    flex: 1 1 auto;
+  }
+  .trust[data-screen] .trustCells > li {
+    min-height: 0;
   }
 }
 
