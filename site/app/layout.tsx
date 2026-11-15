@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Forum, Golos_Text, Marck_Script } from "next/font/google";
 import "./globals.css";
+import { INDEXABLE, SITE_URL } from "@/lib/site";
 
 const forum = Forum({
   variable: "--font-forum",
@@ -24,11 +25,19 @@ const hand = Marck_Script({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "KAVA HOME — махровые полотенца в Минске",
   description:
     "Махровые полотенца из 100% хлопка, коврики и наборы KAVA HOME. Коллекции Верона, Римини, Венеция, Флоренция, Милан. Минск, доставка по Беларуси, заказы для отелей и с логотипом.",
-  // демо на vercel.app закрыто от поисковиков; снять при запуске на kavahome.by
-  robots: { index: false, follow: false },
+  alternates: { canonical: "./" },
+  // превью ссылки в Telegram, Viber и соцсетях; картинка — app/opengraph-image.jpg
+  openGraph: {
+    type: "website",
+    locale: "ru_BY",
+    siteName: "KAVA HOME",
+  },
+  // демо закрыто от поисковиков; на боевом домене SITE_INDEX=1 (lib/site.ts)
+  robots: INDEXABLE ? undefined : { index: false, follow: false },
 };
 
 export const viewport: Viewport = {

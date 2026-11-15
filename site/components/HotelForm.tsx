@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Honeypot } from "./Honeypot";
 import { useEffect, useState } from "react";
 import s from "./home.module.css";
 
@@ -81,6 +82,7 @@ export function HotelForm({
         }
       }}
     >
+      <Honeypot />
       {item && (
         <p>
           Уточнить цену: <strong>{item}</strong>

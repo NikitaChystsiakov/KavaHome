@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { allCards, priceRange } from "@/lib/catalog";
+import { allCards, plural, priceRange } from "@/lib/catalog";
 import { collections } from "@/lib/collections";
 import { getProducts } from "@/lib/woo";
+import { SITE_URL } from "@/lib/site";
 import { CatalogCard } from "@/components/Catalog";
 import { ProductView } from "@/components/ProductView";
 import { Shell } from "@/components/Shell";
@@ -23,9 +24,20 @@ export async function generateMetadata({
   const p = (await getProducts()).find((x) => x.id === id);
   if (!p) return { title: "Товар не найден — KAVA HOME" };
   const [min, max] = priceRange(p);
+  const title = `${p.name} ${p.title}`;
+  const description = `${p.name} ${p.title}: ${p.colors.map((x) => x.name).join(", ")}. ${p.density ? `${p.density} г/м², ` : ""}${p.composition ?? "100% хлопок"}. ${p.source === "woo" ? `Цена ${min}–${max} BYN.` : "Цену уточнит менеджер."} Доставка по Беларуси.`;
   return {
-    title: `${p.name} ${p.title} — ${p.colors.length > 1 ? `${p.colors.length} цветов, ` : ""}${p.source === "woo" ? `от ${min} BYN` : "цена по запросу"} | KAVA HOME`,
-    description: `${p.name} ${p.title}: ${p.colors.map((x) => x.name).join(", ")}. ${p.density ? `${p.density} г/м², ` : ""}${p.composition ?? "100% хлопок"}. ${p.source === "woo" ? `Цена ${min}–${max} BYN.` : "Цену уточнит менеджер."} Доставка по Беларуси.`,
+    // превью ссылки: фото первого цвета вместо общей картинки сайта
+    openGraph: {
+      type: "website",
+      locale: "ru_BY",
+      siteName: "KAVA HOME",
+      title,
+      description,
+      images: [{ url: p.colors[0].image, alt: title }],
+    },
+    title: `${p.name} ${p.title} — ${p.colors.length > 1 ? `${p.colors.length} ${plural(p.colors.length, "цвет", "цвета", "цветов")}, ` : ""}${p.source === "woo" ? `от ${min} BYN` : "цена по запросу"} | KAVA HOME`,
+    description,
   };
 }
 
@@ -50,8 +62,36 @@ async function Product({
     .slice(0, 8 - same.length);
   const more = allCards([...same, ...near]).slice(0, 8);
 
+  const [min, max] = priceRange(p);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${p.name} ${p.title}`,
+    brand: { "@type": "Brand", name: "KAVA HOME" },
+    image: p.colors.flatMap((c) => c.images?.length ? c.images.slice(0, 1) : [c.image]).map((src) => (src.startsWith("http") ? src : `${SITE_URL}${src}`)),
+    description: `${p.composition ?? "100% хлопок"}${p.density ? `, ${p.density} г/м²` : ""}. Цвета: ${p.colors.map((c) => c.name).join(", ")}.`,
+    sku: p.colors[0].sizes?.[0]?.sku || undefined,
+    color: p.colors.map((c) => c.name).join(", "),
+    material: p.composition ?? "100% хлопок",
+    ...(p.source === "woo" && {
+      offers: {
+        "@type": "AggregateOffer",
+        priceCurrency: "BYN",
+        lowPrice: min,
+        highPrice: max,
+        offerCount: p.colors.reduce((n, c) => n + (c.sizes?.length ?? p.sizes.length), 0),
+        availability: "https://schema.org/InStock",
+        url: `${SITE_URL}/catalog/${p.id}`,
+      },
+    }),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
       <ProductView product={p} collection={collection} />
       {more.length > 0 && (
         <section className={s.related} aria-labelledby="related-title">

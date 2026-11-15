@@ -1,3 +1,5 @@
+import { isBot, tooMany } from "@/lib/guard";
+
 // POST /api/lead — заявка «Для бизнеса» (отели, опт, логотип, сертификаты) менеджеру в Telegram.
 // ORDER_DRY_RUN=1 — не отправлять (локальная проверка).
 const esc = (s: string) =>
@@ -20,6 +22,13 @@ export async function POST(req: Request) {
     return Response.json(
       { ok: false, error: "Некорректная заявка" },
       { status: 400 },
+    );
+  // бот: делаем вид, что всё прошло, и ничего не отправляем
+  if (isBot(body)) return Response.json({ ok: true });
+  if (tooMany(req, "lead"))
+    return Response.json(
+      { ok: false, error: "Слишком много заявок подряд" },
+      { status: 429 },
     );
   const name = String(body.name ?? "")
     .trim()

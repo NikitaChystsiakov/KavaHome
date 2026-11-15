@@ -5,6 +5,7 @@ import {
   sendTelegram,
   type OrderInput,
 } from "@/lib/order";
+import { isBot, tooMany } from "@/lib/guard";
 
 // POST /api/order — заказ из корзины. Успех, если заказ дошёл хотя бы в одно место (WooCommerce или Telegram):
 // менеджер всё равно перезвонит. Если не дошёл никуда — ошибка, и корзина просит позвонить.
@@ -22,6 +23,13 @@ export async function POST(req: Request) {
     return Response.json(
       { ok: false, error: "Некорректный заказ" },
       { status: 400 },
+    );
+  // бот: делаем вид, что всё прошло, и ничего не отправляем
+  if (isBot(input)) return Response.json({ ok: true, number: null });
+  if (tooMany(req, "order"))
+    return Response.json(
+      { ok: false, error: "Слишком много заказов подряд. Позвоните нам, пожалуйста." },
+      { status: 429 },
     );
   const name = String(input.name ?? "")
     .trim()

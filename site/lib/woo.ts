@@ -176,6 +176,15 @@ async function pool<T, R>(items: T[], n: number, fn: (x: T) => Promise<R>) {
 
 const attr = (p: WooProduct, name: string) =>
   p.attributes.find((a) => a.name === name)?.options ?? [];
+
+/** Коллекция товара. У халатов в админке атрибута «Коллекция» нет (2026-11-15): берём последнее слово
+ *  названия до запятой («Халат махровый Kava, лиловый» → «Kava»). Старые позиции прошлого разработчика
+ *  в категорию «Халаты» не входят и сняты в черновики. */
+const collectionOf = (p: WooProduct) =>
+  attr(p, "Коллекция")[0] ??
+  (p.categories.some((c) => c.slug === "halaty")
+    ? p.name.split(",")[0].trim().split(/\s+/).pop()
+    : undefined);
 const money = (s: string) => Math.round(Number(s) || 0);
 
 /** Товары WooCommerce, сгруппированные в модели витрины. null — ключей нет. При недоступном API — исключение. */
@@ -193,10 +202,10 @@ export async function getWooProducts(): Promise<Product[] | null> {
     orderby: "menu_order",
     order: "asc",
   });
-  // товары витрины = с атрибутом «Коллекция»; старые позиции прошлого разработчика его не имеют
+  // товары витрины = с атрибутом «Коллекция» (или халаты); старые позиции прошлого разработчика его не имеют
   const ours = raw.filter(
     (p) =>
-      attr(p, "Коллекция").length &&
+      !!collectionOf(p) &&
       (p.status === "publish" || (drafts && p.status === "draft")),
   );
 
@@ -238,10 +247,13 @@ export async function getWooProducts(): Promise<Product[] | null> {
   };
   const groups = new Map<string, Item[]>();
   for (const p of ours) {
-    const coll = attr(p, "Коллекция")[0];
+    const coll = collectionOf(p)!;
     const color = attr(p, "Цвет")[0] ?? "";
     const at = p.name.indexOf(coll);
-    const kind = (at > 0 ? p.name.slice(0, at) : p.name.split(",")[0]).trim();
+    // «Полотенце вафельное «Новогодняя»» — открывающая кавычка остаётся перед коллекцией, убираем
+    const kind = (at > 0 ? p.name.slice(0, at) : p.name.split(",")[0])
+      .replace(/[«»"“”]/g, "")
+      .trim();
     const title = (at >= 0 ? p.name.slice(at) : coll)
       .split(",")[0]
       .replace(/[«»"“”]/g, "")
@@ -352,7 +364,8 @@ export async function getWooProducts(): Promise<Product[] | null> {
         bySize.set(s.label, { label: s.label, note: s.note, price: s.price });
     }
 
-    let id = isSet ? `${collSlug}-nabor` : collSlug;
+    // халат: /catalog/halat-kava, чтобы не путать с коллекцией полотенец «Кава-Хоум»
+    let id = isSet ? `${collSlug}-nabor` : category === "robes" ? `halat-${collSlug}` : collSlug;
     if (ids.has(id)) id = `${collSlug}-${slugify(kind)}`;
     ids.add(id);
 
@@ -361,9 +374,15 @@ export async function getWooProducts(): Promise<Product[] | null> {
       id,
       name: isSet ? "Набор полотенец" : kind,
       title,
-      collection: collSlug,
+      // халаты не коллекция-город: без коллекции, чтобы не появиться в фильтре «Коллекции»; ещё и в «Баня и пляж»
+      collection: category === "robes" ? "" : collSlug,
       category,
-      purposes: [...cats].map((c) => PURPOSE[c]).filter(Boolean),
+      purposes: [
+        ...new Set([
+          ...[...cats].map((c) => PURPOSE[c]).filter(Boolean),
+          ...(category === "robes" ? (["banya-plyazh"] as PurposeId[]) : []),
+        ]),
+      ],
       density,
       sizes: [...bySize.values()].sort(
         (a, b) => sizeArea(a.label) - sizeArea(b.label),
@@ -388,14 +407,15 @@ export async function getWooProducts(): Promise<Product[] | null> {
 
 /**
  * Каталог витрины: товары из WooCommerce, а разделы, которых в админке ещё нет (халаты, QD…), — заглушками прототипа.
- * Без ключей или при ошибке API — целиком заглушки, чтобы витрина не падала.
+ * Без ключей или при ошибке API — исключение (страница ошибки с телефоном), а не заглушки с выдуманными ценами.
+ * На практике посетитель его почти не увидит: готовые страницы хранятся, и при неудачном обновлении остаётся прежняя версия.
  */
 export async function getProducts(): Promise<Product[]> {
   let live: Product[] | null = null;
   try {
     live = await getWooProducts();
   } catch (e) {
-    console.error("[woo] товары не загрузились, показываю заглушки:", e);
+    console.error("[woo] товары не загрузились:", e);
   }
   if (!live?.length)
     throw new Error(

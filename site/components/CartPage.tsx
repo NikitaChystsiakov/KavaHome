@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Honeypot } from "./Honeypot";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cart, cartCount, cartTotal, plural, useCart } from "@/lib/cart";
@@ -172,6 +173,7 @@ export function CartPage() {
               доставку, оплата через ЕРИП.
             </p>
             <form className={s.form} onSubmit={submit} noValidate>
+              <Honeypot />
               <label className={s.field}>
                 <span>Имя</span>
                 <input

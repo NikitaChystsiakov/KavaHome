@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { forCollection, priceRange, type Card } from "@/lib/catalog";
+import { forCollection, plural, priceRange, type Card } from "@/lib/catalog";
 import { collections, legKm } from "@/lib/collections";
 import { sizeNote } from "@/lib/colors";
 import { stories } from "@/lib/stories";
@@ -33,8 +33,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { product, colors } = forCollection(slug, await getProducts());
   const kind = product?.name.toLowerCase() ?? "полотенца";
   return {
+    openGraph: {
+      type: "website",
+      locale: "ru_BY",
+      siteName: "KAVA HOME",
+      title: `Коллекция ${col.city} — KAVA HOME`,
+      images: [{ url: col.image, alt: `Полотенца коллекции ${col.city}` }],
+    },
     title: `Коллекция ${col.city} — ${kind}${product ? `, ${product.density} г/м²` : ""} | KAVA HOME`,
-    description: `${col.city}: ${stories[slug]?.tagline ?? ""} ${colors.length ? `${colors.length} ${colors.length > 4 ? "цветов" : "цвета"}: ${colors.map((x) => x.name).join(", ")}.` : ""} ${product?.composition ?? "100% хлопок"}. Доставка по Беларуси.`.replace(/\s+/g, " "),
+    description: `${col.city}: ${stories[slug]?.tagline ?? ""} ${colors.length ? `${colors.length} ${plural(colors.length, "цвет", "цвета", "цветов")}: ${colors.map((x) => x.name).join(", ")}.` : ""} ${product?.composition ?? "100% хлопок"}. Доставка по Беларуси.`.replace(/\s+/g, " "),
   };
 }
 
@@ -178,7 +185,7 @@ async function CollectionView({ params }: Params) {
         <section id="cveta" className={s.colors} aria-labelledby="colors-title">
           <div className={s.colorsHead}>
             <h2 id="colors-title">
-              {colors.length > 1 ? `${colors.length} ${colors.length > 4 ? "цветов" : "цвета"} коллекции` : "Коллекция"}
+              {colors.length > 1 ? `${colors.length} ${plural(colors.length, "цвет", "цвета", "цветов")} коллекции` : "Коллекция"}
             </h2>
             <Link href={`/catalog?kol=${slug}`} className="caps">
               Смотреть в каталоге

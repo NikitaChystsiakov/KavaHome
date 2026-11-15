@@ -264,7 +264,7 @@ export function ProductView({
           {sizes.length > 0 && (
             <fieldset className={s.block}>
               <legend className={s.label}>
-                {isSet ? "Комплект" : "Размер, см"}
+                {isSet ? "Комплект" : p.category === "robes" ? "Размер" : "Размер, см"}
               </legend>
               <div className={s.sizes}>
                 {sizes.map((z) => (
