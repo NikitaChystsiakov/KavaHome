@@ -374,6 +374,30 @@ div.trustLabel :global(.caps) {
   .trust[data-screen] .trustCells > li {
     min-height: 0;
   }
+  .trust[data-screen] .head {
+    margin-bottom: clamp(20px, 3.4svh, 40px);
+  }
+  .trust[data-screen] .trustLabel,
+  .trust[data-screen] div.trustLabel :global(.caps) {
+    font-size: 12px;
+  }
+  .trust[data-screen] .trustName {
+    font-size: 13px;
+  }
+}
+/* высокий экран: строки таблицы вырастают — логотипы растут вместе с ними, а не тонут в ячейках */
+@media (min-width: 761px) and (min-height: 860px) {
+  .trust[data-screen] .trustCells [role="img"] {
+    zoom: 1.2;
+  }
+}
+@media (min-width: 761px) and (min-height: 980px) {
+  .trust[data-screen] .trustCells [role="img"] {
+    zoom: 1.4;
+  }
+  .trust[data-screen] .trustScore {
+    font-size: 64px;
+  }
 }
 
 @media (max-width: 960px) {

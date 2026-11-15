@@ -236,12 +236,14 @@
 .giftTag {
   position: absolute;
   left: clamp(16px, 2vw, 28px);
-  bottom: clamp(16px, 2vw, 28px);
+  bottom: calc(clamp(16px, 2vw, 28px) + 10px);
   z-index: 1;
+  width: min(360px, calc(100% - 32px));
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 16px 20px;
+  gap: 8px;
+  padding: 18px 22px 20px;
+  animation: giftIn 0.35s var(--ease-out);
   background: rgba(251, 248, 243, 0.94);
   box-shadow: 0 18px 40px -28px rgba(50, 32, 20, 0.45);
 }
@@ -256,6 +258,66 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-2);
+}
+@keyframes giftIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.giftHint {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.giftColors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 2px;
+}
+.giftColors span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.giftColors i {
+  width: 14px;
+  height: 14px;
+  box-shadow: inset 0 0 0 1px rgba(42, 34, 34, 0.14);
+}
+.giftBuy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 15px;
+}
+.giftBuy .giftMore {
+  margin-top: 0;
+}
+/* палитра выбранной линии полосой по низу фото */
+.giftPalette {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  height: 10px;
+}
+.giftPalette i {
+  flex: 1;
+  transition: background-color 0.4s ease;
+}
+.giftEyebrow {
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 600;
 }
 .giftMore {
   display: inline-flex;
@@ -317,10 +379,12 @@
   padding: 0 4px;
   transition: background 0.25s, padding 0.25s var(--ease-out);
 }
-.giftList a:hover {
+.giftList a:hover,
+.giftList li[data-active] a {
   background: var(--white);
   padding: 0 14px;
 }
+.giftList li[data-active] a svg,
 .giftList a:hover svg {
   transform: translateX(3px);
 }
@@ -352,12 +416,40 @@
   margin-top: clamp(16px, 3svh, 32px);
   background: var(--sand);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 16px;
-  padding: clamp(18px, 2.6svh, 28px) clamp(20px, 2vw, 28px);
+  grid-template-columns: minmax(0, 1fr);
+  padding: clamp(18px, 2.6svh, 28px) clamp(22px, 2.2vw, 32px);
   overflow: hidden;
   position: relative;
+  /* открытка: пунктирная рамка внутри, как линия отреза */
+  outline: 1px dashed rgba(42, 34, 34, 0.28);
+  outline-offset: -8px;
+}
+.certLines {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 2px 0 6px;
+}
+.certLines span {
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+  gap: 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(42, 34, 34, 0.3);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.certLines em {
+  font-family: var(--hand);
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
 }
 .certText {
   display: flex;
@@ -374,7 +466,17 @@
   font-family: var(--serif);
   font-size: clamp(28px, 2.4vw, 38px);
   line-height: 1;
-  margin-bottom: 6px;
+}
+.certTitle {
+  padding-right: 120px;
+}
+/* штемпель в углу открытки, поверх рамки */
+.cert .certStamp {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 128px;
+  height: 76px;
 }
 .btnInk {
   align-self: flex-start;
@@ -649,7 +751,13 @@
 /* ───────── планшет ───────── */
 /* низкий ноутбук: в «Подарить» без вводного абзаца, чтобы список линий не сжимался */
 @media (min-width: 761px) and (max-height: 700px) {
-  .giftsLead {
+  .giftsLead,
+  .certLines {
+    display: none;
+  }
+}
+@media (min-width: 761px) and (max-height: 900px) {
+  .giftEyebrow {
     display: none;
   }
 }
@@ -780,7 +888,10 @@
     grid-template-columns: 1fr;
     grid-template-rows: 22svh auto;
   }
-  .giftTag {
+  .giftTag,
+  .giftPalette,
+  .giftEyebrow,
+  .certLines {
     display: none;
   }
   .giftsSide {
@@ -824,9 +935,14 @@
     font-size: 22px;
     margin-bottom: 2px;
   }
-  .certStamp {
+  .cert .certStamp {
+    top: 8px;
+    right: 10px;
     width: 96px;
     height: 58px;
+  }
+  .certTitle {
+    padding-right: 96px;
   }
   .cert .btnInk {
     height: 40px;
