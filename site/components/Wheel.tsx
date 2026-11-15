@@ -12,6 +12,10 @@ import { SwapPhoto } from "./SwapPhoto";
 import { warm } from "@/lib/warm";
 import w from "./wheel.module.css";
 
+const stampCities = new Set([
+  "bergamo", "verona", "rimini", "venice", "florence", "milan", "lyon", "naples",
+]);
+
 // Веер-колесо: открытки с фото полотенец разложены по дуге на всю ширину, как карты в руке.
 // Колесо бесконечное: новые коллекции не сужают карточки, просто дуга становится длиннее.
 // Крутится перетаскиванием, свайпом, горизонтальной прокруткой тачпада и кликом по соседней открытке.
@@ -299,7 +303,8 @@ export function Wheel({ items, mode = "fan", products: list }: { items: Collecti
       >
         {items.map((x, k) => {
           const ph = mode === "flow" && k === active ? tonePhoto : photoOf(x, products);
-          const sym = citySymbol(x.slug);
+          const hasArtwork = stampCities.has(x.slug);
+          const sym = hasArtwork ? undefined : citySymbol(x.slug);
           const fc = forCollection(x.slug, products);
           const product = fc.product;
           const sizes = product && [...fc.sizes, ...(fc.hasSet ? ["набор"] : [])].join(" · ");
@@ -322,8 +327,16 @@ export function Wheel({ items, mode = "fan", products: list }: { items: Collecti
                     <b>{x.city}</b>
                     <small>{x.latin}</small>
                   </span>
-                  <span className={w.postage} style={{ "--tone": x.tone } as React.CSSProperties} aria-hidden="true">
-                    {sym ? (
+                  <span className={hasArtwork ? w.postageArtwork : w.postage} style={{ "--tone": x.tone } as React.CSSProperties} aria-hidden="true">
+                    {hasArtwork ? (
+                      <Image
+                        src={`/stamps/${x.slug}.webp`}
+                        alt=""
+                        fill
+                        unoptimized
+                        draggable={false}
+                      />
+                    ) : sym ? (
                       <svg viewBox={sym.viewBox} preserveAspectRatio="xMidYMid meet" style={{ "--sw": Number(sym.viewBox.split(" ")[2]) / 36 } as React.CSSProperties}>
                         <path d={sym.d} />
                       </svg>
