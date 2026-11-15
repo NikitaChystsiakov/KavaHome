@@ -194,3 +194,85 @@ export function Marketplaces({ screen = false }: { screen?: boolean }) {
     </section>
   );
 }
+
+/** Главная (2026-11-15): отели, магазины и маркетплейсы одним экраном — три строки-таблицы вместо двух
+ *  полных экранов. Подробно отели — на /biznes, полный блок маркетплейсов остаётся для отдельной страницы. */
+export function Trust() {
+  return (
+    <section
+      className={s.trust}
+      aria-labelledby="trust-title"
+      data-screen
+    >
+      <div className={s.head}>
+        <div>
+          <p className={`caps ${s.kicker}`}>Нам доверяют</p>
+          <h2 id="trust-title" className={s.h2}>
+            Отели, магазины
+            <br />и маркетплейсы
+          </h2>
+        </div>
+        <p className={s.lead}>
+          Более трёх лет KAVA HOME поставляет полотенца в&nbsp;крупнейшие
+          торговые сети Беларуси. Текстиль повышенной плотности 500&nbsp;г/м²
+          выбирают гостиницы, курорты и&nbsp;фитнес-клубы.
+        </p>
+      </div>
+
+      <div className={s.trustRow}>
+        <p className={`caps ${s.trustLabel}`}>Отели и курорты</p>
+        <ul className={s.trustCells} style={{ "--n": hotels.length } as React.CSSProperties}>
+          {hotels.map((p) => (
+            <li key={p.name} title={`${p.name} — ${p.kind}`}>
+              <PartnerLogo p={p} area={3400} />
+              <span className={s.trustName}>{p.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className={s.trustRow}>
+        <p className={`caps ${s.trustLabel}`}>В магазинах Беларуси</p>
+        <ul className={s.trustCells} style={{ "--n": stores.length } as React.CSSProperties}>
+          {stores.map((p) => (
+            <li key={p.name} title={`${p.name} — ${p.kind}`}>
+              <PartnerLogo p={p} area={3400} />
+              <span className="visually-hidden">{p.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className={s.trustRow}>
+        <div className={s.trustLabel}>
+          <p className="caps">На маркетплейсах</p>
+          <p className={s.trustScore}>
+            {rating}
+            <Stars />
+          </p>
+          <p className={s.trustNote}>средняя оценка покупателей</p>
+        </div>
+        <ul className={s.trustCells} style={{ "--n": marketplaces.length } as React.CSSProperties}>
+          {marketplaces.map((m) => (
+            <li key={m.name}>
+              <a
+                href={m.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={s.trustShop}
+              >
+                <PartnerLogo p={m} area={2600} />
+                <span className={s.shopGo}>
+                  Магазин KAVA HOME
+                  <svg viewBox="0 0 12 12" aria-hidden="true">
+                    <path d="M3 9l6-6M4 3h5v5" />
+                  </svg>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}

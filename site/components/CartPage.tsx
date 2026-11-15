@@ -22,7 +22,11 @@ export function CartPage() {
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    if (busy) return;
+    const data = Object.fromEntries(new FormData(e.currentTarget)) as Record<
+      string,
+      string
+    >;
     const wrong = [
       !data.name?.trim() && "name",
       (data.phone ?? "").replace(/\D/g, "").length < 9 && "phone",
@@ -30,7 +34,13 @@ export function CartPage() {
     ].filter(Boolean) as string[];
     setBad(wrong);
     if (wrong.length) {
-      setError(wrong.includes("phone") ? "Проверьте телефон: нужен номер, по которому перезвонить." : "Заполните отмеченные поля.");
+      setError(
+        wrong.includes("phone")
+          ? "Проверьте телефон: нужен номер, по которому перезвонить."
+          : "Заполните отмеченные поля.",
+      );
+      const field = e.currentTarget.elements.namedItem(wrong[0]);
+      if (field instanceof HTMLElement) field.focus();
       return;
     }
     setError("");
@@ -42,15 +52,31 @@ export function CartPage() {
         body: JSON.stringify({
           ...data,
           delivery,
-          lines: list.map((x) => ({ model: x.model, color: x.color, size: x.size, qty: x.qty })),
+          lines: list.map((x) => ({
+            model: x.model,
+            color: x.color,
+            size: x.size,
+            qty: x.qty,
+            expectedPrice: x.price,
+          })),
         }),
       });
-      const out = (await res.json()) as { ok: boolean; number?: string; error?: string };
+      const out = (await res.json()) as {
+        ok: boolean;
+        number?: string;
+        error?: string;
+        prices?: { key: string; price: number }[];
+      };
+      if (out.prices) cart.reprice(out.prices);
       if (!out.ok) throw new Error(out.error);
       cart.clear();
-      router.push(`/spasibo${out.number ? `?n=${encodeURIComponent(out.number)}` : ""}`);
+      router.push(
+        `/spasibo${out.number ? `?n=${encodeURIComponent(out.number)}` : ""}`,
+      );
     } catch (err) {
-      setError(`${(err as Error).message || "Заказ не отправился."} Позвоните: ${contacts.phone}.`);
+      setError(
+        `${(err as Error).message || "Заказ не отправился."} Позвоните: ${contacts.phone}.`,
+      );
       setBusy(false);
     }
   };
@@ -68,7 +94,10 @@ export function CartPage() {
 
       {n === 0 ? (
         <div className={s.empty}>
-          <p>В корзине пока пусто. Выберите полотенца в каталоге: цвет и размер — в карточке товара.</p>
+          <p>
+            В корзине пока пусто. Выберите полотенца в каталоге: цвет и размер —
+            в карточке товара.
+          </p>
           <Link href="/catalog" className={s.btnInk}>
             Перейти в каталог
           </Link>
@@ -78,8 +107,22 @@ export function CartPage() {
           <ul className={s.list}>
             {list.map((x) => (
               <li key={x.key} className={s.row}>
-                <Link href={x.href} className={s.rowPhoto} tabIndex={-1} aria-hidden="true">
-                  <Image src={x.image} alt="" fill sizes="112px" style={{ objectFit: "cover", objectPosition: x.position ?? "50% 50%" }} />
+                <Link
+                  href={x.href}
+                  className={s.rowPhoto}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                >
+                  <Image
+                    src={x.image}
+                    alt=""
+                    fill
+                    sizes="112px"
+                    style={{
+                      objectFit: "cover",
+                      objectPosition: x.position ?? "50% 50%",
+                    }}
+                  />
                 </Link>
                 <div className={s.rowInfo}>
                   <Link href={x.href} className={s.rowName}>
@@ -92,15 +135,27 @@ export function CartPage() {
                   <span className={s.muted}>{x.price} BYN за шт.</span>
                   <div className={s.rowTools}>
                     <span className={s.qty}>
-                      <button type="button" aria-label="Меньше" onClick={() => cart.setQty(x.key, x.qty - 1)}>
+                      <button
+                        type="button"
+                        aria-label="Меньше"
+                        onClick={() => cart.setQty(x.key, x.qty - 1)}
+                      >
                         −
                       </button>
                       <span aria-live="polite">{x.qty}</span>
-                      <button type="button" aria-label="Больше" onClick={() => cart.setQty(x.key, x.qty + 1)}>
+                      <button
+                        type="button"
+                        aria-label="Больше"
+                        onClick={() => cart.setQty(x.key, x.qty + 1)}
+                      >
                         +
                       </button>
                     </span>
-                    <button type="button" className={s.remove} onClick={() => cart.remove(x.key)}>
+                    <button
+                      type="button"
+                      className={s.remove}
+                      onClick={() => cart.remove(x.key)}
+                    >
                       Удалить
                     </button>
                   </div>
@@ -112,27 +167,66 @@ export function CartPage() {
 
           <aside className={s.checkout} aria-labelledby="checkout-title">
             <h2 id="checkout-title">Оформление</h2>
-            <p className={s.lead}>Платить сейчас не нужно. Менеджер перезвонит, подтвердит заказ и доставку, оплата через ЕРИП.</p>
+            <p className={s.lead}>
+              Платить сейчас не нужно. Менеджер перезвонит, подтвердит заказ и
+              доставку, оплата через ЕРИП.
+            </p>
             <form className={s.form} onSubmit={submit} noValidate>
               <label className={s.field}>
                 <span>Имя</span>
-                <input name="name" autoComplete="name" aria-invalid={bad.includes("name")} />
+                <input
+                  name="name"
+                  autoComplete="name"
+                  aria-invalid={bad.includes("name")}
+                  aria-describedby={
+                    bad.includes("name") ? "error-name" : undefined
+                  }
+                />
+                {bad.includes("name") && (
+                  <small id="error-name" className={s.error}>
+                    Укажите имя.
+                  </small>
+                )}
               </label>
               <label className={s.field}>
                 <span>Телефон</span>
-                <input name="phone" type="tel" autoComplete="tel" placeholder="+375 (__) ___-__-__" aria-invalid={bad.includes("phone")} />
+                <input
+                  name="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="+375 (__) ___-__-__"
+                  aria-invalid={bad.includes("phone")}
+                  aria-describedby={
+                    bad.includes("phone") ? "error-phone" : undefined
+                  }
+                />
+                {bad.includes("phone") && (
+                  <small id="error-phone" className={s.error}>
+                    Укажите номер, по которому можно перезвонить.
+                  </small>
+                )}
               </label>
               <fieldset className={s.ways}>
                 <legend>Получение</legend>
                 <label className={s.way}>
-                  <input type="radio" name="way" checked={delivery === "delivery"} onChange={() => setDelivery("delivery")} />
+                  <input
+                    type="radio"
+                    name="way"
+                    checked={delivery === "delivery"}
+                    onChange={() => setDelivery("delivery")}
+                  />
                   <span>
                     Доставка по Беларуси
                     <small>Стоимость и срок менеджер назовёт при звонке</small>
                   </span>
                 </label>
                 <label className={s.way}>
-                  <input type="radio" name="way" checked={delivery === "pickup"} onChange={() => setDelivery("pickup")} />
+                  <input
+                    type="radio"
+                    name="way"
+                    checked={delivery === "pickup"}
+                    onChange={() => setDelivery("pickup")}
+                  />
                   <span>
                     Самовывоз из шоурума
                     <small>{contacts.pickupShort}</small>
@@ -143,17 +237,37 @@ export function CartPage() {
                 <>
                   <label className={s.field}>
                     <span>Город</span>
-                    <input name="city" autoComplete="address-level2" aria-invalid={bad.includes("city")} />
+                    <input
+                      name="city"
+                      autoComplete="address-level2"
+                      aria-invalid={bad.includes("city")}
+                      aria-describedby={
+                        bad.includes("city") ? "error-city" : undefined
+                      }
+                    />
+                    {bad.includes("city") && (
+                      <small id="error-city" className={s.error}>
+                        Укажите город доставки.
+                      </small>
+                    )}
                   </label>
                   <label className={s.field}>
-                    <span>Адрес</span>
-                    <input name="address" autoComplete="street-address" placeholder="Улица, дом, квартира" />
+                    <span>Адрес · необязательно</span>
+                    <input
+                      name="address"
+                      autoComplete="street-address"
+                      placeholder="Можно уточнить при звонке"
+                    />
                   </label>
                 </>
               )}
               <label className={s.field}>
-                <span>Комментарий</span>
-                <textarea name="comment" rows={2} placeholder="Удобное время звонка, подарочная упаковка…" />
+                <span>Комментарий · необязательно</span>
+                <textarea
+                  name="comment"
+                  rows={2}
+                  placeholder="Удобное время звонка, подарочная упаковка…"
+                />
               </label>
 
               <dl className={s.sum}>
@@ -163,10 +277,16 @@ export function CartPage() {
                 </div>
                 <div>
                   <dt>{delivery === "pickup" ? "Самовывоз" : "Доставка"}</dt>
-                  <dd>{delivery === "pickup" ? "д. Волковичи" : "назовёт менеджер"}</dd>
+                  <dd>
+                    {delivery === "pickup"
+                      ? "д. Волковичи"
+                      : "назовёт менеджер"}
+                  </dd>
                 </div>
                 <div className={s.total}>
-                  <dt>{delivery === "pickup" ? "Итого" : "Итого без доставки"}</dt>
+                  <dt>
+                    {delivery === "pickup" ? "Итого" : "Итого без доставки"}
+                  </dt>
                   <dd>{total} BYN</dd>
                 </div>
               </dl>
@@ -180,7 +300,8 @@ export function CartPage() {
                 {busy ? "Отправляем…" : "Отправить заказ"}
               </button>
               <p className={s.fine}>
-                Нажимая «Отправить заказ», вы соглашаетесь с <Link href="/privacy">обработкой персональных данных</Link>.
+                Нажимая «Отправить заказ», вы соглашаетесь с{" "}
+                <Link href="/privacy">обработкой персональных данных</Link>.
               </p>
             </form>
           </aside>

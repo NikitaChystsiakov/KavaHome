@@ -21,11 +21,22 @@ function defaultSize(sizes: Size[]) {
   return sizes.find((z) => z.label.startsWith("70×")) ?? sizes[0];
 }
 
-export function ProductView({ product: p, collection }: { product: Product; collection?: Collection }) {
+export function ProductView({
+  product: p,
+  collection,
+}: {
+  product: Product;
+  collection?: Collection;
+}) {
+  const zoom = useRef<HTMLDialogElement>(null);
+  const [zoomShot, setZoomShot] = useState(0);
+  const confirmed = p.source === "woo";
   const [ci, setCi] = useState(0);
   const color = p.colors[ci];
   const sizes = color.sizes?.length ? color.sizes : p.sizes;
-  const [sizeLabel, setSizeLabel] = useState<string>(() => defaultSize(sizes)?.label ?? "");
+  const [sizeLabel, setSizeLabel] = useState<string>(
+    () => defaultSize(sizes)?.label ?? "",
+  );
   const size = sizes.find((z) => z.label === sizeLabel) ?? defaultSize(sizes);
   const [shot, setShot] = useState(0);
   const [done, setDone] = useState(false);
@@ -65,7 +76,8 @@ export function ProductView({ product: p, collection }: { product: Product; coll
     const next = p.colors[i];
     // у цвета может не быть выбранного размера: тогда ближайший по умолчанию
     const nextSizes = next.sizes?.length ? next.sizes : p.sizes;
-    if (!nextSizes.some((z) => z.label === sizeLabel)) setSizeLabel(defaultSize(nextSizes)?.label ?? "");
+    if (!nextSizes.some((z) => z.label === sizeLabel))
+      setSizeLabel(defaultSize(nextSizes)?.label ?? "");
   };
 
   const [min, max] = priceRange(p);
@@ -73,7 +85,7 @@ export function ProductView({ product: p, collection }: { product: Product; coll
   const isSet = p.category === "sets";
 
   const add = () => {
-    if (!size) return;
+    if (!size || !confirmed) return;
     cart.add({
       key: `${p.id}|${color.name}|${size.label}`,
       model: p.id,
@@ -95,21 +107,43 @@ export function ProductView({ product: p, collection }: { product: Product; coll
   return (
     <div className={s.product}>
       <div className={s.gallery} aria-label="Фото">
-        <ul className={s.photos} data-count={photos.length} onScroll={(e) => {
-          const el = e.currentTarget;
-          setShot(Math.round(el.scrollLeft / el.clientWidth));
-        }}>
+        <ul
+          key={color.name}
+          className={s.photos}
+          data-count={photos.length}
+          onScroll={(e) => {
+            const el = e.currentTarget;
+            setShot(Math.round(el.scrollLeft / el.clientWidth));
+          }}
+        >
           {photos.map((src, i) => (
             <li key={src}>
-              <Image
-                src={src}
-                alt={`${p.name} ${p.title}, ${color.name}, фото ${i + 1}`}
-                fill
-                sizes="(max-width: 760px) 100vw, 30vw"
-                style={{ objectFit: "cover", objectPosition: i === 0 ? (color.position ?? "50% 50%") : "50% 50%" }}
-                preload={i === 0}
-                quality={85}
-              />
+              <button
+                type="button"
+                className={s.photoButton}
+                aria-label={`Увеличить фото ${i + 1}`}
+                onClick={() => {
+                  setZoomShot(i);
+                  zoom.current?.showModal();
+                }}
+              >
+                <Image
+                  src={src}
+                  alt={`${p.name} ${p.title}, ${color.name}, фото ${i + 1}`}
+                  fill
+                  sizes="(max-width: 960px) 100vw, 30vw"
+                  style={{
+                    objectFit: "cover",
+                    objectPosition:
+                      i === 0 ? (color.position ?? "50% 50%") : "50% 50%",
+                  }}
+                  preload={i === 0}
+                  quality={85}
+                />
+                <span className={s.zoomHint} aria-hidden="true">
+                  Рассмотреть +
+                </span>
+              </button>
             </li>
           ))}
         </ul>
@@ -120,6 +154,56 @@ export function ProductView({ product: p, collection }: { product: Product; coll
         )}
       </div>
 
+      <dialog
+        ref={zoom}
+        className={s.zoom}
+        aria-label="Фото товара крупным планом"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) zoom.current?.close();
+        }}
+      >
+        <div className={s.zoomBar}>
+          <span>
+            {p.title} · {color.name} · {zoomShot + 1}/{photos.length}
+          </span>
+          <button
+            type="button"
+            autoFocus
+            onClick={() => zoom.current?.close()}
+            aria-label="Закрыть фото"
+          >
+            Закрыть ×
+          </button>
+        </div>
+        <div className={s.zoomImage}>
+          <Image
+            src={photos[zoomShot] ?? photos[0]}
+            alt={`${p.title}, ${color.name}, крупный план`}
+            fill
+            sizes="100vw"
+            quality={85}
+            style={{ objectFit: "contain" }}
+          />
+        </div>
+        {photos.length > 1 && (
+          <div className={s.zoomNav}>
+            <button
+              type="button"
+              onClick={() =>
+                setZoomShot((zoomShot + photos.length - 1) % photos.length)
+              }
+            >
+              ← Предыдущее
+            </button>
+            <button
+              type="button"
+              onClick={() => setZoomShot((zoomShot + 1) % photos.length)}
+            >
+              Следующее →
+            </button>
+          </div>
+        )}
+      </dialog>
       <div className={s.panel}>
         <div className={s.sticky}>
           <nav className={`caps ${s.crumbs}`} aria-label="Навигация">
@@ -136,8 +220,17 @@ export function ProductView({ product: p, collection }: { product: Product; coll
             <span>{p.name}</span> {p.title}
           </h1>
           <p className={s.price}>
-            {size ? `${size.price} BYN` : `${min} – ${max} BYN`}
-            {size && min !== max && <small> · от {min} до {max} BYN за размер</small>}
+            {!confirmed
+              ? "Цена по запросу"
+              : size
+                ? `${size.price} BYN`
+                : `${min} – ${max} BYN`}
+            {confirmed && size && min !== max && (
+              <small>
+                {" "}
+                · от {min} до {max} BYN за размер
+              </small>
+            )}
           </p>
 
           <div className={s.block}>
@@ -153,7 +246,13 @@ export function ProductView({ product: p, collection }: { product: Product; coll
                     aria-label={c.name}
                     title={c.name}
                     onClick={() => pickColor(i)}
-                    onPointerEnter={() => warm([c.images?.[0] ?? c.image], "(max-width: 760px) 100vw, 30vw", 85)}
+                    onPointerEnter={() =>
+                      warm(
+                        [c.images?.[0] ?? c.image],
+                        "(max-width: 960px) 100vw, 30vw",
+                        85,
+                      )
+                    }
                   >
                     <i style={{ background: c.swatch }} />
                   </button>
@@ -164,7 +263,9 @@ export function ProductView({ product: p, collection }: { product: Product; coll
 
           {sizes.length > 0 && (
             <fieldset className={s.block}>
-              <legend className={s.label}>{isSet ? "Комплект" : "Размер, см"}</legend>
+              <legend className={s.label}>
+                {isSet ? "Комплект" : "Размер, см"}
+              </legend>
               <div className={s.sizes}>
                 {sizes.map((z) => (
                   <label key={z.label} className={s.size}>
@@ -180,7 +281,9 @@ export function ProductView({ product: p, collection }: { product: Product; coll
                     />
                     <span className={s.sizeName}>{z.label}</span>
                     <span className={s.sizeNote}>{z.note}</span>
-                    <span className={s.sizePrice}>{z.price} BYN</span>
+                    <span className={s.sizePrice}>
+                      {confirmed ? `${z.price} BYN` : "по запросу"}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -188,16 +291,33 @@ export function ProductView({ product: p, collection }: { product: Product; coll
           )}
 
           <div className={s.buy}>
-            <button type="button" className={s.btnInk} onClick={add} disabled={!size}>
-              {done ? "Добавлено · ещё одно" : "В корзину"}
-            </button>
+            {confirmed ? (
+              <button
+                type="button"
+                className={s.btnInk}
+                onClick={add}
+                disabled={!size}
+              >
+                {done ? "Добавлено · ещё одно" : "В корзину"}
+              </button>
+            ) : (
+              <a
+                className={s.btnInk}
+                href={`/biznes?item=${encodeURIComponent(`${p.title}, ${color.name}, ${size?.label ?? ""}`)}#zayavka`}
+              >
+                Уточнить цену
+              </a>
+            )}
             {done && (
               <Link href="/korzina" className={s.btnLine}>
                 Перейти в корзину
               </Link>
             )}
           </div>
-          <p className={s.hint}>Оплата при подтверждении: менеджер позвонит, уточнит заказ и доставку.</p>
+          <p className={s.hint}>
+            Менеджер подтвердит заказ и доставку по телефону. Оплата — после
+            согласования.
+          </p>
 
           <dl className={s.facts}>
             <div>
@@ -220,7 +340,9 @@ export function ProductView({ product: p, collection }: { product: Product; coll
               <div>
                 <dt>Коллекция</dt>
                 <dd>
-                  <Link href={`/catalog?kol=${collection.slug}`}>{collection.city} →</Link>
+                  <Link href={`/kollekcii/${collection.slug}`}>
+                    {collection.city} →
+                  </Link>
                 </dd>
               </div>
             )}
@@ -230,7 +352,10 @@ export function ProductView({ product: p, collection }: { product: Product; coll
             {p.description && (
               <details>
                 <summary>Описание</summary>
-                <div className={s.desc} dangerouslySetInnerHTML={{ __html: p.description }} />
+                <div
+                  className={s.desc}
+                  dangerouslySetInnerHTML={{ __html: p.description }}
+                />
               </details>
             )}
             <details>
@@ -240,8 +365,10 @@ export function ProductView({ product: p, collection }: { product: Product; coll
             <details>
               <summary>Доставка и оплата</summary>
               <p>
-                Доставляем по всей Беларуси. Самовывоз — шоурум и склад: {contacts.pickupShort}. Стоимость доставки менеджер назовёт при
-                подтверждении заказа, оплата через ЕРИП или по реквизитам. <Link href="/dostavka">Подробнее</Link>
+                Доставляем по всей Беларуси. Самовывоз — шоурум и склад:{" "}
+                {contacts.pickupShort}. Стоимость доставки менеджер назовёт при
+                подтверждении заказа, оплата через ЕРИП или по реквизитам.{" "}
+                <Link href="/dostavka">Подробнее</Link>
               </p>
             </details>
           </div>

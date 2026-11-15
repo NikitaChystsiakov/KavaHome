@@ -1,0 +1,489 @@
+/* Страницы коллекций /kollekcii и /kollekcii/[slug] (2026-11-15) */
+
+/* ───────── первый экран: фото слева, паспорт коллекции справа ───────── */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  min-height: 100svh;
+  padding-top: var(--hdr);
+  background: var(--milk);
+}
+.heroPhoto {
+  position: relative;
+  min-height: 0;
+  background: var(--paper);
+}
+.heroText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px clamp(28px, 4vw, 72px);
+}
+.heroText > :global(.caps) {
+  color: var(--ink-2);
+}
+.heroText > :global(.caps) a {
+  border-bottom: 1px solid var(--line);
+}
+.heroText h1 {
+  margin-top: 20px;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(64px, 7.4vw, 128px);
+  line-height: 0.92;
+}
+.latin {
+  margin-top: 14px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--ink-3);
+}
+.tagline {
+  margin-top: 24px;
+  max-width: 36ch;
+  font-size: 19px;
+  line-height: 1.4;
+}
+.swatches {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+}
+.swatches a {
+  display: block;
+  width: 26px;
+  height: 26px;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+  transition: outline-color 0.2s;
+}
+.swatches a:hover,
+.swatches a:focus-visible {
+  outline-color: var(--ink);
+}
+.specs {
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.specs div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.specs dt {
+  color: var(--ink-2);
+}
+.btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+.btn,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 24px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--ink);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.btn {
+  background: var(--ink);
+  color: var(--milk);
+}
+.btn:hover {
+  background: transparent;
+  color: var(--ink);
+}
+.btnGhost:hover {
+  background: var(--ink);
+  color: var(--milk);
+}
+
+/* ───────── почему так названа: открытка + текст ───────── */
+.story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  padding: 112px var(--pad);
+  background: var(--paper);
+}
+.story[data-postcard] {
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  align-items: center;
+  justify-items: stretch;
+  gap: clamp(40px, 6vw, 112px);
+}
+.postcard {
+  position: relative;
+  padding: 14px 14px 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  transform: rotate(-2deg);
+}
+.postcardImg {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--sand);
+}
+.postcard figcaption {
+  padding: 12px 96px 14px 2px;
+  font-family: var(--serif);
+  font-size: 17px;
+  color: var(--logo);
+}
+.stamp {
+  position: absolute;
+  right: -28px;
+  bottom: -44px;
+  width: 128px;
+  height: 128px;
+  color: var(--logo);
+  transform: rotate(12deg);
+}
+.storyText {
+  max-width: 60ch;
+}
+.storyText > :global(.caps) {
+  color: var(--ink-2);
+}
+.storyText h2 {
+  margin: 14px 0 24px;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 4.4vw, 64px);
+  line-height: 1;
+}
+.para {
+  margin-top: 14px;
+  line-height: 1.6;
+}
+.storyText h3 {
+  margin-top: 40px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.facts {
+  list-style: none;
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.facts li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 8px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.5;
+}
+.facts li > span {
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--logo);
+}
+
+/* ───────── цвета: сетка каталога от края до края ───────── */
+.colors {
+  padding: 72px 0 0;
+  background: var(--milk);
+}
+.colorsHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  padding: 0 var(--pad) 24px;
+}
+.colorsHead h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(32px, 3.4vw, 48px);
+  line-height: 1;
+}
+.colorsHead a {
+  border-bottom: 1px solid var(--line);
+}
+
+/* ───────── следующая остановка маршрута ───────── */
+.route {
+  margin-top: 72px;
+  border-top: 1px solid var(--line);
+  background: var(--sand);
+}
+.next {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  min-height: clamp(280px, 44svh, 440px);
+}
+.nextPhoto {
+  position: relative;
+  overflow: hidden;
+}
+.nextPhoto img {
+  transition: transform 0.8s var(--ease-out);
+}
+.next:hover .nextPhoto img {
+  transform: scale(1.03);
+}
+.nextText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px clamp(28px, 5vw, 96px);
+}
+.nextText :global(.caps) {
+  color: var(--ink-2);
+}
+.nextText b {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(56px, 7vw, 112px);
+  line-height: 0.95;
+}
+.nextText b::after {
+  content: "→";
+  margin-left: 0.3em;
+  font-size: 0.5em;
+  vertical-align: middle;
+  display: inline-block;
+  transition: transform 0.3s var(--ease-out);
+}
+.next:hover .nextText b::after {
+  transform: translateX(8px);
+}
+.routeLinks {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px var(--pad);
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.routeLinks a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ───────── /kollekcii: все города ───────── */
+.indexTop {
+  padding: calc(var(--hdr) + 72px) var(--pad) 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 32px;
+  background: var(--milk);
+}
+.indexTop > div > :global(.caps) {
+  color: var(--ink-2);
+}
+.indexTop h1 {
+  margin-top: 14px;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(56px, 6vw, 96px);
+  line-height: 0.95;
+}
+.indexTop > p {
+  max-width: 44ch;
+  color: var(--ink-2);
+}
+.cities {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 40px var(--gap);
+  background: var(--milk);
+}
+.city {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.cityImg {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--paper);
+}
+.cityImg img {
+  transition: transform 0.8s var(--ease-out);
+}
+.city:hover .cityImg img {
+  transform: scale(1.03);
+}
+.cityCard {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  width: 72%;
+  padding: 6px 6px 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  transform: translateX(-50%) rotate(-2.5deg);
+  transition: transform 0.4s var(--ease-out);
+}
+.city:hover .cityCard {
+  transform: translateX(-50%) rotate(0deg) translateY(-6px);
+}
+.cityCard span {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+}
+.cityCard i {
+  display: block;
+  padding: 4px 2px 5px;
+  font-family: var(--serif);
+  font-style: normal;
+  font-size: 12px;
+  color: var(--logo);
+}
+.cityMeta {
+  display: grid;
+  gap: 6px;
+  padding: 14px var(--pad) 0;
+}
+.cityMeta :global(.caps) {
+  font-size: 11px;
+  color: var(--ink-3);
+}
+.cityMeta b {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1;
+}
+.cityMeta > span:last-child {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.citySw {
+  display: flex;
+  gap: 4px;
+}
+.citySw i {
+  width: 14px;
+  height: 14px;
+}
+.indexMore {
+  margin-top: 72px;
+  padding: 40px var(--pad);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: var(--paper);
+}
+.indexMore p {
+  max-width: 52ch;
+}
+
+@media (max-width: 1100px) {
+  .cities {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .heroPhoto {
+    height: 58svh;
+  }
+  .heroText {
+    padding: 32px var(--pad) 48px;
+  }
+  .story[data-postcard] {
+    grid-template-columns: 1fr;
+    gap: 64px;
+  }
+  .story {
+    padding: 72px var(--pad);
+  }
+  .postcard {
+    margin-right: 24px;
+  }
+  .next {
+    grid-template-columns: 1fr;
+  }
+  .nextPhoto {
+    aspect-ratio: 3 / 2;
+  }
+  .indexTop {
+    flex-direction: column;
+    align-items: start;
+  }
+}
+
+@media (max-width: 760px) {
+  .heroText h1 {
+    font-size: 64px;
+  }
+  .tagline {
+    font-size: 17px;
+  }
+  .specs div {
+    grid-template-columns: 96px minmax(0, 1fr);
+  }
+  .btns > * {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+  .stamp {
+    width: 96px;
+    height: 96px;
+    right: -18px;
+    bottom: -36px;
+  }
+  .colors {
+    padding-top: 56px;
+  }
+  .colorsHead {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cities {
+    gap: 28px var(--gap);
+  }
+  .cityMeta {
+    padding: 10px 12px 0;
+  }
+  .cityMeta b {
+    font-size: 26px;
+  }
+  .cityMeta > span:last-child {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nextPhoto img,
+  .cityImg img,
+  .cityCard,
+  .nextText b::after {
+    transition: none;
+  }
+}

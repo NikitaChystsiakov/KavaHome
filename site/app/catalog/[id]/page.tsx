@@ -16,26 +16,38 @@ export async function generateStaticParams() {
   return list.map((p) => ({ id: p.id }));
 }
 
-export async function generateMetadata({ params }: PageProps<"/catalog/[id]">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/catalog/[id]">): Promise<Metadata> {
   const { id } = await params;
   const p = (await getProducts()).find((x) => x.id === id);
   if (!p) return { title: "Товар не найден — KAVA HOME" };
   const [min, max] = priceRange(p);
   return {
-    title: `${p.name} ${p.title} — ${p.colors.length > 1 ? `${p.colors.length} цветов, ` : ""}от ${min} BYN | KAVA HOME`,
-    description: `${p.name} ${p.title}: ${p.colors.map((x) => x.name).join(", ")}. ${p.density ? `${p.density} г/м², ` : ""}${p.composition ?? "100% хлопок"}. Цена ${min}–${max} BYN. Доставка по Беларуси.`,
+    title: `${p.name} ${p.title} — ${p.colors.length > 1 ? `${p.colors.length} цветов, ` : ""}${p.source === "woo" ? `от ${min} BYN` : "цена по запросу"} | KAVA HOME`,
+    description: `${p.name} ${p.title}: ${p.colors.map((x) => x.name).join(", ")}. ${p.density ? `${p.density} г/м², ` : ""}${p.composition ?? "100% хлопок"}. ${p.source === "woo" ? `Цена ${min}–${max} BYN.` : "Цену уточнит менеджер."} Доставка по Беларуси.`,
   };
 }
 
-async function Product({ params }: { params: PageProps<"/catalog/[id]">["params"] }) {
+async function Product({
+  params,
+}: {
+  params: PageProps<"/catalog/[id]">["params"];
+}) {
   const { id } = await params;
   const list = await getProducts();
   const p = list.find((x) => x.id === id);
   if (!p) notFound();
   const collection = collections.find((x) => x.slug === p.collection);
   // ниже карточки: та же коллекция (наборы, коврики), потом соседи по категории
-  const same = list.filter((x) => x.id !== p.id && p.collection && x.collection === p.collection);
-  const near = list.filter((x) => x.id !== p.id && !same.includes(x) && x.category === p.category).slice(0, 8 - same.length);
+  const same = list.filter(
+    (x) => x.id !== p.id && p.collection && x.collection === p.collection,
+  );
+  const near = list
+    .filter(
+      (x) => x.id !== p.id && !same.includes(x) && x.category === p.category,
+    )
+    .slice(0, 8 - same.length);
   const more = allCards([...same, ...near]).slice(0, 8);
 
   return (
@@ -44,12 +56,20 @@ async function Product({ params }: { params: PageProps<"/catalog/[id]">["params"
       {more.length > 0 && (
         <section className={s.related} aria-labelledby="related-title">
           <div className={s.relatedHead}>
-            <h2 id="related-title">{same.length && !near.length ? `Ещё из коллекции ${collection?.city ?? p.title}` : "Вам может подойти"}</h2>
+            <h2 id="related-title">
+              {same.length && !near.length
+                ? `Ещё из коллекции ${collection?.city ?? p.title}`
+                : "Вам может подойти"}
+            </h2>
             <Link href="/catalog" className="caps">
               Весь каталог
             </Link>
           </div>
-          <ul className={c.grid} style={{ "--cols": 4 } as React.CSSProperties} data-cols={4}>
+          <ul
+            className={c.grid}
+            style={{ "--cols": 4 } as React.CSSProperties}
+            data-cols={4}
+          >
             {more.map((card) => (
               <li key={card.key}>
                 <CatalogCard card={card} eager={false} cols={4} />

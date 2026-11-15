@@ -23,7 +23,9 @@ export function Thanks({ order: initial = "" }: { order?: string }) {
 
   return (
     <main className={s.page}>
-      <p className={`caps ${s.eyebrow}`}>{order ? `Заказ № ${order} принят` : "Заказ принят"}</p>
+      <p className={`caps ${s.eyebrow}`}>
+        {order ? `Заказ № ${order} принят` : "Заказ принят"}
+      </p>
 
       <div className={s.stage} key={run}>
         <div className={s.card}>
@@ -40,14 +42,17 @@ export function Thanks({ order: initial = "" }: { order?: string }) {
               <div className={s.letter}>
                 <p className={s.hello}>Спасибо за заказ!</p>
                 <p>
-                  Мы уже собираем его. Менеджер позвонит в рабочее время, чтобы подтвердить размер, цвет и доставку.
+                  Мы получили вашу заявку. Менеджер позвонит в рабочее время,
+                  чтобы подтвердить размер, цвет и доставку.
                 </p>
                 <p className={s.sign}>KAVA HOME</p>
               </div>
               <div className={s.addr}>
                 <span className={s.line}>Кому: вам</span>
-                <span className={s.line}>{order ? `Заказ № ${order}` : "Заказ с сайта"}</span>
-                <span className={s.line}>Минск, ул. Рафиева, 55</span>
+                <span className={s.line}>
+                  {order ? `Заказ № ${order}` : "Заказ с сайта"}
+                </span>
+                <span className={s.line}>С заботой о вашем доме</span>
               </div>
               <Stamp
                 id="thanks"
@@ -64,13 +69,18 @@ export function Thanks({ order: initial = "" }: { order?: string }) {
 
       <div className={s.after} key={`a${run}`}>
         <p className={s.text}>
-          Позвоним по телефону из заказа: {contacts.hours}. Вопросы — <a href={contacts.phoneHref}>{contacts.phone}</a>.
+          Позвоним по телефону из заказа: {contacts.hours}. Вопросы —{" "}
+          <a href={contacts.phoneHref}>{contacts.phone}</a>.
         </p>
         <div className={s.btns}>
           <Link href="/catalog" className={s.btn}>
             Вернуться в каталог
           </Link>
-          <button type="button" className={s.replay} onClick={() => setRun(run + 1)}>
+          <button
+            type="button"
+            className={s.replay}
+            onClick={() => setRun(run + 1)}
+          >
             ↻ Показать ещё раз
           </button>
         </div>

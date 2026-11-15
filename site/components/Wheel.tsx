@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Collection } from "@/lib/collections";
@@ -206,9 +207,9 @@ export function Wheel({ items, mode = "fan", products: list }: { items: Collecti
             )}
             <div className={w.pBuy}>
               <span className={w.pPrice}>от {d.from} BYN</span>
-              <a href={`/?kol=${c.slug}#catalog`} data-filter-kol={c.slug} className={w.pMore}>
+              <Link href={`/kollekcii/${c.slug}`} className={w.pMore}>
                 Смотреть коллекцию
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -228,9 +229,9 @@ export function Wheel({ items, mode = "fan", products: list }: { items: Collecti
                 <i key={x.name} style={{ background: x.swatch }} title={x.name} />
               ))}
             </span>
-            <a href={`/?kol=${c.slug}#catalog`} className={w.more}>
+            <Link href={`/kollekcii/${c.slug}`} className={w.more}>
               от {d.from} BYN · смотреть коллекцию →
-            </a>
+            </Link>
           </div>
         </div>
       )}
@@ -340,9 +341,9 @@ export function Wheel({ items, mode = "fan", products: list }: { items: Collecti
                   )}
                   {sizes && <p className={w.letter}>{sizes}</p>}
                   <Stamp id={`wh-${x.slug}`} ring="ЧИСТЫЙ ХЛОПОК · KAVA HOME ·" center="100%" sub="ХЛОПОК" waves={false} className={w.cottonMark} ink />
-                  <a href={`/?kol=${x.slug}#catalog`} className={w.backLink}>
+                  <Link href={`/kollekcii/${x.slug}`} className={w.backLink}>
                     от {forCollection(x.slug, products).from} BYN · смотреть
-                  </a>
+                  </Link>
                 </div>
               </div>
             </article>

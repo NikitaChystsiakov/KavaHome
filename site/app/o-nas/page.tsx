@@ -2,193 +2,167 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Shell } from "@/components/Shell";
-import { Partners, Marketplaces } from "@/components/Partners";
-import { rating, stores } from "@/lib/partners";
-import s from "@/components/info.module.css";
+import { PartnerLogo } from "@/components/Partners";
+import { stores, marketplaces, rating } from "@/lib/partners";
+import s from "@/components/editorial.module.css";
 
 export const metadata: Metadata = {
-  title: "О бренде KAVA HOME — махровые полотенца из 100% хлопка",
+  title: "О бренде — KAVA HOME",
   description:
-    "KAVA HOME больше трёх лет: полотенца из 100% хлопка плотностью 420–500 г/м² в сетях Корона, Green, ProStore, Гиппо, ЦУМ, на Wildberries, Ozon и Emall (оценка 4,9), в отелях и санаториях Беларуси.",
+    "Полотенца KAVA HOME: натуральный хлопок, фактуры и спокойные оттенки. Для дома, подарка и гостиниц Беларуси.",
 };
-
-// Тексты — по ответам Эллы 2026-11-13. Название бренда не объясняем (просьба клиента).
-const reasons = [
-  {
-    title: "100% натуральный хлопок",
-    text: "Полотенца из высококачественного узбекского хлопка: прочного, экологичного и гипоаллергенного. Подходят даже для чувствительной и детской кожи.",
-    photo: "/img/hero-verona-tex.webp",
-    position: "50% 50%",
-  },
-  {
-    title: "Плотность 420–500 г/м²",
-    text: "В меру плотные и пушистые: мгновенно впитывают влагу и при этом быстро сохнут.",
-    photo: "/img/venice-beige.webp",
-    position: "50% 74%",
-  },
-  {
-    title: "Аккуратный пошив",
-    text: "Ровные швы, никаких торчащих ниток и стойкое окрашивание: полотенца держат форму и цвет после десятков интенсивных стирок.",
-    photo: "/img/hotel-badge.webp",
-    position: "60% 70%",
-  },
-];
-
-// спокойная палитра — оттенки из ответа Эллы
-const palette = [
-  { name: "графит", hex: "#4b4c51", ink: "#f8f2e8" },
-  { name: "бежевый", hex: "#d9c3ae", ink: "#2a2222" },
-  { name: "мятный", hex: "#8fb8b4", ink: "#2a2222" },
-  { name: "изумруд", hex: "#00747c", ink: "#f8f2e8" },
-  { name: "шоколад", hex: "#5a3b31", ink: "#f8f2e8" },
-  { name: "белый", hex: "#f6f3ee", ink: "#2a2222" },
-];
-
-const who = [
-  {
-    title: "Для себя и семьи",
-    text: "Берут наборы из 2, 3 или 8–10 полотенец — для тела, лица, рук и кухни, — чтобы обновить домашний текстиль в едином стиле.",
-    photo: "/img/use-bath.webp",
-    href: "/catalog?kat=sets",
-    more: "Наборы",
-  },
-  {
-    title: "В подарок",
-    text: "Коллекции приходят в эстетичной упаковке, есть готовые подарочные наборы. Их выбирают на новоселье, свадьбу, день рождения или просто как знак заботы.",
-    photo: "/img/gift-qd.webp",
-    href: "/catalog?kat=gifts",
-    more: "Подарочные наборы",
-  },
-  {
-    title: "Отели, санатории, фитнес-клубы",
-    text: "Для гостиниц, курортов и спортивных клубов — полотенца повышенной плотности 500 г/м².",
-    photo: "/img/use-hotel.webp",
-    href: "/biznes",
-    more: "Для бизнеса",
-  },
-];
 
 export default function AboutPage() {
   return (
     <Shell>
-      <section className={s.hero} aria-labelledby="about-title">
+      <section className={s.hero}>
         <div className={s.heroText}>
-          <div>
-            <p className={`caps ${s.kicker}`}>О бренде</p>
-            <h1 id="about-title" className={s.h1}>
-              Наполняем уютом дома уже больше трёх лет
-            </h1>
-          </div>
+          <p className="caps">О бренде · KAVA HOME</p>
+          <h1>
+            Вещи, с которыми
+            <br />
+            хорошо дома
+          </h1>
           <p className={s.lead}>
-            За это время KAVA HOME вырос в крупного и надёжного поставщика домашнего и профессионального текстиля. Наши полотенца
-            продаются во всех крупнейших торговых сетях Беларуси и на маркетплейсах, ими пользуются отели, санатории и фитнес-клубы.
+            Мягкая махра, знакомые оттенки, любимое полотенце после душа. Мы
+            выбираем текстиль для этих простых ежедневных моментов.
           </p>
-          <dl className={s.lines}>
-            <div>
-              <dt>3+ года</dt>
-              <dd>на рынке Беларуси</dd>
-            </div>
-            <div>
-              <dt>{rating}</dt>
-              <dd>средняя оценка на Wildberries, Ozon и Emall</dd>
-            </div>
-            <div>
-              <dt>{stores.length} сетей</dt>
-              <dd>{stores.map((x) => x.name).join(", ")}</dd>
-            </div>
-            <div>
-              <dt>420–500 г/м²</dt>
-              <dd>плотность махры</dd>
-            </div>
-          </dl>
+          <Link href="/catalog" className={s.textLink}>
+            Найти своё полотенце <span>↗</span>
+          </Link>
+          <div className={s.heroFoot}>
+            <span>100% хлопок</span>
+            <span>Больше трёх лет в Беларуси</span>
+          </div>
         </div>
-        <div className={s.heroPhoto}>
+        <figure className={s.heroImage}>
           <Image
             src="/img/florence.webp"
-            alt="Полотенца Флоренция в интерьере"
+            alt="Бежевые полотенца Флоренция на туалетном столике"
             fill
             preload
-            sizes="(max-width: 960px) 100vw, 50vw"
-            style={{ objectFit: "cover" }}
+            sizes="(max-width: 900px) 100vw, 50vw"
             quality={85}
           />
+          <figcaption>Флоренция · фактура «ёлочка»</figcaption>
+        </figure>
+      </section>
+      <section className={`${s.section} ${s.paper}`}>
+        <div className={s.sectionHead}>
+          <p className="caps">Знакомство в деталях</p>
+          <h2>
+            Не только цвет.
+            <br />
+            Ещё и ощущение.
+          </h2>
+          <p>
+            Махровые и вафельные полотенца, коврики и наборы. У каждой коллекции
+            — свой рисунок и плотность.
+          </p>
+        </div>
+        <div className={s.detailsGrid}>
+          <figure className={s.texture}>
+            <Image
+              src="/img/hero-verona-tex.webp"
+              alt="Махровая фактура полотенца Верона крупным планом"
+              fill
+              sizes="(max-width: 760px) 100vw, 54vw"
+              quality={85}
+            />
+            <figcaption>01 / Натуральный хлопок</figcaption>
+          </figure>
+          <div className={s.detailText}>
+            <span className="caps">То, что касается кожи</span>
+            <h3>
+              Сначала —<br />
+              прикосновение
+            </h3>
+            <p>
+              Состав и плотность указаны в каждой карточке. Можно выбрать лёгкое
+              вафельное полотенце для кухни или более плотную махру для ванной.
+            </p>
+            <Link className={s.textLink} href="/catalog?kat=bath">
+              Махровые полотенца ↗
+            </Link>
+          </div>
+          <div className={s.detailText}>
+            <span className="caps">Всё складывается</span>
+            <h3>
+              Один оттенок.
+              <br />
+              Разные размеры.
+            </h3>
+            <p>
+              Полотенца для рук, лица и тела можно подобрать в одной коллекции.
+              А если хочется готовое сочетание — выбрать набор из трёх.
+            </p>
+            <Link className={s.textLink} href="/catalog?kat=sets">
+              Посмотреть наборы ↗
+            </Link>
+          </div>
+          <figure className={s.texture}>
+            <Image
+              src="/img/venice-beige.webp"
+              alt="Набор бежевых полотенец Венеция разных размеров"
+              fill
+              sizes="(max-width: 760px) 100vw, 46vw"
+              quality={85}
+            />
+            <figcaption>02 / Цвет, который объединяет</figcaption>
+          </figure>
         </div>
       </section>
-
-      <section className={`${s.section} ${s.paper}`} aria-labelledby="why-title">
-        <div className={s.secHead}>
-          <h2 id="why-title" className={s.h2}>
-            Почему выбирают нас
+      <section className={s.section}>
+        <div className={s.sectionHead}>
+          <p className="caps">Рядом с вами</p>
+          <h2>
+            В магазинах Беларуси.
+            <br />И у вас дома.
           </h2>
-          <p className={s.text}>Доверие покупателей и крупных партнёров держится на честном качестве материалов и продуманности каждого изделия.</p>
+          <p>
+            KAVA HOME можно найти в торговых сетях и заказать онлайн. Выбирайте
+            удобный способ покупки.
+          </p>
         </div>
-        <ol className={s.reasons}>
-          {reasons.map((r, i) => (
-            <li key={r.title} className={s.reason}>
-              <div className={s.reasonPhoto}>
-                <Image src={r.photo} alt="" fill sizes="(max-width: 960px) 100vw, 22vw" style={{ objectFit: "cover", objectPosition: r.position }} quality={75} />
-              </div>
-              <div className={s.reasonBody}>
-                <span className={s.num}>{String(i + 1).padStart(2, "0")}</span>
-                <h3 className={s.h3}>{r.title}</h3>
-                <p>{r.text}</p>
-              </div>
-            </li>
-          ))}
-          <li className={s.reason}>
-            <ul className={s.palette} aria-label="Оттенки">
-              {palette.map((c) => (
-                <li key={c.name} style={{ background: c.hex, color: c.ink }}>
-                  {c.name}
-                </li>
-              ))}
-            </ul>
-            <div className={s.reasonBody}>
-              <span className={s.num}>04</span>
-              <h3 className={s.h3}>Спокойная палитра</h3>
-              <p>
-                Благородные оттенки — графит, бежевый, мятный, изумруд, шоколад, классический белый — и фактуры легко вписываются в
-                современную ванную, кухню или спа-зону.
-              </p>
-            </div>
-          </li>
-        </ol>
-      </section>
-
-      <section className={s.section} aria-labelledby="who-title">
-        <div className={s.secHead}>
-          <h2 id="who-title" className={s.h2}>
-            Кто покупает KAVA HOME
-          </h2>
-          <p className={s.text}>Ассортимент закрывает потребности и розничных покупателей, и гостиниц, и велнес-индустрии.</p>
-        </div>
-        <ul className={s.who}>
-          {who.map((w) => (
-            <li key={w.title}>
-              <Link href={w.href} className={s.whoItem}>
-                <span className={s.whoPhoto}>
-                  <Image src={w.photo} alt="" fill sizes="(max-width: 960px) 100vw, 33vw" style={{ objectFit: "cover" }} quality={75} />
-                </span>
-                <span className={s.whoBody}>
-                  <span className={s.h3}>{w.title}</span>
-                  <p>{w.text}</p>
-                  <span className={s.more}>{w.more} →</span>
-                </span>
-              </Link>
+        <ul className={s.logos}>
+          {stores.map((p) => (
+            <li key={p.name}>
+              <PartnerLogo p={p} area={3500} />
+              <span>{p.name}</span>
             </li>
           ))}
         </ul>
+        <div className={s.marketRow}>
+          <p>
+            <b>{rating}</b>
+            <span>Оценка бренда на маркетплейсах</span>
+          </p>
+          <div>
+            {marketplaces.map((p) => (
+              <a
+                key={p.name}
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {p.name} ↗
+              </a>
+            ))}
+          </div>
+        </div>
       </section>
-
-      <Partners />
-      <Marketplaces />
-
-      <div className={s.cta}>
-        <p className={s.h3}>Выберите цвет и размер в каталоге</p>
-        <Link href="/catalog" className={s.btnInk}>
-          Перейти в каталог
+      <section className={s.paths} aria-label="Выбрать направление">
+        <Link href="/catalog">
+          <span className="caps">Для себя и близких</span>
+          <h2>Выбрать для дома</h2>
+          <span>Перейти в каталог ↗</span>
         </Link>
-      </div>
+        <Link href="/biznes">
+          <span className="caps">Для вашего дела</span>
+          <h2>Обсудить поставку</h2>
+          <span>Отели, магазины и компании ↗</span>
+        </Link>
+      </section>
     </Shell>
   );
 }

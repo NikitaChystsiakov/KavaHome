@@ -1,126 +1,138 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { Shell } from "@/components/Shell";
 import { Partners } from "@/components/Partners";
 import { HotelForm } from "@/components/HotelForm";
 import { contacts } from "@/lib/collections";
-import s from "@/components/info.module.css";
-
+import s from "@/components/editorial.module.css";
 export const metadata: Metadata = {
-  title: "Полотенца для отелей, санаториев и опт — KAVA HOME",
+  title: "Для отелей и бизнеса — KAVA HOME",
   description:
-    "Полотенца повышенной плотности 500 г/м² для гостиниц, курортов и фитнес-клубов, опт, вышивка и жаккард с логотипом, подарочные сертификаты. Нам доверяют «Европа», отель «Минск», «Альфа Радон», «Плисса», World Class.",
+    "Белая отельная линия, оптовые поставки, вышивка и жаккард с логотипом. Обсудите задачу с KAVA HOME.",
 };
-
-// Опт: количество и условия согласуются с каждым клиентом индивидуально (Элла, 2026-11-13) — без цифр.
 const offers = [
   {
     id: "hotels",
-    title: "Отели и курорты",
-    text: "Полотенца повышенной плотности 500 г/м² и белая отельная линия Бергамо и Марсель. Подберём модели и размеры для номеров, банного комплекса или спа.",
-    tags: ["500 г/м²", "Бергамо", "Марсель"],
-    photo: "/img/use-hotel.webp",
+    num: "01",
+    title: "Для отелей и спа",
+    text: "Белая отельная линия Бергамо и Марсель. Подберём полотенца для номеров, банного комплекса и процедур: по размерам, плотности и нужному количеству.",
+    action: "Подобрать для отеля",
+    need: "Отель",
+    href: "/catalog?nazn=oteli",
+    more: "Посмотреть отельную линию",
   },
   {
     id: "opt",
-    title: "Опт",
-    text: "Для магазинов и компаний. Объём и условия согласуем с каждым клиентом индивидуально: оставьте заявку — менеджер пришлёт предложение.",
-    tags: ["индивидуальные условия"],
-    photo: "/img/naples-stack.webp",
+    num: "02",
+    title: "Оптовые поставки",
+    text: "Для магазинов и компаний. Условия обсуждаем индивидуально: расскажите об ассортименте и объёме, а мы подготовим предложение.",
+    action: "Обсудить опт",
+    need: "Опт",
+    href: "/catalog",
+    more: "Весь ассортимент",
   },
   {
     id: "logo",
-    title: "Полотенца с логотипом",
-    text: "Вышивка или жаккард с логотипом вашего отеля, клуба или компании. Тираж и сроки зависят от задачи — менеджер рассчитает после заявки.",
-    tags: ["вышивка", "жаккард"],
-    photo: "/img/hotel-badge.webp",
+    num: "03",
+    title: "Ваш логотип на текстиле",
+    text: "Вышивка или жаккард с символикой отеля, клуба или компании. Способ нанесения, тираж и сроки согласуем под вашу задачу.",
+    action: "Обсудить нанесение",
+    need: "Логотип",
   },
   {
     id: "certificate",
+    num: "04",
     title: "Подарочные сертификаты",
-    text: "Сертификаты KAVA HOME — подарок сотрудникам и клиентам, когда не знаете цвет и размер.",
-    tags: ["для сотрудников", "для клиентов"],
-    photo: "/img/gift-qd.webp",
+    text: "Когда хочется оставить выбор получателю. Уточните у менеджера варианты оформления и условия заказа сертификатов для сотрудников и клиентов.",
+    action: "Узнать о сертификате",
+    need: "Сертификаты",
   },
 ];
-
 export default function BusinessPage() {
   return (
     <Shell>
-      <section className={s.hero} aria-labelledby="b-title">
+      <section className={s.hero}>
         <div className={s.heroText}>
-          <div>
-            <p className={`caps ${s.kicker}`}>Для бизнеса</p>
-            <h1 id="b-title" className={s.h1}>
-              Полотенца для отелей, санаториев и фитнес-клубов
-            </h1>
-          </div>
+          <p className="caps">KAVA HOME · Для бизнеса</p>
+          <h1>
+            Забота о гостях
+            <br />
+            начинается с деталей
+          </h1>
           <p className={s.lead}>
-            Текстиль повышенной плотности для гостиниц и курортов, опт для магазинов, полотенца с вашим логотипом и подарочные
-            сертификаты. Условия обсуждаем с каждым клиентом индивидуально.
+            Текстиль для отелей, санаториев и фитнес-клубов. Оптовые поставки и
+            полотенца с вашим логотипом.
           </p>
-          <div className={s.heroBtns}>
-            <a href="#zayavka" className={s.btnInk}>
-              Оставить заявку
-            </a>
-            <a href={contacts.phoneHref} className={s.phone}>
-              {contacts.phone}
-            </a>
+          <a className={s.textLink} href="#zayavka">
+            Обсудить вашу задачу ↗
+          </a>
+          <div className={s.heroFoot}>
+            <a href={contacts.phoneHref}>{contacts.phone}</a>
+            <span>Индивидуальные условия</span>
           </div>
         </div>
-        <div className={s.heroPhoto}>
+        <figure className={s.heroImage}>
           <Image
             src="/img/hotel-main.webp"
-            alt="Белые полотенца отельной линии"
+            alt="Белые махровые полотенца отельной линии"
             fill
             preload
-            sizes="(max-width: 960px) 100vw, 50vw"
-            style={{ objectFit: "cover", objectPosition: "50% 60%" }}
+            sizes="(max-width: 900px) 100vw, 50vw"
             quality={85}
           />
-        </div>
+          <figcaption>Для номеров, спа и ежедневной заботы</figcaption>
+        </figure>
       </section>
-
-      <Partners title="Нам доверяют гостиницы, курорты и сети" photo={false} />
-
-      <section className={`${s.section} ${s.paper}`} aria-labelledby="offers-title">
-        <div className={s.secHead}>
-          <h2 id="offers-title" className={s.h2}>
-            Что мы предлагаем
-          </h2>
-        </div>
-        <ul className={s.offers}>
-          {offers.map((o) => (
-            <li key={o.id} id={o.id} className={s.offer}>
-              <div className={s.offerPhoto}>
-                <Image src={o.photo} alt="" fill sizes="(max-width: 960px) 100vw, 25vw" style={{ objectFit: "cover" }} quality={75} />
-              </div>
-              <div className={s.offerBody}>
-                <h3 className={s.h3}>{o.title}</h3>
-                <p>{o.text}</p>
-                <ul className={s.tags}>
-                  {o.tags.map((t) => (
-                    <li key={t}>{t}</li>
-                  ))}
-                </ul>
-              </div>
-            </li>
-          ))}
-        </ul>
+      <nav className={s.jumpNav} aria-label="Направления бизнеса">
+        {offers.map((o) => (
+          <a href={`#${o.id}`} key={o.id}>
+            {o.title} ↓
+          </a>
+        ))}
+      </nav>
+      <section
+        className={`${s.section} ${s.paper}`}
+        aria-label="Что мы предлагаем"
+      >
+        {offers.map((o) => (
+          <article className={s.service} id={o.id} key={o.id}>
+            <span>{o.num}</span>
+            <h2>{o.title}</h2>
+            <div>
+              <p>{o.text}</p>
+              <a
+                className={s.textLink}
+                href={`/biznes?need=${encodeURIComponent(o.need)}#zayavka`}
+              >
+                {o.action} ↗
+              </a>
+              {o.href && (
+                <div className={s.serviceLinks}>
+                  <Link href={o.href}>{o.more}</Link>
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
       </section>
-
-      <section id="zayavka" className={`${s.section} ${s.sand} ${s.formWrap}`} aria-labelledby="form-title">
-        <div className={s.stack}>
-          <h2 id="form-title" className={s.h2}>
-            Расскажите о задаче
-          </h2>
-          <p className={s.text}>
-            Оставьте телефон — менеджер перезвонит в рабочее время ({contacts.hours}), подберёт модели и пришлёт цены. Или позвоните сами:{" "}
-            <a href={contacts.phoneHref}>{contacts.phone}</a>.
+      <Partners title="С нами работают" photo={false} />
+      <section className={s.formSection} id="zayavka">
+        <div>
+          <p className="caps">Начнём с разговора</p>
+          <h2>Какая у вас задача?</h2>
+          <p>
+            Можно оставить только телефон. Если уже знаете количество, размеры
+            или сроки — расскажите об этом, чтобы мы подготовились к разговору.
           </p>
         </div>
         <div>
-          <HotelForm phone={contacts.phone} phoneHref={contacts.phoneHref} hours={contacts.hours} />
+          <HotelForm
+            phone={contacts.phone}
+            phoneHref={contacts.phoneHref}
+            hours={contacts.hours}
+            detailed
+          />
         </div>
       </section>
     </Shell>

@@ -20,7 +20,7 @@ export function TopBar({ compact = false }: { compact?: boolean }) {
   useEffect(() => {
     const el = logo.current;
     const hdr = bar.current;
-    if (!el || !hdr) return;
+    if (!el || !hdr || compact) return;
     let raf = 0;
 
     const update = () => {
@@ -28,14 +28,22 @@ export function TopBar({ compact = false }: { compact?: boolean }) {
       const vh = window.innerHeight;
       const vw = window.innerWidth;
       const mobile = vw < 760;
-      const p = compact ? 1 : Math.min(1, Math.max(0, window.scrollY / (vh * 0.55)));
+      const p = compact
+        ? 1
+        : Math.min(1, Math.max(0, window.scrollY / (vh * 0.55)));
       const e = 1 - Math.pow(1 - p, 3);
       // на десктопе лого вписывается между шапкой и блоком предложения (контур лого ≈ 0.44 его ширины)
       const offer = document.querySelector<HTMLElement>("[data-hero-offer]");
-      const offerTop = offer ? offer.getBoundingClientRect().top + window.scrollY : vh;
+      const offerTop = offer
+        ? offer.getBoundingClientRect().top + window.scrollY
+        : vh;
       const top = (mobile ? 56 : 64) + 20;
       const avail = Math.max(120, offerTop - 20 - top);
-      const big = Math.min(mobile ? vw * 0.86 : vw * 0.84, 1400, mobile ? 9999 : avail / 0.44);
+      const big = Math.min(
+        mobile ? vw * 0.86 : vw * 0.84,
+        1400,
+        mobile ? 9999 : avail / 0.44,
+      );
       const small = mobile ? 84 : 116;
       const scale = 1 + (small / big - 1) * e;
       const hdrH = mobile ? 56 : 64;
@@ -61,27 +69,51 @@ export function TopBar({ compact = false }: { compact?: boolean }) {
 
   return (
     <>
-      <header ref={bar} className={s.bar} data-solid="false">
+      <header
+        ref={bar}
+        className={s.bar}
+        data-solid={compact ? "true" : "false"}
+      >
         <div className={s.barLeft}>
-          <button className={s.burger} type="button" aria-label="Открыть меню" aria-expanded={menu} onClick={() => setMenu(true)}>
+          <button
+            className={s.burger}
+            type="button"
+            aria-label="Открыть меню"
+            aria-expanded={menu}
+            onClick={() => setMenu(true)}
+          >
             <span />
           </button>
           <Link href="/catalog" className={`caps ${s.hideMobile}`}>
             Каталог
           </Link>
+          <Link href="/kollekcii" className={`caps ${s.hideMobile} ${s.hideNarrow}`}>
+            Коллекции
+          </Link>
           <Link href="/biznes" className={`caps ${s.hideMobile}`}>
             Для бизнеса
           </Link>
+          <Link href="/dostavka" className={`caps ${s.hideMobile} ${s.hideNarrow}`}>
+            Доставка
+          </Link>
         </div>
         <div className={s.barRight}>
-          <Link href="/catalog?poisk=1" className={`${s.barLink} ${s.search}`} aria-label="Поиск">
+          <Link
+            href="/catalog?poisk=1"
+            className={`${s.barLink} ${s.search}`}
+            aria-label="Поиск"
+          >
             <svg className={s.icon} viewBox="0 0 20 20" aria-hidden="true">
               <circle cx="8.5" cy="8.5" r="6" />
               <path d="M13 13l5 5" />
             </svg>
             <span className={s.hideMobile}>Найти полотенце</span>
           </Link>
-          <Link href="/korzina" className={`caps ${s.barLink}`} aria-label={`Корзина, ${count} ${plural(count, "товар", "товара", "товаров")}`}>
+          <Link
+            href="/korzina"
+            className={`caps ${s.barLink}`}
+            aria-label={`Корзина, ${count} ${plural(count, "товар", "товара", "товаров")}`}
+          >
             <svg className={s.icon} viewBox="0 0 20 20" aria-hidden="true">
               <path d="M3.5 6.5h13l-1 11h-11z" />
               <path d="M7 6.5V5a3 3 0 0 1 6 0v1.5" />
@@ -93,7 +125,12 @@ export function TopBar({ compact = false }: { compact?: boolean }) {
           </Link>
         </div>
       </header>
-      <Link ref={logo} href="/" className={s.logo} aria-label="KAVA HOME, на главную">
+      <Link
+        ref={logo}
+        href="/"
+        className={`${s.logo} ${compact ? s.compactLogo : ""}`}
+        aria-label="KAVA HOME, на главную"
+      >
         <Logo />
       </Link>
       <Menu open={menu} onClose={closeMenu} />

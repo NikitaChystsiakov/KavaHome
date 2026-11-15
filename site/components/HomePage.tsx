@@ -13,10 +13,10 @@ import { Wheel } from "./Wheel";
 import { Catalog } from "./Catalog";
 import { PresentationScroll } from "./PresentationScroll";
 import { Hero, Gifts, Hotels, Footer } from "./Sections";
-import { Partners, Marketplaces } from "./Partners";
+import { Trust } from "./Partners";
 
 // Главная после звонка 2026-11-09: первый экран → колода открыток-коллекций → каталог по схеме Zara Home →
-// подарочные наборы QD → нам доверяют (отели, сети) → маркетплейсы → для отелей → подвал.
+// подарочные наборы QD → нам доверяют (отели, сети и маркетплейсы одним экраном, 2026-11-15) → вход «для бизнеса» → подвал.
 // view: эскизы показа коллекций — deck (колода, текущая), rail (A, лента фото), stage (B, витрина),
 // open (C, открытка во весь экран), index (D, указатель городов), tint (E, цвет коллекции),
 // ring (F, кольцо открыток в пространстве и под ним простой ряд в духе Zara для сравнения)
@@ -50,8 +50,7 @@ export function HomePage({ view = "fan", products }: { view?: HomeView; products
         )}
         <Catalog collections={collections} products={products} />
         <Gifts />
-        <Partners screen />
-        <Marketplaces screen />
+        <Trust />
         <Hotels />
       </main>
       <Footer />

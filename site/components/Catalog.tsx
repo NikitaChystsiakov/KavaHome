@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { warm } from "@/lib/warm";
+import { slugify } from "@/lib/colors";
 import { SwapPhoto } from "./SwapPhoto";
 import type { Collection } from "@/lib/collections";
 import {
@@ -26,6 +27,10 @@ import s from "./catalog.module.css";
 type Sort = "pop" | "cheap" | "dear";
 type Filters = {
   q: string;
+  razmer: string;
+  plotnost: string;
+  min: string;
+  max: string;
   kat: CategoryId | null;
   nazn: PurposeId | null;
   kol: string | null;
@@ -33,7 +38,19 @@ type Filters = {
   sort: Sort;
   vid: number | null;
 };
-const EMPTY: Filters = { q: "", kat: null, nazn: null, kol: null, cvet: null, sort: "pop", vid: null };
+const EMPTY: Filters = {
+  q: "",
+  razmer: "",
+  plotnost: "",
+  min: "",
+  max: "",
+  kat: null,
+  nazn: null,
+  kol: null,
+  cvet: null,
+  sort: "pop",
+  vid: null,
+};
 
 function readUrl(): Filters {
   const q = new URLSearchParams(window.location.search);
@@ -44,10 +61,23 @@ function readUrl(): Filters {
   const vid = Number(q.get("vid"));
   return {
     q: q.get("q") ?? "",
-    kat: pick<CategoryId>("kat", categories.map((c) => c.id)),
-    nazn: pick<PurposeId>("nazn", purposeChips.map((c) => c.id)),
+    razmer: q.get("razmer") ?? "",
+    plotnost: q.get("plotnost") ?? "",
+    min: /^\d+(\.\d+)?$/.test(q.get("min") ?? "") ? q.get("min")! : "",
+    max: /^\d+(\.\d+)?$/.test(q.get("max") ?? "") ? q.get("max")! : "",
+    kat: pick<CategoryId>(
+      "kat",
+      categories.map((c) => c.id),
+    ),
+    nazn: pick<PurposeId>(
+      "nazn",
+      purposeChips.map((c) => c.id),
+    ),
     kol: q.get("kol"),
-    cvet: pick<FamilyId>("cvet", families.map((f) => f.id)),
+    cvet: pick<FamilyId>(
+      "cvet",
+      families.map((f) => f.id),
+    ),
     sort: pick<Sort>("sort", ["pop", "cheap", "dear"]) ?? "pop",
     vid: [1, 2, 4, 6].includes(vid) ? vid : null,
   };
@@ -56,6 +86,8 @@ function readUrl(): Filters {
 function writeUrl(f: Filters) {
   const q = new URLSearchParams();
   if (f.q.trim()) q.set("q", f.q.trim());
+  for (const key of ["razmer", "plotnost", "min", "max"] as const)
+    if (f[key]) q.set(key, f[key]);
   if (f.kat) q.set("kat", f.kat);
   if (f.nazn) q.set("nazn", f.nazn);
   if (f.kol) q.set("kol", f.kol);
@@ -63,12 +95,26 @@ function writeUrl(f: Filters) {
   if (f.sort !== "pop") q.set("sort", f.sort);
   if (f.vid) q.set("vid", String(f.vid));
   const qs = q.toString();
-  window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`);
+  window.history.replaceState(
+    null,
+    "",
+    `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`,
+  );
 }
 
 // поиск: каждое слово запроса должно найтись в названии, коллекции, цвете или размере
 function haystack(p: Product, city?: string) {
-  return [p.name, p.title, city, ...p.colors.map((x) => x.name), ...p.sizes.map((z) => `${z.label} ${z.note}`), categories.find((c) => c.id === p.category)?.label]
+  return [
+    p.name,
+    p.title,
+    city,
+    ...p.colors.map((x) => x.name),
+    ...p.sizes.map((z) => `${z.label} ${z.note}`),
+    categories.find((c) => c.id === p.category)?.label,
+    ...p.purposes.map((id) => purposeChips.find((c) => c.id === id)?.label),
+    `${p.density} г/м²`,
+    slugify(`${p.name} ${city ?? ""}`).replace(/-/g, " "),
+  ]
     .join(" ")
     .toLowerCase()
     .replace(/ё/g, "е")
@@ -78,10 +124,36 @@ function haystack(p: Product, city?: string) {
 function match(c: Card, f: Filters, hay?: string) {
   const p = c.product;
   if (f.q.trim() && hay) {
-    const words = f.q.toLowerCase().replace(/ё/g, "е").replace(/(\d)\s*[xх*]\s*(\d)/g, "$1×$2").split(/\s+/).filter(Boolean);
+    const words = f.q
+      .toLowerCase()
+      .replace(/ё/g, "е")
+      .replace(/(\d)\s*[xх*]\s*(\d)/g, "$1×$2")
+      .split(/\s+/)
+      .filter(Boolean);
     if (!words.every((w) => hay.includes(w))) return false;
   }
-  if (f.kat && (f.kat === "sets" ? !hasSet(p) : p.category !== f.kat)) return false;
+  const options = p.colors
+    .filter((color) => !f.cvet || color.family === f.cvet)
+    .flatMap((color) => (color.sizes?.length ? color.sizes : p.sizes));
+  if (f.razmer && !options.some((size) => size.label === f.razmer))
+    return false;
+  if (f.plotnost === "light" && p.density > 300) return false;
+  if (f.plotnost === "medium" && (p.density <= 300 || p.density > 500))
+    return false;
+  if (f.plotnost === "dense" && p.density <= 500) return false;
+  if (
+    (f.min || f.max) &&
+    (p.source !== "woo" ||
+      !options.some(
+        (size) =>
+          (!f.razmer || size.label === f.razmer) &&
+          (!f.min || size.price >= Number(f.min)) &&
+          (!f.max || size.price <= Number(f.max)),
+      ))
+  )
+    return false;
+  if (f.kat && (f.kat === "sets" ? !hasSet(p) : p.category !== f.kat))
+    return false;
   if (f.nazn && !p.purposes.includes(f.nazn)) return false;
   if (f.kol && p.collection !== f.kol) return false;
   if (f.cvet && !p.colors.some((x) => x.family === f.cvet)) return false;
@@ -89,12 +161,55 @@ function match(c: Card, f: Filters, hay?: string) {
 }
 
 // page — отдельная страница /catalog: заголовок H1 и поле поиска (в шапке «Найти полотенце» ведёт сюда с ?poisk=1)
-export function Catalog({ collections, products, page = false }: { collections: Collection[]; products?: Product[]; page?: boolean }) {
+export function Catalog({
+  collections,
+  products,
+  page = false,
+}: {
+  collections: Collection[];
+  products?: Product[];
+  page?: boolean;
+}) {
   const cards = useMemo(() => allCards(products), [products]);
   const hay = useMemo(
-    () => new Map(cards.map((c) => [c.key, haystack(c.product, collections.find((x) => x.slug === c.product.collection)?.city)])),
+    () =>
+      new Map(
+        cards.map((c) => [
+          c.key,
+          haystack(
+            c.product,
+            collections.find((x) => x.slug === c.product.collection)?.city,
+          ),
+        ]),
+      ),
     [cards, collections],
   );
+  const sizeOptions = useMemo(
+    () =>
+      [
+        ...new Set(
+          cards.flatMap((c) =>
+            c.product.colors.flatMap((color) =>
+              (color.sizes?.length ? color.sizes : c.product.sizes).map(
+                (z) => z.label,
+              ),
+            ),
+          ),
+        ),
+      ].sort((a, b) => a.localeCompare(b, "ru", { numeric: true })),
+    [cards],
+  );
+  const collectionOptions = useMemo(() => {
+    const entries = new Map(collections.map((c) => [c.slug, c.city]));
+    for (const { product } of cards)
+      if (product.collection && !entries.has(product.collection))
+        entries.set(product.collection, product.title.replace(/ Премиум$/, ""));
+    return [...entries]
+      .filter(([slug]) =>
+        cards.some(({ product }) => product.collection === slug),
+      )
+      .map(([slug, city]) => ({ slug, city }));
+  }, [cards, collections]);
   const search = useRef<HTMLInputElement>(null);
   const root = useRef<HTMLElement>(null);
   const [f, setF] = useState<Filters>(EMPTY);
@@ -134,7 +249,8 @@ export function Catalog({ collections, products, page = false }: { collections: 
     if (!el) return;
     const hdr = window.innerWidth < 761 ? 56 : 64;
     const top = el.getBoundingClientRect().top;
-    if (top < hdr - 1) window.scrollTo({ top: window.scrollY + top - hdr, behavior: "instant" });
+    if (top < hdr - 1)
+      window.scrollTo({ top: window.scrollY + top - hdr, behavior: "instant" });
   }, [f]);
 
   // адрес обновляется после рендера: replaceState внутри setState задевает роутер Next
@@ -147,7 +263,9 @@ export function Catalog({ collections, products, page = false }: { collections: 
   // ссылки-фильтры с других частей страницы (первый экран, оборот открытки, меню) работают без перезагрузки
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>("a[data-filter-nazn], a[data-filter-kol], a[data-filter-kat]");
+      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>(
+        "a[data-filter-nazn], a[data-filter-kol], a[data-filter-kat]",
+      );
       if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
       e.preventDefault();
       const next: Filters = {
@@ -169,28 +287,76 @@ export function Catalog({ collections, products, page = false }: { collections: 
     const out = cards
       .filter((c) => match(c, f, hay.get(c.key)))
       .map((c) => {
-        if (f.cvet) return { ...c, colorIndex: Math.max(0, c.product.colors.findIndex((x) => x.family === f.cvet)) };
+        if (f.cvet)
+          return {
+            ...c,
+            colorIndex: Math.max(
+              0,
+              c.product.colors.findIndex((x) => x.family === f.cvet),
+            ),
+          };
         // поиск по цвету: карточка сразу показывает найденный цвет
-        const words = f.q.toLowerCase().replace(/ё/g, "е").split(/\s+/).filter((w) => w.length > 2);
-        const i = words.length ? c.product.colors.findIndex((x) => words.some((w) => x.name.toLowerCase().replace(/ё/g, "е").includes(w))) : -1;
+        const words = f.q
+          .toLowerCase()
+          .replace(/ё/g, "е")
+          .split(/\s+/)
+          .filter((w) => w.length > 2);
+        const i = words.length
+          ? c.product.colors.findIndex((x) =>
+              words.some((w) =>
+                x.name.toLowerCase().replace(/ё/g, "е").includes(w),
+              ),
+            )
+          : -1;
         return i > 0 ? { ...c, colorIndex: i } : c;
       });
-    if (f.sort === "cheap") out.sort((a, b) => priceRange(a.product)[0] - priceRange(b.product)[0]);
-    if (f.sort === "dear") out.sort((a, b) => priceRange(b.product)[0] - priceRange(a.product)[0]);
+    if (f.sort === "cheap")
+      out.sort((a, b) => priceRange(a.product)[0] - priceRange(b.product)[0]);
+    if (f.sort === "dear")
+      out.sort((a, b) => priceRange(b.product)[0] - priceRange(a.product)[0]);
     return out;
   }, [f, cards, hay]);
 
-  const cols = f.vid ?? (mobile ? 2 : 4);
+  const cols = mobile ? (f.vid === 1 ? 1 : 2) : f.vid === 1 ? 2 : (f.vid ?? 4);
   const views = mobile ? [1, 2] : [2, 4, 6];
   const active = [
-    f.kat && { key: "kat", label: categories.find((c) => c.id === f.kat)!.label },
-    f.kol && { key: "kol", label: collections.find((c) => c.slug === f.kol)?.city ?? f.kol },
-    f.cvet && { key: "cvet", label: families.find((x) => x.id === f.cvet)!.label },
+    f.kat && {
+      key: "kat",
+      label: categories.find((c) => c.id === f.kat)!.label,
+    },
+    f.kol && {
+      key: "kol",
+      label: collectionOptions.find((c) => c.slug === f.kol)?.city ?? f.kol,
+    },
+    f.cvet && {
+      key: "cvet",
+      label: families.find((x) => x.id === f.cvet)!.label,
+    },
+    f.razmer && { key: "razmer", label: f.razmer },
+    f.plotnost && {
+      key: "plotnost",
+      label:
+        (
+          {
+            light: "Лёгкие",
+            medium: "Плотные",
+            dense: "Особо плотные",
+          } as Record<string, string>
+        )[f.plotnost] ?? f.plotnost,
+    },
+    f.min && { key: "min", label: `От ${f.min} BYN` },
+    f.max && { key: "max", label: `До ${f.max} BYN` },
     f.q.trim() && { key: "q", label: `«${f.q.trim()}»` },
   ].filter(Boolean) as { key: keyof Filters; label: string }[];
 
   return (
-    <section id="catalog" ref={root} className={s.catalog} aria-labelledby="catalog-title" data-screen>
+    <section
+      id="catalog"
+      ref={root}
+      className={s.catalog}
+      aria-labelledby="catalog-title"
+      data-screen
+    >
       <aside className={s.side} data-open={panel}>
         <div className={s.sideInner}>
           {page ? (
@@ -205,13 +371,23 @@ export function Catalog({ collections, products, page = false }: { collections: 
           <nav aria-label="Категории">
             <ul className={s.cats}>
               <li>
-                <button type="button" aria-pressed={!f.kat} onClick={() => update({ kat: null })}>
+                <button
+                  type="button"
+                  aria-pressed={!f.kat}
+                  onClick={() => update({ kat: null })}
+                >
                   Все товары
                 </button>
               </li>
               {categories.map((c) => (
                 <li key={c.id}>
-                  <button type="button" aria-pressed={f.kat === c.id} onClick={() => update({ kat: f.kat === c.id ? null : c.id })}>
+                  <button
+                    type="button"
+                    aria-pressed={f.kat === c.id}
+                    onClick={() =>
+                      update({ kat: f.kat === c.id ? null : c.id })
+                    }
+                  >
                     {c.label}
                   </button>
                 </li>
@@ -219,11 +395,72 @@ export function Catalog({ collections, products, page = false }: { collections: 
             </ul>
           </nav>
 
+          <div className={s.extraFilters}>
+            <label>
+              Размер
+              <select
+                value={f.razmer}
+                onChange={(e) => update({ razmer: e.target.value })}
+              >
+                <option value="">Все размеры</option>
+                {sizeOptions.map((z) => (
+                  <option key={z}>{z}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Плотность
+              <select
+                value={f.plotnost}
+                onChange={(e) => update({ plotnost: e.target.value })}
+              >
+                <option value="">Любая плотность</option>
+                <option value="light">Лёгкие · до 300 г/м²</option>
+                <option value="medium">Плотные · 301–500 г/м²</option>
+                <option value="dense">Особо плотные · от 501 г/м²</option>
+              </select>
+            </label>
+            <fieldset>
+              <legend>Цена, BYN</legend>
+              <div>
+                <input
+                  aria-label="Цена от"
+                  type="number"
+                  min="0"
+                  value={f.min}
+                  placeholder="От"
+                  onChange={(e) => update({ min: e.target.value })}
+                />
+                <input
+                  aria-label="Цена до"
+                  type="number"
+                  min="0"
+                  value={f.max}
+                  placeholder="До"
+                  onChange={(e) => update({ max: e.target.value })}
+                />
+              </div>
+            </fieldset>
+            <button
+              type="button"
+              className={s.applyFilters}
+              onClick={() => setPanel(false)}
+            >
+              Показать товары · {list.length}
+            </button>
+          </div>
+
           <p className={s.group}>Коллекции</p>
           <ul className={s.cities}>
-            {collections.map((c) => (
+            {collectionOptions.map((c) => (
               <li key={c.slug}>
-                <button type="button" aria-pressed={f.kol === c.slug} onClick={() => update({ kol: f.kol === c.slug ? null : c.slug })}>
+                <button
+                  type="button"
+                  aria-pressed={f.kol === c.slug}
+                  onClick={() =>
+                    update({ kol: f.kol === c.slug ? null : c.slug })
+                  }
+                >
                   {c.city}
                 </button>
               </li>
@@ -239,13 +476,16 @@ export function Catalog({ collections, products, page = false }: { collections: 
                   aria-pressed={f.cvet === x.id}
                   aria-label={x.label}
                   title={x.label}
-                  onClick={() => update({ cvet: f.cvet === x.id ? null : x.id })}
+                  onClick={() =>
+                    update({ cvet: f.cvet === x.id ? null : x.id })
+                  }
                 >
                   <i style={{ background: x.swatch }} />
                 </button>
               </li>
             ))}
           </ul>
+
         </div>
       </aside>
 
@@ -257,7 +497,13 @@ export function Catalog({ collections, products, page = false }: { collections: 
           <ul className={s.chips} aria-label="Назначение">
             {purposeChips.map((p) => (
               <li key={p.id}>
-                <button type="button" aria-pressed={f.nazn === p.id} onClick={() => update({ nazn: f.nazn === p.id ? null : p.id })}>
+                <button
+                  type="button"
+                  aria-pressed={f.nazn === p.id}
+                  onClick={() =>
+                    update({ nazn: f.nazn === p.id ? null : p.id })
+                  }
+                >
                   {p.label}
                 </button>
               </li>
@@ -275,16 +521,26 @@ export function Catalog({ collections, products, page = false }: { collections: 
                 type="search"
                 value={f.q}
                 placeholder="Цвет, коллекция, размер"
-                onChange={(e) => setF((prev) => ({ ...prev, q: e.target.value }))}
+                onChange={(e) =>
+                  setF((prev) => ({ ...prev, q: e.target.value }))
+                }
               />
             </label>
-            <button type="button" className={s.filtersBtn} aria-expanded={panel} onClick={() => setPanel(!panel)}>
+            <button
+              type="button"
+              className={s.filtersBtn}
+              aria-expanded={panel}
+              onClick={() => setPanel(!panel)}
+            >
               Фильтры{active.length ? ` (${active.length})` : ""}
             </button>
             <label className={s.sort}>
               <span className="visually-hidden">Сортировка</span>
-              <select value={f.sort} onChange={(e) => update({ sort: e.target.value as Sort })}>
-                <option value="pop">Популярные</option>
+              <select
+                value={f.sort}
+                onChange={(e) => update({ sort: e.target.value as Sort })}
+              >
+                <option value="pop">По умолчанию</option>
                 <option value="cheap">Сначала дешевле</option>
                 <option value="dear">Сначала дороже</option>
               </select>
@@ -292,7 +548,13 @@ export function Catalog({ collections, products, page = false }: { collections: 
             <div className={s.views} role="group" aria-label="Плотность сетки">
               <span className="caps">Вид</span>
               {views.map((v) => (
-                <button key={v} type="button" aria-pressed={cols === v} aria-label={`${v} в ряд`} onClick={() => update({ vid: v })}>
+                <button
+                  key={v}
+                  type="button"
+                  aria-pressed={cols === v}
+                  aria-label={`${v} в ряд`}
+                  onClick={() => update({ vid: v })}
+                >
                   <ViewIcon n={v} />
                 </button>
               ))}
@@ -305,25 +567,46 @@ export function Catalog({ collections, products, page = false }: { collections: 
             {list.length} {plural(list.length, "товар", "товара", "товаров")}
           </span>
           {active.map((a) => (
-            <button key={a.key} type="button" className={s.tag} onClick={() => update({ [a.key]: a.key === "q" ? "" : null })}>
+            <button
+              key={a.key}
+              type="button"
+              className={s.tag}
+              onClick={() =>
+                update({
+                  [a.key]: ["q", "razmer", "plotnost", "min", "max"].includes(
+                    a.key,
+                  )
+                    ? ""
+                    : null,
+                })
+              }
+            >
               {a.label} <span aria-hidden="true">×</span>
               <span className="visually-hidden">убрать фильтр</span>
             </button>
           ))}
           {(active.length > 0 || f.nazn) && (
-            <button type="button" className={s.reset} onClick={() => update({ ...EMPTY, vid: f.vid })}>
+            <button
+              type="button"
+              className={s.reset}
+              onClick={() => update({ ...EMPTY, vid: f.vid })}
+            >
               Сбросить всё
             </button>
           )}
           {f.nazn === "oteli" && (
             <a href="/biznes" className={s.reset}>
-              Опт и полотенца с логотипом — заявка ниже
+              Опт и полотенца с логотипом →
             </a>
           )}
         </div>
 
         {list.length ? (
-          <ul className={s.grid} style={{ "--cols": cols } as React.CSSProperties} data-cols={cols}>
+          <ul
+            className={s.grid}
+            style={{ "--cols": cols } as React.CSSProperties}
+            data-cols={cols}
+          >
             {list.map((c, i) => (
               <li key={`${c.key}-${c.colorIndex}`}>
                 <CatalogCard card={c} eager={i < 4} cols={cols} />
@@ -333,14 +616,19 @@ export function Catalog({ collections, products, page = false }: { collections: 
         ) : (
           <div className={s.empty}>
             <p>Под эти фильтры ничего нет.</p>
-            <button type="button" className={s.reset} onClick={() => update({ ...EMPTY, vid: f.vid })}>
+            <button
+              type="button"
+              className={s.reset}
+              onClick={() => update({ ...EMPTY, vid: f.vid })}
+            >
               Сбросить фильтры
             </button>
           </div>
         )}
         <p className={s.note}>
           Размер выбирается в карточке товара.
-          {list.some((c) => c.product.source !== "woo") && " Цены подарочных наборов и халатов уточняются."}
+          {list.some((c) => c.product.source !== "woo") &&
+            " Цены подарочных наборов и халатов уточняются."}
         </p>
       </div>
     </section>
@@ -350,19 +638,46 @@ export function Catalog({ collections, products, page = false }: { collections: 
 // Карточка: фото, название, квадраты цветов, цена «от – до».
 // Клик по квадрату: новое фото натягивается шторкой поверх старого, когда загрузится (без белой паузы).
 // При наведении на карточку остальные цвета подгружаются заранее.
-export function CatalogCard({ card, eager, cols }: { card: Card; eager: boolean; cols: number }) {
+export function CatalogCard({
+  card,
+  eager,
+  cols,
+}: {
+  card: Card;
+  eager: boolean;
+  cols: number;
+}) {
   const p = card.product;
   const [cur, setCur] = useState(card.colorIndex);
   const color = p.colors[cur];
   const [min, max] = priceRange(p);
   const href = `/catalog/${p.id}?cvet=${encodeURIComponent(color.name)}`;
-  const sizes = cols >= 6 ? "(max-width: 760px) 50vw, 16vw" : cols >= 4 ? "(max-width: 760px) 50vw, 25vw" : "(max-width: 760px) 100vw, 50vw";
-  const prefetch = () => warm(p.colors.map((v) => v.image), sizes);
+  const sizes =
+    cols >= 6
+      ? "(max-width: 760px) 50vw, 16vw"
+      : cols >= 4
+        ? "(max-width: 760px) 50vw, 25vw"
+        : "(max-width: 760px) 100vw, 50vw";
+  const prefetch = () =>
+    warm(
+      p.colors.map((v) => v.image),
+      sizes,
+    );
 
   return (
-    <article className={s.item} onPointerEnter={p.colors.length > 1 ? prefetch : undefined} onFocus={p.colors.length > 1 ? prefetch : undefined}>
+    <article
+      className={s.item}
+      onPointerEnter={p.colors.length > 1 ? prefetch : undefined}
+      onFocus={p.colors.length > 1 ? prefetch : undefined}
+    >
       <a href={href} className={s.media} tabIndex={-1} aria-hidden="true">
-        <SwapPhoto src={color.image} alt={`${p.name} ${p.title}, ${color.name}`} sizes={sizes} position={color.position ?? "50% 50%"} eager={eager} />
+        <SwapPhoto
+          src={color.image}
+          alt={`${p.name} ${p.title}, ${color.name}`}
+          sizes={sizes}
+          position={color.position ?? "50% 50%"}
+          eager={eager}
+        />
       </a>
       <div className={s.info}>
         <a href={href} className={s.name}>
@@ -375,14 +690,26 @@ export function CatalogCard({ card, eager, cols }: { card: Card; eager: boolean;
           <ul className={s.swatches} aria-label="Цвет">
             {p.colors.map((v, i) => (
               <li key={v.name}>
-                <button type="button" aria-pressed={i === cur} aria-label={v.name} title={v.name} onClick={() => setCur(i)}>
+                <button
+                  type="button"
+                  aria-pressed={i === cur}
+                  aria-label={v.name}
+                  title={v.name}
+                  onClick={() => setCur(i)}
+                >
                   <i style={{ background: v.swatch }} />
                 </button>
               </li>
             ))}
           </ul>
         )}
-        <p className={s.price}>{min === max ? `${min} BYN` : `${min} – ${max} BYN`}</p>
+        <p className={s.price}>
+          {p.source !== "woo"
+            ? "Цена по запросу"
+            : min === max
+              ? `${min} BYN`
+              : `${min} – ${max} BYN`}
+        </p>
       </div>
     </article>
   );

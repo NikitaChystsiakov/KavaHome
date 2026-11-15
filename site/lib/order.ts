@@ -6,7 +6,13 @@ import type { Product } from "./catalog";
 // и дублируется в Telegram. Ключи в .env: WOO_URL/WOO_KEY/WOO_SECRET (ключ с правом записи),
 // TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID. ORDER_DRY_RUN=1 — ничего не отправлять (локальная проверка).
 
-export type OrderLine = { model: string; color: string; size: string; qty: number };
+export type OrderLine = {
+  model: string;
+  color: string;
+  size: string;
+  qty: number;
+  expectedPrice?: number;
+};
 export type OrderInput = {
   name: string;
   phone: string;
@@ -16,25 +22,49 @@ export type OrderInput = {
   comment?: string;
   lines: OrderLine[];
 };
-export type PricedLine = OrderLine & { title: string; price: number; productId?: number; variationId?: number; sku?: string };
+export type PricedLine = OrderLine & {
+  title: string;
+  price: number;
+  productId?: number;
+  variationId?: number;
+  sku?: string;
+};
 
 /** Цены и id берутся из каталога, а не из браузера. Неизвестные позиции отбрасываются. */
-export function priceLines(input: OrderInput, products: Product[]): PricedLine[] {
+export function priceLines(
+  input: OrderInput,
+  products: Product[],
+): PricedLine[] {
   const out: PricedLine[] = [];
   for (const l of input.lines) {
     const p = products.find((x) => x.id === l.model);
     const color = p?.colors.find((c) => c.name === l.color);
-    if (!p || !color) continue;
-    const size = (color.sizes?.length ? color.sizes : p.sizes).find((z) => z.label === l.size);
-    if (!size) continue;
-    const qty = Math.max(1, Math.min(99, Math.round(l.qty)));
+    if (!p || !color || p.source !== "woo")
+      throw new Error(
+        "Некоторые товары больше недоступны для заказа. Проверьте корзину и удалите недоступные позиции.",
+      );
+    const size = (color.sizes?.length ? color.sizes : p.sizes).find(
+      (z) => z.label === l.size,
+    );
+    if (!size)
+      throw new Error(
+        "Выбранный размер больше недоступен. Откройте товар и выберите другой размер.",
+      );
+    if (!Number.isInteger(l.qty) || l.qty < 1 || l.qty > 99)
+      throw new Error("Количество товара должно быть от 1 до 99.");
+    if (!Number.isFinite(size.price) || size.price <= 0)
+      throw new Error("Цена товара уточняется. Свяжитесь с менеджером.");
+    const qty = l.qty;
     out.push({
       ...l,
       qty,
       title: `${p.name} ${p.title}`,
       price: size.price,
       productId: p.source === "woo" ? color.id : undefined,
-      variationId: p.source === "woo" && size.id && size.id !== color.id ? size.id : undefined,
+      variationId:
+        p.source === "woo" && size.id && size.id !== color.id
+          ? size.id
+          : undefined,
       sku: size.sku,
     });
   }
@@ -48,7 +78,12 @@ export async function createWooOrder(input: OrderInput, lines: PricedLine[]) {
   if (!url || !key || !secret) throw new Error("нет ключей WooCommerce");
   const inWoo = lines.filter((l) => l.productId);
   // позиции, которых нет в админке (заглушки витрины), — в примечание к заказу
-  const extra = lines.filter((l) => !l.productId).map((l) => `${l.title}, ${l.color}, ${l.size} × ${l.qty} = ${l.price * l.qty} BYN`);
+  const extra = lines
+    .filter((l) => !l.productId)
+    .map(
+      (l) =>
+        `${l.title}, ${l.color}, ${l.size} × ${l.qty} = ${l.price * l.qty} BYN`,
+    );
   const body = {
     status: "on-hold",
     set_paid: false,
@@ -59,33 +94,60 @@ export async function createWooOrder(input: OrderInput, lines: PricedLine[]) {
       first_name: input.name,
       phone: input.phone,
       city: input.delivery === "delivery" ? (input.city ?? "") : "",
-      address_1: input.delivery === "delivery" ? (input.address ?? "") : "Самовывоз",
+      address_1:
+        input.delivery === "delivery" ? (input.address ?? "") : "Самовывоз",
       country: "BY",
     },
     shipping_lines: [
       {
         method_id: input.delivery === "pickup" ? "local_pickup" : "flat_rate",
-        method_title: input.delivery === "pickup" ? `Самовывоз: ${contacts.pickupShort}` : "Доставка по Беларуси (стоимость назовёт менеджер)",
+        method_title:
+          input.delivery === "pickup"
+            ? `Самовывоз: ${contacts.pickupShort}`
+            : "Доставка по Беларуси (стоимость назовёт менеджер)",
         total: "0",
       },
     ],
-    line_items: inWoo.map((l) => ({ product_id: l.productId, ...(l.variationId ? { variation_id: l.variationId } : {}), quantity: l.qty })),
-    customer_note: [input.comment, extra.length ? `Позиции не из админки:\n${extra.join("\n")}` : ""].filter(Boolean).join("\n\n"),
+    line_items: inWoo.map((l) => ({
+      product_id: l.productId,
+      ...(l.variationId ? { variation_id: l.variationId } : {}),
+      quantity: l.qty,
+    })),
+    customer_note: [
+      input.comment,
+      extra.length ? `Позиции не из админки:\n${extra.join("\n")}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n"),
   };
   const res = await fetch(`${url.replace(/\/$/, "")}/wp-json/wc/v3/orders`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: "Basic " + btoa(`${key}:${secret}`) },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Basic " + btoa(`${key}:${secret}`),
+    },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(30_000),
   });
-  if (!res.ok) throw new Error(`WooCommerce ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  if (!res.ok)
+    throw new Error(
+      `WooCommerce ${res.status}: ${(await res.text()).slice(0, 300)}`,
+    );
   const order = (await res.json()) as { id: number; number: string };
   return order.number || String(order.id);
 }
 
-const esc = (s: string) => s.replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[ch]!);
+const esc = (s: string) =>
+  s.replace(
+    /[&<>]/g,
+    (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[ch]!,
+  );
 
-export async function sendTelegram(input: OrderInput, lines: PricedLine[], number: string | null) {
+export async function sendTelegram(
+  input: OrderInput,
+  lines: PricedLine[],
+  number: string | null,
+) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chat = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chat) throw new Error("нет ключей Telegram");
@@ -93,11 +155,16 @@ export async function sendTelegram(input: OrderInput, lines: PricedLine[], numbe
   const text = [
     `<b>Заказ с сайта${number ? ` № ${esc(number)}` : ""}</b>`,
     "",
-    ...lines.map((l) => `• ${esc(l.title)}, ${esc(l.color)}, ${esc(l.size)} × ${l.qty} = ${l.price * l.qty} BYN`),
+    ...lines.map(
+      (l) =>
+        `• ${esc(l.title)}, ${esc(l.color)}, ${esc(l.size)} × ${l.qty} = ${l.price * l.qty} BYN`,
+    ),
     `<b>Итого: ${total} BYN</b> (без доставки)`,
     "",
     `${esc(input.name)}, ${esc(input.phone)}`,
-    input.delivery === "pickup" ? `Самовывоз: ${esc(contacts.pickupShort)}` : `Доставка: ${esc([input.city, input.address].filter(Boolean).join(", "))}`,
+    input.delivery === "pickup"
+      ? `Самовывоз: ${esc(contacts.pickupShort)}`
+      : `Доставка: ${esc([input.city, input.address].filter(Boolean).join(", "))}`,
     input.comment ? `Комментарий: ${esc(input.comment)}` : "",
     number ? "" : "⚠️ В WooCommerce заказ не создался — внесите вручную.",
   ]
@@ -106,8 +173,16 @@ export async function sendTelegram(input: OrderInput, lines: PricedLine[], numbe
   const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chat, text, parse_mode: "HTML", disable_web_page_preview: true }),
+    body: JSON.stringify({
+      chat_id: chat,
+      text,
+      parse_mode: "HTML",
+      disable_web_page_preview: true,
+    }),
     signal: AbortSignal.timeout(15_000),
   });
-  if (!res.ok) throw new Error(`Telegram ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  if (!res.ok)
+    throw new Error(
+      `Telegram ${res.status}: ${(await res.text()).slice(0, 200)}`,
+    );
 }

@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { contacts } from "@/lib/collections";
 import { giftLines, purposeChips } from "@/lib/catalog";
-import { HotelForm } from "./HotelForm";
 import { Stamp } from "./Stamp";
 import { Logo } from "./Logo";
 import s from "./home.module.css";
@@ -23,9 +22,14 @@ export function Hero() {
         />
       </div>
       <div className={s.heroShade} />
-      <h1 className="visually-hidden">KAVA HOME — махровые полотенца, коврики и наборы в Минске, доставка по Беларуси</h1>
+      <h1 className="visually-hidden">
+        KAVA HOME — махровые полотенца, коврики и наборы в Минске, доставка по
+        Беларуси
+      </h1>
       <div className={s.heroOffer} data-hero-offer>
-        <p className={s.heroLead}>Махровые полотенца из&nbsp;100%&nbsp;хлопка</p>
+        <p className={s.heroLead}>
+          Махровые полотенца из&nbsp;100%&nbsp;хлопка
+        </p>
         <p className={s.heroSub}>Минск · доставка по Беларуси</p>
         <div className={s.heroBtns}>
           <a href="#kollekcii" className={s.btnHero}>
@@ -41,7 +45,12 @@ export function Hero() {
       </div>
       <nav className={s.heroNav} aria-label="Назначение">
         {purposeChips.map((p) => (
-          <a key={p.id} href={`?nazn=${p.id}#catalog`} data-filter-nazn={p.id} className="caps">
+          <a
+            key={p.id}
+            href={`?nazn=${p.id}#catalog`}
+            data-filter-nazn={p.id}
+            className="caps"
+          >
             {p.label}
           </a>
         ))}
@@ -52,18 +61,29 @@ export function Hero() {
 
 // Подарить: две половины на один экран. Слева наборы QD (ведут в каталог на подборку QD), справа сертификат.
 export function Gifts() {
-  const from = Math.min(...giftLines.map((g) => g.from));
   const dens = giftLines.map((g) => g.density);
   return (
-    <section id="gifts" className={s.gifts} aria-labelledby="gifts-title" data-screen>
+    <section
+      id="gifts"
+      className={s.gifts}
+      aria-labelledby="gifts-title"
+      data-screen
+    >
       <div className={s.giftsHead}>
         <h2 id="gifts-title" className={s.h2}>
           Подарить
         </h2>
-        <p className={s.giftsLead}>Полотенца дарят на новоселье, свадьбу и просто так. Если не знаете цвет — подарите сертификат.</p>
+        <p className={s.giftsLead}>
+          Полотенца дарят на новоселье, свадьбу и просто так. Если не знаете
+          цвет — подарите сертификат.
+        </p>
       </div>
       <div className={s.giftsGrid}>
-        <a href="?kat=gifts#catalog" data-filter-kat="gifts" className={s.giftPhoto}>
+        <a
+          href="?kat=gifts#catalog"
+          data-filter-kat="gifts"
+          className={s.giftPhoto}
+        >
           <Image
             src="/img/gift-qd.webp"
             alt="Подарочные полотенца QD: ментол, ваниль, персик, сирень"
@@ -74,12 +94,15 @@ export function Gifts() {
           />
           <span className={s.giftCaption}>
             <span className={s.giftKicker}>
-              {giftLines.length} линий · {Math.min(...dens)}–{Math.max(...dens)} г/м²
+              {giftLines.length} линий · {Math.min(...dens)}–{Math.max(...dens)}{" "}
+              г/м²
             </span>
             <b>Подарочные наборы QD</b>
-            <span className={s.giftNames}>{giftLines.map((g) => g.name.replace("QD ", "")).join(" · ")}</span>
+            <span className={s.giftNames}>
+              {giftLines.map((g) => g.name.replace("QD ", "")).join(" · ")}
+            </span>
             <span className={s.giftBuy}>
-              <span>от {from} BYN</span>
+              <span>Цена по запросу</span>
               <span className={s.btnInk}>Выбрать набор</span>
             </span>
           </span>
@@ -87,7 +110,13 @@ export function Gifts() {
         <a href="/biznes#certificate" className={s.cert}>
           <span className={s.certTop}>
             <Logo className={s.certLogo} />
-            <Stamp id="cert" ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·" center="★" sub="МИНСК" className={s.certStamp} />
+            <Stamp
+              id="cert"
+              ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·"
+              center="★"
+              sub="МИНСК"
+              className={s.certStamp}
+            />
           </span>
           <span className={s.certTitle}>Подарочный сертификат</span>
           <span className={s.certLines}>
@@ -102,45 +131,74 @@ export function Gifts() {
   );
 }
 
+// Для бизнеса на главной (2026-11-15): короткий экран-вход на /biznes — четыре направления ссылками
+// и кнопка. Форма заявки только на /biznes, чтобы не дублировать её на главной.
+const businessLines = [
+  { href: "/biznes#hotels", title: "Отели и гостевые дома", text: "белая отельная линия" },
+  { href: "/biznes#opt", title: "Опт", text: "цены по запросу" },
+  { href: "/biznes#logo", title: "Ваш логотип", text: "вышивка или жаккард" },
+  { href: "/biznes#certificate", title: "Сертификаты", text: "для сотрудников и клиентов" },
+];
+
 export function Hotels() {
   return (
-    <section id="hotels" className={s.hotels} aria-labelledby="hotels-title" data-screen>
+    <section
+      id="hotels"
+      className={s.hotels}
+      aria-labelledby="hotels-title"
+      data-screen
+    >
       <div className={s.hotelsPhoto}>
-        <Image src="/img/hotel-main.webp" alt="Белые полотенца отельной линии" fill sizes="(max-width: 760px) 100vw, 40vw" style={{ objectFit: "cover", objectPosition: "50% 60%" }} quality={75} />
+        <Image
+          src="/img/hotel-main.webp"
+          alt="Белые полотенца отельной линии"
+          fill
+          sizes="(max-width: 760px) 100vw, 40vw"
+          style={{ objectFit: "cover", objectPosition: "50% 60%" }}
+          quality={75}
+        />
       </div>
       <div className={s.hotelsBody}>
         <h2 id="hotels-title" className={s.h2}>
           Для отелей и бизнеса
         </h2>
         <p className={s.hotelsLead}>
-          Белая отельная линия Бергамо и Марсель, опт для магазинов и полотенца с вашим логотипом. Менеджер подберёт
-          модели и пришлёт цены.
+          Белая отельная линия Бергамо и Марсель, опт для магазинов и полотенца
+          с вашим логотипом. Менеджер подберёт модели и пришлёт цены.
         </p>
-        <dl className={s.lines}>
-          <div>
-            <dt>Отели и гостевые дома</dt>
-            <dd>белая отельная линия</dd>
-          </div>
-          <div>
-            <dt>Опт</dt>
-            <dd>цены по запросу</dd>
-          </div>
-          <div>
-            <dt>Ваш логотип</dt>
-            <dd>вышивка или жаккард</dd>
-          </div>
-          <div>
-            <dt>Сертификаты</dt>
-            <dd>для подарков сотрудникам и клиентам</dd>
-          </div>
-        </dl>
+        <ul className={s.lines}>
+          {businessLines.map((l) => (
+            <li key={l.href}>
+              <Link href={l.href}>
+                <b>{l.title}</b>
+                <span>{l.text}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
         <figure className={s.badge}>
           <span className={s.badgeImg}>
-            <Image src="/img/hotel-badge.webp" alt="Шильдик KAVA на бордюре полотенца" fill sizes="220px" style={{ objectFit: "cover", objectPosition: "60% 70%" }} quality={75} />
+            <Image
+              src="/img/hotel-badge.webp"
+              alt="Шильдик KAVA на бордюре полотенца"
+              fill
+              sizes="220px"
+              style={{ objectFit: "cover", objectPosition: "60% 70%" }}
+              quality={75}
+            />
           </span>
-          <figcaption>Сейчас здесь шильдик KAVA. На вашем заказе будет ваш логотип.</figcaption>
+          <figcaption>
+            Сейчас здесь шильдик KAVA. На вашем заказе будет ваш логотип.
+          </figcaption>
         </figure>
-        <HotelForm phone={contacts.phone} phoneHref={contacts.phoneHref} hours={contacts.hours} />
+        <div className={s.hotelsCta}>
+          <Link href="/biznes" className={s.btnLight}>
+            Подробнее для бизнеса
+          </Link>
+          <a href={contacts.phoneHref} className={s.hotelsPhone}>
+            {contacts.phone}
+          </a>
+        </div>
       </div>
     </section>
   );
@@ -153,6 +211,7 @@ export function Footer() {
         <div>
           <h3 className="caps">Покупателям</h3>
           <Link href="/catalog">Каталог</Link>
+          <Link href="/kollekcii">Коллекции</Link>
           <Link href="/dostavka">Доставка и оплата</Link>
           <Link href="/faq">Вопросы и ответы</Link>
           <Link href="/o-nas">О бренде</Link>
@@ -177,7 +236,8 @@ export function Footer() {
       </div>
       <Logo className={s.footLogo} />
       <p className={s.legal}>
-        {contacts.company} · <Link href="/privacy">Политика обработки персональных данных</Link>
+        {contacts.company} ·{" "}
+        <Link href="/privacy">Политика обработки персональных данных</Link>
       </p>
     </footer>
   );

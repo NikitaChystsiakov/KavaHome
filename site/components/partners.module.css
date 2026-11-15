@@ -259,13 +259,104 @@
   transform: translate(2px, -2px);
 }
 
+/* ───────── «Нам доверяют» на главной: три строки в один экран ───────── */
+.trust {
+  padding: clamp(48px, 8svh, 96px) var(--pad) clamp(40px, 6svh, 72px);
+  background: var(--milk);
+}
+.trustRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--gap);
+  border-top: 1px solid var(--line);
+}
+.trustRow:first-of-type {
+  border-top-color: var(--ink);
+}
+.trustRow:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.trustLabel {
+  align-self: center;
+  padding: 18px 24px 18px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+div.trustLabel :global(.caps) {
+  font-size: 11px;
+}
+.trustScore {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+  font-family: var(--serif);
+  font-size: clamp(40px, 3.6vw, 56px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--logo);
+}
+.trustScore .stars svg {
+  width: 15px;
+  height: 15px;
+}
+.trustNote {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 400;
+}
+.trustCells {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+}
+.trustCells > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  justify-items: center;
+  gap: 8px;
+  min-height: clamp(96px, 15svh, 140px);
+  padding: 14px 10px;
+  border-left: 1px solid var(--line);
+  text-align: center;
+}
+.trustName {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.trustShop {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: 100%;
+  height: 100%;
+  align-content: center;
+  transition: background 0.25s;
+}
+.trustCells > li:has(.trustShop) {
+  padding: 0;
+}
+.trustShop:hover {
+  background: var(--white);
+}
+.trustShop:hover .shopGo svg {
+  transform: translate(2px, -2px);
+}
+.trustShop .shopGo {
+  font-size: 11px;
+}
+
 /* главная листается по экранам на компьютере: блоки ровно в экран */
 @media (min-width: 761px) {
   .partners[data-screen],
-  .market[data-screen] {
+  .market[data-screen],
+  .trust[data-screen] {
     min-height: calc(100svh - var(--hdr));
   }
-  .partners[data-screen] {
+  .partners[data-screen],
+  .trust[data-screen] {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -291,6 +382,16 @@
   }
   .storesTitle br {
     display: none;
+  }
+  .trustRow {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .trustLabel {
+    padding: 16px 0 6px;
+  }
+  .trustCells > li:first-child {
+    border-left: 0;
   }
 }
 @media (max-width: 760px) {
@@ -324,5 +425,46 @@
   }
   .shopLogo {
     padding: 28px 20px;
+  }
+  .trustLabel br {
+    display: none;
+  }
+  /* шесть отелей и пять магазинов — по три в ряд */
+  .trustCells {
+    grid-template-columns: repeat(min(var(--n), 3), minmax(0, 1fr));
+  }
+  .trust {
+    padding-top: 36px;
+  }
+  .trustCells > li {
+    min-height: 0;
+    gap: 4px;
+    padding: 10px 4px;
+    border-left: 0;
+  }
+  /* zoom, а не scale: уменьшает и место под логотипом, иначе строки остаются высокими */
+  .trustCells > li > [role="img"] {
+    zoom: 0.72;
+  }
+  div.trustLabel {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+  .trustScore {
+    margin-top: 0;
+    font-size: 34px;
+  }
+  .trustNote {
+    margin-top: 0;
+  }
+  .trustShop {
+    padding: 10px 0;
+    gap: 8px;
+  }
+  .trustShop .shopGo {
+    font-size: 10px;
+    letter-spacing: 0.08em;
   }
 }

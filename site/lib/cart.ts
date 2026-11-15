@@ -34,7 +34,9 @@ const subs = new Set<() => void>();
 function read(raw: string | null): CartItem[] {
   try {
     const list = JSON.parse(raw ?? "[]");
-    return Array.isArray(list) ? list.filter((x) => x && x.key && x.qty > 0) : EMPTY;
+    return Array.isArray(list)
+      ? list.filter((x) => x && x.key && x.qty > 0)
+      : EMPTY;
   } catch {
     return EMPTY;
   }
@@ -84,14 +86,36 @@ export const cart = {
   add(item: Omit<CartItem, "qty">, qty = 1) {
     init();
     const cur = items.find((x) => x.key === item.key);
-    commit(cur ? items.map((x) => (x.key === item.key ? { ...x, qty: Math.min(99, x.qty + qty) } : x)) : [...items, { ...item, qty }]);
+    commit(
+      cur
+        ? items.map((x) =>
+            x.key === item.key
+              ? { ...x, ...item, qty: Math.min(99, x.qty + qty) }
+              : x,
+          )
+        : [...items, { ...item, qty }],
+    );
     window.dispatchEvent(new CustomEvent("kava:added", { detail: item.key }));
   },
   setQty(key: string, qty: number) {
-    commit(qty <= 0 ? items.filter((x) => x.key !== key) : items.map((x) => (x.key === key ? { ...x, qty: Math.min(99, qty) } : x)));
+    commit(
+      qty <= 0
+        ? items.filter((x) => x.key !== key)
+        : items.map((x) =>
+            x.key === key ? { ...x, qty: Math.min(99, qty) } : x,
+          ),
+    );
   },
   remove(key: string) {
     commit(items.filter((x) => x.key !== key));
+  },
+  reprice(prices: { key: string; price: number }[]) {
+    commit(
+      items.map((item) => {
+        const next = prices.find((p) => p.key === item.key);
+        return next ? { ...item, price: next.price } : item;
+      }),
+    );
   },
   clear() {
     commit(EMPTY);

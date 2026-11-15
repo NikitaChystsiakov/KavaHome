@@ -1,13 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import s from "./home.module.css";
 
 const NEEDS = ["Отель", "Опт", "Логотип", "Сертификаты"];
 
 // Заявка для бизнеса: уходит менеджеру в Telegram (app/api/lead).
-export function HotelForm({ phone, phoneHref, hours, initial = "Отель" }: { phone: string; phoneHref: string; hours: string; initial?: string }) {
+export function HotelForm({
+  phone,
+  phoneHref,
+  hours,
+  initial = "Отель",
+  detailed = false,
+}: {
+  phone: string;
+  phoneHref: string;
+  hours: string;
+  initial?: string;
+  detailed?: boolean;
+}) {
   const [needs, setNeeds] = useState<string[]>([initial]);
+  const [item, setItem] = useState("");
+  useEffect(() => {
+    if (!detailed) return;
+    const q = new URLSearchParams(window.location.search);
+    const need = q.get("need");
+    const raf = requestAnimationFrame(() => {
+      if (need && NEEDS.includes(need)) setNeeds([need]);
+      if (q.get("item")) {
+        setItem(q.get("item")!.slice(0, 300));
+        setNeeds([]);
+      }
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [detailed]);
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -25,7 +52,9 @@ export function HotelForm({ phone, phoneHref, hours, initial = "Отель" }: {
       className={s.form}
       onSubmit={async (e) => {
         e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+        const data = Object.fromEntries(
+          new FormData(e.currentTarget),
+        ) as Record<string, string>;
         const tel = String(data.phone || "").replace(/\D/g, "");
         if (tel.length < 9) {
           setError("Проверьте телефон: нужен номер, по которому перезвонить.");
@@ -37,7 +66,11 @@ export function HotelForm({ phone, phoneHref, hours, initial = "Отель" }: {
           const res = await fetch("/api/lead", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...data, needs }),
+            body: JSON.stringify({
+              ...data,
+              needs,
+              comment: [item, data.comment].filter(Boolean).join(" — "),
+            }),
           });
           if (!(await res.json()).ok) throw new Error();
           setSent(true);
@@ -48,6 +81,11 @@ export function HotelForm({ phone, phoneHref, hours, initial = "Отель" }: {
         }
       }}
     >
+      {item && (
+        <p>
+          Уточнить цену: <strong>{item}</strong>
+        </p>
+      )}
       <fieldset className={s.needs}>
         <legend className="caps">Что нужно</legend>
         {NEEDS.map((n) => {
@@ -57,7 +95,9 @@ export function HotelForm({ phone, phoneHref, hours, initial = "Отель" }: {
               key={n}
               type="button"
               aria-pressed={on}
-              onClick={() => setNeeds(on ? needs.filter((x) => x !== n) : [...needs, n])}
+              onClick={() =>
+                setNeeds(on ? needs.filter((x) => x !== n) : [...needs, n])
+              }
             >
               {n}
             </button>
@@ -66,13 +106,48 @@ export function HotelForm({ phone, phoneHref, hours, initial = "Отель" }: {
       </fieldset>
       <label className={s.field}>
         <span className="caps">Имя</span>
-        <input name="name" autoComplete="name" placeholder="Как к вам обращаться" />
+        <input
+          name="name"
+          autoComplete="name"
+          placeholder="Как к вам обращаться"
+        />
       </label>
       <label className={s.field}>
         <span className="caps">Телефон</span>
-        <input name="phone" type="tel" autoComplete="tel" placeholder="+375 (__) ___-__-__" required aria-invalid={!!error} />
+        <input
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          placeholder="+375 (__) ___-__-__"
+          required
+          aria-invalid={!!error}
+        />
       </label>
-      {error && <p className={s.formError}>{error}</p>}
+      {detailed && (
+        <>
+          <label className={s.field}>
+            <span className="caps">Компания · необязательно</span>
+            <input
+              name="company"
+              autoComplete="organization"
+              placeholder="Название отеля или магазина"
+            />
+          </label>
+          <label className={s.field}>
+            <span className="caps">Ваша задача · необязательно</span>
+            <textarea
+              name="comment"
+              rows={3}
+              placeholder="Количество, размеры, желаемые сроки"
+            />
+          </label>
+        </>
+      )}
+      {error && (
+        <p className={s.formError} role="alert">
+          {error}
+        </p>
+      )}
       <div className={s.formFoot}>
         <button type="submit" className={s.btnLight} disabled={busy}>
           {busy ? "Отправляем…" : "Отправить заявку"}
@@ -81,6 +156,13 @@ export function HotelForm({ phone, phoneHref, hours, initial = "Отель" }: {
           или позвоните {phone}
         </a>
       </div>
+      <p style={{ fontSize: 12, color: "var(--ink-2)", gridColumn: "1 / -1" }}>
+        Отправляя заявку, вы соглашаетесь с{" "}
+        <Link href="/privacy" style={{ textDecoration: "underline" }}>
+          обработкой персональных данных
+        </Link>
+        .
+      </p>
     </form>
   );
 }

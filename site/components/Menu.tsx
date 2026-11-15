@@ -8,19 +8,48 @@ import s from "./menu.module.css";
 
 type Props = { open: boolean; onClose: () => void };
 
-// Меню по бургеру: слева панель как у Zara Home — коллекции-города, назначение, бизнесу, контакты.
+// Главные разделы — первыми: до 2026-11-15 «Доставка» и «Для бизнеса» стояли в самом конце меню, после городов и категорий.
+const mainLinks = [
+  { href: "/catalog", label: "Весь каталог" },
+  { href: "/kollekcii", label: "Коллекции" },
+  { href: "/dostavka", label: "Доставка и оплата" },
+  { href: "/biznes", label: "Для отелей и бизнеса" },
+  { href: "/o-nas", label: "О бренде" },
+  { href: "/faq", label: "Вопросы и ответы" },
+  { href: "/kontakty", label: "Контакты и шоурум" },
+];
+
+const businessLinks = [
+  { href: "/biznes#hotels", label: "Отельная линия" },
+  { href: "/biznes#opt", label: "Опт для магазинов" },
+  { href: "/biznes#logo", label: "Полотенца с логотипом" },
+  { href: "/biznes#certificate", label: "Подарочный сертификат" },
+];
+
+// Меню по бургеру: слева панель как у Zara Home — главные разделы, коллекции-города, каталог, назначение, бизнесу.
 export function Menu({ open, onClose }: Props) {
   const panel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const previousFocus = document.activeElement;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key !== "Tab") return;
+      const focusable = panel.current?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])");
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
     document.addEventListener("keydown", onKey);
     document.documentElement.style.overflow = "hidden";
     panel.current?.querySelector<HTMLElement>("a, button")?.focus();
     return () => {
       document.removeEventListener("keydown", onKey);
       document.documentElement.style.overflow = "";
+      if (previousFocus instanceof HTMLElement) previousFocus.focus();
     };
   }, [open, onClose]);
 
@@ -37,17 +66,27 @@ export function Menu({ open, onClose }: Props) {
         </div>
 
         <nav className={s.nav} aria-label="Разделы">
-          <p className={s.group}>Коллекции</p>
+          <ul className={s.main}>
+            {mainLinks.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} onClick={onClose}>
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <p className={s.group}>Коллекции-города</p>
           <ul className={s.cities}>
             {collections.map((c, i) => (
               <li key={c.slug}>
-                <a href={`/catalog?kol=${c.slug}`} data-filter-kol={c.slug} onClick={onClose}>
+                <Link href={`/kollekcii/${c.slug}`} onClick={onClose}>
                   <i style={{ background: c.tone }} aria-hidden="true" />
                   <span className={s.cityName}>{c.city}</span>
                   <span className={s.cityMeta}>
                     {String(i + 1).padStart(2, "0")} · {c.latin}
                   </span>
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -78,45 +117,13 @@ export function Menu({ open, onClose }: Props) {
 
           <p className={s.group}>Бизнесу</p>
           <ul className={s.links}>
-            <li>
-              <Link href="/biznes" onClick={onClose}>
-                Для отелей и опт
-              </Link>
-            </li>
-            <li>
-              <Link href="/biznes#logo" onClick={onClose}>
-                Полотенца с логотипом
-              </Link>
-            </li>
-            <li>
-              <Link href="/biznes#certificate" onClick={onClose}>
-                Подарочный сертификат
-              </Link>
-            </li>
-          </ul>
-
-          <p className={s.group}>Покупателям</p>
-          <ul className={s.links}>
-            <li>
-              <Link href="/o-nas" onClick={onClose}>
-                О бренде
-              </Link>
-            </li>
-            <li>
-              <Link href="/dostavka" onClick={onClose}>
-                Доставка и оплата
-              </Link>
-            </li>
-            <li>
-              <Link href="/faq" onClick={onClose}>
-                Вопросы и ответы
-              </Link>
-            </li>
-            <li>
-              <Link href="/kontakty" onClick={onClose}>
-                Контакты
-              </Link>
-            </li>
+            {businessLinks.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} onClick={onClose}>
+                  {l.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
 
