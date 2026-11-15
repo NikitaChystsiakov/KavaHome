@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Forum, Golos_Text, Marck_Script, Playfair_Display, Caveat } from "next/font/google";
+import { Forum, Golos_Text, Marck_Script } from "next/font/google";
 import "./globals.css";
 
 const forum = Forum({
@@ -23,19 +23,6 @@ const hand = Marck_Script({
   display: "swap",
 });
 
-// пробные шрифты для показа клиенту: ?font=a или ?font=b (ветка design/font-variants)
-const fontA = Playfair_Display({
-  variable: "--font-a",
-  style: "italic",
-  subsets: ["latin", "cyrillic"],
-  display: "swap",
-});
-const fontB = Caveat({
-  variable: "--font-b",
-  subsets: ["latin", "cyrillic"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: "KAVA HOME — махровые полотенца в Минске",
   description:
@@ -50,19 +37,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="ru"
-      suppressHydrationWarning
-      className={`${forum.variable} ${golos.variable} ${hand.variable} ${fontA.variable} ${fontB.variable}`}
-    >
-      <body>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `var f=new URLSearchParams(location.search).get("font");if(f)document.documentElement.dataset.font=f;`,
-          }}
-        />
-        {children}
-      </body>
+    <html lang="ru" className={`${forum.variable} ${golos.variable} ${hand.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }
