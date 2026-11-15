@@ -36,3 +36,6 @@ next-env.d.ts
 /photos-curated/
 /Фото контент для сайта/
 /backup/
+
+# сгенерированные картинки (исходники PNG, на сайт идут сжатые WebP)
+.art-director/generated/
