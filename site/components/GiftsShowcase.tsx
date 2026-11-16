@@ -32,7 +32,11 @@ export function GiftsShowcase({
   const dens = lines.map((l) => l.density).filter(Boolean);
   const palette = line
     ? line.colors
-    : lines.flatMap((l) => l.colors.slice(0, 2));
+    : [
+        ...new Map(
+          lines.flatMap((l) => l.colors).map((c) => [c.swatch, c]),
+        ).values(),
+      ].slice(0, 9);
 
   return (
     <>

@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { contacts } from "@/lib/collections";
 import { giftLines, priceRange, purposeChips, type Product } from "@/lib/catalog";
+import { Certificate } from "./Certificate";
 import { GiftsShowcase, type GiftLineView } from "./GiftsShowcase";
-import { Stamp } from "./Stamp";
 import { Logo } from "./Logo";
 import s from "./home.module.css";
 
@@ -113,29 +113,7 @@ export function Gifts({ items = [] }: { items?: Product[] }) {
             </p>
           </div>
         }
-        cert={
-          <Link href="/biznes#certificate" className={s.cert}>
-            <span className={s.certText}>
-              <span className={s.certTitle}>Подарочный сертификат</span>
-              <span className={s.certLines}>
-                <span>
-                  Кому <em>маме</em>
-                </span>
-                <span>
-                  От кого <em>с любовью</em>
-                </span>
-              </span>
-              <span className={s.btnInk}>Заказать сертификат</span>
-            </span>
-            <Stamp
-              id="cert"
-              ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·"
-              center="★"
-              sub="МИНСК"
-              className={s.certStamp}
-            />
-          </Link>
-        }
+        cert={<Certificate phoneHint={contacts.phone} />}
       />
     </section>
   );
