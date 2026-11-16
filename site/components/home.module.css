@@ -226,6 +226,7 @@
   background: var(--sand);
 }
 .giftPhoto img {
+  object-position: 0% 50%;
   transition: transform 1.2s var(--ease-out);
 }
 .giftPhoto:hover img {
@@ -1123,4 +1124,42 @@
 }
 .field textarea::placeholder {
   color: var(--ink-3);
+}
+
+/* планшет: колонка фото узкая, рулоны сдвигаем в центр кадра; в списке убираем плотность, чтобы не резать названия */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .giftPhoto img {
+    object-position: 46% 50%;
+  }
+  .giftList a {
+    grid-template-columns: minmax(0, 1fr) auto 12px;
+  }
+  .giftDensity {
+    display: none;
+  }
+  .cert {
+    padding: 24px 24px 22px;
+  }
+  .certEyebrow::before,
+  .certEyebrow::after {
+    display: none;
+  }
+  .certTitle {
+    white-space: normal;
+    padding-right: 96px;
+  }
+  .cert .certStamp {
+    width: 100px;
+    height: 60px;
+    top: 14px;
+    right: 14px;
+  }
+  .certLines {
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 12px;
+  }
+  .certLines span {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
 }

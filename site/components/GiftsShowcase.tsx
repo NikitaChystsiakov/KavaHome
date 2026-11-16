@@ -50,7 +50,7 @@ export function GiftsShowcase({
           alt="Подарочные полотенца QD: ментол, ваниль, персик, сирень"
           fill
           sizes="(max-width: 760px) 100vw, 55vw"
-          style={{ objectFit: "cover", objectPosition: "0% 50%" }}
+          style={{ objectFit: "cover" }}
           quality={75}
         />
         <span className={s.giftTag} key={line?.key ?? "all"}>
