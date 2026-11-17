@@ -98,15 +98,32 @@ export function GiftCertificate({
           >
             <div className={g.cardTop}>
               <Logo className={g.cardLogo} />
-              <Stamp
-                id="cert"
-                ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·"
-                center="★"
-                sub="МИНСК"
-                className={g.stamp}
-              />
+              <div className={g.postage}>
+                <span className={g.photoStamp}>
+                  <Image
+                    src="/img/florence-beige.webp"
+                    alt=""
+                    fill
+                    sizes="160px"
+                    quality={60}
+                    style={{ objectFit: "cover", objectPosition: "50% 78%" }}
+                  />
+                  <b>KAVA</b>
+                </span>
+                <Stamp
+                  id="cert"
+                  ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·"
+                  center="★"
+                  sub="МИНСК"
+                  className={g.stamp}
+                />
+              </div>
             </div>
-            <p className={g.kicker}>Подарочный сертификат</p>
+            <p className={g.kicker}>
+              <span>Подарочный сертификат</span>
+              <i aria-hidden="true" />
+              <span>Минск</span>
+            </p>
             <p className={g.amount} data-empty={!amount || undefined}>
               {amount || "100"}
               <small>BYN</small>
