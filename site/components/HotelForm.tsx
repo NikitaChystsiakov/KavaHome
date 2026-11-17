@@ -14,12 +14,16 @@ export function HotelForm({
   hours,
   initial = "Отель",
   detailed = false,
+  compact = false,
+  moreHref,
 }: {
   phone: string;
   phoneHref: string;
   hours: string;
   initial?: string;
   detailed?: boolean;
+  compact?: boolean;
+  moreHref?: string;
 }) {
   const [needs, setNeeds] = useState<string[]>([initial]);
   const [item, setItem] = useState("");
@@ -50,7 +54,7 @@ export function HotelForm({
 
   return (
     <form
-      className={s.form}
+      className={compact ? s.hotelsForm : s.form}
       onSubmit={async (e) => {
         e.preventDefault();
         const data = Object.fromEntries(
@@ -69,8 +73,8 @@ export function HotelForm({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               ...data,
-              needs,
-              comment: [item, data.comment].filter(Boolean).join(" — "),
+              needs: compact ? [] : needs,
+              comment: compact ? "С главной, раздел «Для отелей и бизнеса»" : [item, data.comment].filter(Boolean).join(" — "),
             }),
           });
           if (!(await res.json()).ok) throw new Error();
@@ -83,6 +87,47 @@ export function HotelForm({
       }}
     >
       <Honeypot />
+      {compact ? (
+        <>
+          <div className={s.hotelsRow}>
+            <label className={s.field}>
+              <input
+                name="phone"
+                type="tel"
+                autoComplete="tel"
+                aria-label="Телефон"
+                placeholder="Ваш телефон: +375 (__) ___-__-__"
+                required
+                aria-invalid={!!error}
+              />
+            </label>
+            <button type="submit" className={s.btnLight} disabled={busy}>
+              {busy ? "Отправляем…" : "Получить предложение"}
+            </button>
+          </div>
+          {error && (
+            <p className={s.formError} role="alert">
+              {error}
+            </p>
+          )}
+          <div className={s.hotelsRow}>
+            {moreHref && (
+              <Link href={moreHref} className={s.btnLine}>
+                Подробнее для бизнеса
+              </Link>
+            )}
+          </div>
+          <p className={s.formNote}>
+            Перезвоним в рабочее время: {hours}. Отправляя номер, вы соглашаетесь
+            с{" "}
+            <Link href="/privacy" style={{ textDecoration: "underline" }}>
+              обработкой персональных данных
+            </Link>
+            .
+          </p>
+        </>
+      ) : (
+      <>
       {item && (
         <p>
           Уточнить цену: <strong>{item}</strong>
@@ -165,6 +210,8 @@ export function HotelForm({
         </Link>
         .
       </p>
+      </>
+      )}
     </form>
   );
 }

@@ -604,94 +604,92 @@
   min-height: 0;
 }
 .hotelsBody {
-  padding: clamp(40px, 8svh, 96px) clamp(28px, 6vw, 96px)
-    clamp(40px, 8svh, 96px) clamp(28px, 5vw, 80px);
-  display: grid;
-  grid-template-columns: 1fr 200px;
-  grid-template-rows: auto 1fr auto auto;
-  grid-template-areas:
-    "title badge"
-    "lead badge"
-    "lines lines"
-    "form form";
-  column-gap: 48px;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(28px, 5svh, 64px) clamp(28px, 6vw, 96px)
+    clamp(28px, 5svh, 64px) clamp(28px, 5vw, 80px);
 }
 .hotelsBody .h2 {
-  grid-area: title;
+  font-size: clamp(44px, 5.4vw, 84px);
 }
 .hotelsLead {
-  grid-area: lead;
-  margin-top: 20px;
-  max-width: 52ch;
+  margin-top: clamp(16px, 3svh, 28px);
+  max-width: 46ch;
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.5;
   color: var(--ink-2);
 }
-.lines {
-  grid-area: lines;
-  margin-top: clamp(20px, 3svh, 36px);
+.facts {
+  margin-top: clamp(28px, 6svh, 64px);
   list-style: none;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 32px;
-  border-top: 1px solid var(--line);
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--ink);
 }
-.lines a {
-  position: relative;
-  display: grid;
-  gap: 2px;
-  padding: 12px 24px 12px 0;
-  border-bottom: 1px solid var(--line);
+.facts li {
+  padding: clamp(14px, 2.4svh, 24px) 20px 0 0;
 }
-.lines a::after {
-  content: "";
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  width: 7px;
-  height: 7px;
-  border-top: 1px solid currentColor;
-  border-right: 1px solid currentColor;
-  transform: translateY(-50%) rotate(45deg);
-  opacity: 0.45;
-  transition: transform 0.25s var(--ease-out), opacity 0.25s;
+.facts li + li {
+  padding-left: clamp(16px, 2vw, 32px);
+  border-left: 1px solid var(--line);
 }
-.lines a:hover::after {
-  opacity: 1;
-  transform: translate(3px, -50%) rotate(45deg);
+.facts b {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(30px, 3.2vw, 48px);
+  font-weight: 400;
+  line-height: 1.1;
 }
-.lines b {
-  font-weight: 500;
-}
-.lines span {
+.facts span {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
   color: var(--ink-2);
 }
-.hotelsCta {
-  grid-area: form;
-  margin-top: clamp(24px, 4svh, 44px);
+.hotelsForm {
+  margin-top: clamp(28px, 6svh, 64px);
+  display: grid;
+  gap: 14px;
+}
+.hotelsRow {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 16px 28px;
+  gap: 12px;
 }
-.hotelsPhone {
-  font-family: var(--serif);
-  font-size: 24px;
-  border-bottom: 1px solid var(--line);
+.hotelsRow .field {
+  flex: 1 1 220px;
 }
-.badge {
-  grid-area: badge;
-  align-self: start;
+.hotelsRow .field input {
+  height: 56px;
+  font-size: 18px;
 }
-.badgeImg {
-  position: relative;
-  display: block;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
+.hotelsRow .btnLight,
+.btnLine {
+  height: 56px;
 }
-.badge figcaption {
-  font-size: 13px;
-  line-height: 1.4;
-  margin-top: 10px;
+.btnLine {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 22px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid rgba(42, 34, 34, 0.4);
+  color: var(--ink);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.btnLine:hover {
+  background: var(--ink);
+  color: var(--milk);
+}
+.formNote {
+  font-size: 12px;
   color: var(--ink-2);
 }
 .form {
@@ -883,13 +881,12 @@
   }
 }
 @media (min-width: 761px) and (max-height: 700px) {
-  .lines {
+  .facts span {
     display: none;
   }
 }
-@media (min-width: 761px) and (max-height: 640px) {
-  .hotelsLead,
-  .badge figcaption {
+@media (min-width: 761px) and (max-height: 600px) {
+  .hotelsLead {
     display: none;
   }
 }
@@ -901,18 +898,6 @@
     border-bottom: 0;
   }
   .search .hideMobile {
-    display: none;
-  }
-  .hotelsBody {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto;
-    grid-template-areas:
-      "title"
-      "lead"
-      "lines"
-      "form";
-  }
-  .badge {
     display: none;
   }
 }
@@ -1054,7 +1039,7 @@
   /* телефон: «Для отелей» тоже в один экран — узкое фото сверху, заголовок, короткий текст и форма */
   .hotels {
     grid-template-columns: 1fr;
-    grid-template-rows: 24svh minmax(0, 1fr);
+    grid-template-rows: 18svh minmax(0, 1fr);
     min-height: calc(100svh - var(--hdr));
   }
   .hotelsPhoto {
@@ -1062,13 +1047,6 @@
   }
   .hotelsBody {
     padding: 20px var(--pad) 22px;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto;
-    grid-template-areas:
-      "title"
-      "lead"
-      "lines"
-      "form";
   }
   .hotelsBody .h2 {
     font-size: 34px;
@@ -1077,25 +1055,27 @@
     margin-top: 10px;
     font-size: 14px;
   }
-  .badge {
-    display: none;
-  }
-  .lines {
-    grid-template-columns: 1fr;
+  .facts {
     margin-top: 16px;
+    grid-template-columns: repeat(3, 1fr);
   }
-  .lines a {
-    padding: 10px 24px 10px 0;
+  .facts li {
+    padding-right: 10px;
   }
-  .hotelsCta {
-    margin-top: 20px;
+  .facts li + li {
+    padding-left: 12px;
   }
-  .form {
-    grid-template-columns: 1fr;
-    margin-top: 16px;
-    gap: 14px;
+  .facts b {
+    font-size: 20px;
   }
-  .btnLight {
+  .facts span {
+    font-size: 12px;
+  }
+  .hotelsForm {
+    margin-top: 18px;
+  }
+  .btnLight,
+  .btnLine {
     flex: 1 1 100%;
     justify-content: center;
   }

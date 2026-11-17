@@ -1,3 +1,4 @@
+import { HotelForm } from "./HotelForm";
 import Image from "next/image";
 import Link from "next/link";
 import { contacts } from "@/lib/collections";
@@ -110,13 +111,12 @@ export function Gifts({ items = [] }: { items?: Product[] }) {
   );
 }
 
-// Для бизнеса на главной (2026-11-15): короткий экран-вход на /biznes — четыре направления ссылками
-// и кнопка. Форма заявки только на /biznes, чтобы не дублировать её на главной.
-const businessLines = [
-  { href: "/biznes#hotels", title: "Отели и гостевые дома", text: "белая отельная линия" },
-  { href: "/biznes#opt", title: "Опт", text: "цены по запросу" },
-  { href: "/biznes#logo", title: "Ваш логотип", text: "вышивка или жаккард" },
-  { href: "/biznes#certificate", title: "Сертификаты", text: "для сотрудников и клиентов" },
+// Для бизнеса на главной (2026-11-17): один экран — факты, поле «Телефон» с кнопкой «Получить предложение»
+// и вторичная «Подробнее для бизнеса». Полная форма с направлениями только на /biznes.
+const hotelFacts = [
+  { big: "450–500", small: "г/м², плотная махра" },
+  { big: "100%", small: "хлопок" },
+  { big: "Логотип", small: "вышивка или жаккард" },
 ];
 
 export function Hotels() {
@@ -142,42 +142,24 @@ export function Hotels() {
           Для отелей и бизнеса
         </h2>
         <p className={s.hotelsLead}>
-          Белая отельная линия Бергамо и Марсель, опт для магазинов и полотенца
-          с вашим логотипом. Менеджер подберёт модели и пришлёт цены.
+          Полотенца, халаты и коврики для номеров, спа и бассейнов, опт для
+          магазинов. Менеджер подберёт модели и пришлёт цены.
         </p>
-        <ul className={s.lines}>
-          {businessLines.map((l) => (
-            <li key={l.href}>
-              <Link href={l.href}>
-                <b>{l.title}</b>
-                <span>{l.text}</span>
-              </Link>
+        <ul className={s.facts}>
+          {hotelFacts.map((f) => (
+            <li key={f.big}>
+              <b>{f.big}</b>
+              <span>{f.small}</span>
             </li>
           ))}
         </ul>
-        <figure className={s.badge}>
-          <span className={s.badgeImg}>
-            <Image
-              src="/img/hotel-badge.webp"
-              alt="Шильдик KAVA на бордюре полотенца"
-              fill
-              sizes="220px"
-              style={{ objectFit: "cover", objectPosition: "60% 70%" }}
-              quality={75}
-            />
-          </span>
-          <figcaption>
-            Сейчас здесь шильдик KAVA. На вашем заказе будет ваш логотип.
-          </figcaption>
-        </figure>
-        <div className={s.hotelsCta}>
-          <Link href="/biznes" className={s.btnLight}>
-            Подробнее для бизнеса
-          </Link>
-          <a href={contacts.phoneHref} className={s.hotelsPhone}>
-            {contacts.phone}
-          </a>
-        </div>
+        <HotelForm
+          compact
+          moreHref="/biznes"
+          phone={contacts.phone}
+          phoneHref={contacts.phoneHref}
+          hours={contacts.hours}
+        />
       </div>
     </section>
   );

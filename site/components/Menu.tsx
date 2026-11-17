@@ -20,7 +20,7 @@ const mainLinks = [
 ];
 
 const businessLinks = [
-  { href: "/biznes#hotels", label: "Отельная линия" },
+  { href: "/biznes#hotels", label: "Для отелей" },
   { href: "/biznes#opt", label: "Опт для магазинов" },
   { href: "/biznes#logo", label: "Полотенца с логотипом" },
   { href: "/biznes#certificate", label: "Подарочный сертификат" },
