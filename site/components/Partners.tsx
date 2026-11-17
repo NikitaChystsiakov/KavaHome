@@ -212,11 +212,27 @@ export function Trust() {
             <br />и маркетплейсы
           </h2>
         </div>
-        <p className={s.lead}>
-          Более трёх лет KAVA HOME поставляет полотенца в&nbsp;крупнейшие
-          торговые сети Беларуси. Текстиль повышенной плотности 500&nbsp;г/м²
-          выбирают гостиницы, курорты и&nbsp;фитнес-клубы.
-        </p>
+        <div className={s.trustAside}>
+          <p className={s.lead}>
+            Более трёх лет KAVA HOME поставляет полотенца в&nbsp;крупнейшие
+            торговые сети Беларуси. Текстиль повышенной плотности выбирают
+            гостиницы, курорты и&nbsp;фитнес-клубы.
+          </p>
+          <dl className={s.facts}>
+            <div>
+              <dt>3+</dt>
+              <dd>года поставок в&nbsp;сети Беларуси</dd>
+            </div>
+            <div>
+              <dt>500</dt>
+              <dd>г/м² — плотность для отелей</dd>
+            </div>
+            <div>
+              <dt>{hotels.length + stores.length + marketplaces.length}</dt>
+              <dd>партнёров и&nbsp;площадок</dd>
+            </div>
+          </dl>
+        </div>
       </div>
 
       <div className={s.trustRow}>

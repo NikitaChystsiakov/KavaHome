@@ -264,11 +264,52 @@
   padding: clamp(48px, 8svh, 96px) var(--pad) clamp(40px, 6svh, 72px);
   background: var(--milk);
 }
+/* шапка на той же сетке, что и ряды: текст начинается ровно над колонкой логотипов */
+.trust .head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--gap);
+  align-items: end;
+}
+.trustAside {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) auto;
+  gap: 32px clamp(32px, 5vw, 80px);
+  align-items: end;
+  padding-left: 24px;
+}
+.trustAside .lead {
+  max-width: 440px;
+}
+.facts {
+  display: flex;
+  gap: clamp(24px, 3.4vw, 56px);
+}
+.facts dt {
+  font-family: var(--serif);
+  font-size: clamp(36px, 3.4vw, 52px);
+  line-height: 1;
+  color: var(--logo);
+}
+.facts dd {
+  margin-top: 6px;
+  max-width: 150px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
 .trustRow {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   gap: var(--gap);
   border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+.trustRow:nth-of-type(2) {
+  background: var(--sand);
+}
+.trustRow:nth-of-type(3) {
+  background: var(--card);
 }
 .trustRow:first-of-type {
   border-top-color: var(--ink);
@@ -278,7 +319,7 @@
 }
 .trustLabel {
   align-self: center;
-  padding: 18px 24px 18px 0;
+  padding: 18px 24px 18px 24px;
   font-size: 11px;
   font-weight: 600;
   color: var(--ink-2);
@@ -330,12 +371,12 @@ div.trustLabel :global(.caps) {
   display: grid;
   justify-items: center;
   gap: 14px;
-  width: 100%;
-  height: 100%;
+  flex: 1;
   align-content: center;
   transition: background 0.25s;
 }
 .trustCells > li:has(.trustShop) {
+  display: flex;
   padding: 0;
 }
 .trustShop:hover {
@@ -365,7 +406,7 @@ div.trustLabel :global(.caps) {
   .trust[data-screen] {
     display: flex;
     flex-direction: column;
-    padding-top: clamp(28px, 6svh, 64px);
+    padding-top: clamp(16px, 2.6svh, 28px);
     padding-bottom: clamp(24px, 4svh, 48px);
   }
   .trust[data-screen] .trustRow {
@@ -425,7 +466,15 @@ div.trustLabel :global(.caps) {
     gap: 0;
   }
   .trustLabel {
-    padding: 16px 0 6px;
+    padding: 16px 16px 6px;
+  }
+  .trust .head {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .trustAside {
+    grid-template-columns: 1fr;
+    padding-left: 0;
   }
   .trustCells > li:first-child {
     border-left: 0;
@@ -503,5 +552,45 @@ div.trustLabel :global(.caps) {
   .trustShop .shopGo {
     font-size: 10px;
     letter-spacing: 0.08em;
+  }
+}
+
+/* шапка «Нам доверяют» на компьютере: лид под заголовком, цифры ячейками в линию с таблицей */
+@media (min-width: 961px) {
+  .trust .head {
+    grid-template-rows: auto auto;
+    align-items: stretch;
+  }
+  .trustAside {
+    display: contents;
+  }
+  .trust .head > div:first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .trustAside .lead {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: 330px;
+    margin-top: 14px;
+  }
+  .facts {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    align-self: end;
+  }
+  .facts > div {
+    padding: 4px 0 4px 24px;
+    border-left: 1px solid var(--line);
+  }
+  .facts dt {
+    font-size: clamp(48px, 5vw, 76px);
+  }
+  .facts dd {
+    font-size: 13px;
+    max-width: 190px;
   }
 }
