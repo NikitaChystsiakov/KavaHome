@@ -24,8 +24,7 @@ export function Hero() {
       </div>
       <div className={s.heroShade} />
       <h1 className="visually-hidden">
-        KAVA HOME — махровые полотенца, коврики и наборы в Минске, доставка по
-        Беларуси
+        Махровые полотенца из 100% хлопка в Минске — купить в KAVA HOME
       </h1>
       <div className={s.heroOffer} data-hero-offer>
         <p className={s.heroLead}>

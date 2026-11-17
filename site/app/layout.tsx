@@ -27,9 +27,9 @@ const hand = Marck_Script({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "KAVA HOME — махровые полотенца в Минске",
+  title: "Махровые полотенца в Минске — купить в KAVA HOME",
   description:
-    "Махровые полотенца из 100% хлопка, коврики и наборы KAVA HOME. Коллекции Верона, Римини, Венеция, Флоренция, Милан. Минск, доставка по Беларуси, заказы для отелей и с логотипом.",
+    "Махровые полотенца из 100% хлопка в Минске: Верона, Венеция, Милан, Римини, наборы по 3 шт, коврики, халаты. Доставка по Беларуси.",
   alternates: { canonical: "./" },
   // превью ссылки в Telegram, Viber и соцсетях; картинка — app/opengraph-image.jpg
   openGraph: {

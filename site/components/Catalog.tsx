@@ -362,6 +362,7 @@ export function Catalog({
           {page ? (
             <h1 id="catalog-title" className={s.title}>
               Каталог
+              <span className="visually-hidden"> махровых полотенец в Минске</span>
             </h1>
           ) : (
             <h2 id="catalog-title" className={s.title}>

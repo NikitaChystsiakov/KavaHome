@@ -5,9 +5,9 @@ import { Catalog } from "@/components/Catalog";
 import { Shell } from "@/components/Shell";
 
 export const metadata: Metadata = {
-  title: "Каталог махровых полотенец, ковриков и наборов — KAVA HOME",
+  title: "Каталог махровых полотенец — KAVA HOME, Минск",
   description:
-    "Махровые полотенца из 100% хлопка 420–500 г/м², коврики, наборы и подарочные полотенца. Фильтры по назначению, цвету и коллекции. Доставка по Беларуси.",
+    "Банные, кухонные и пляжные полотенца, наборы по 3 шт, коврики и халаты из 100% хлопка. Цвета и размеры на выбор, доставка по Беларуси.",
 };
 
 export default async function CatalogPage() {
