@@ -2,9 +2,8 @@ import { HotelForm } from "./HotelForm";
 import Image from "next/image";
 import Link from "next/link";
 import { contacts } from "@/lib/collections";
-import { priceRange, purposeChips, type Product } from "@/lib/catalog";
-import { Certificate } from "./Certificate";
-import { GiftsShowcase, type GiftLineView } from "./GiftsShowcase";
+import { purposeChips } from "@/lib/catalog";
+import { GiftCertificate } from "./GiftCertificate";
 import { Logo } from "./Logo";
 import s from "./home.module.css";
 
@@ -60,55 +59,9 @@ export function Hero() {
   );
 }
 
-// Подарить (2026-11-17): слева фото во весь рост, при наведении на набор в списке показывается его фото, цвета,
-// размеры и цена; справа заголовок, наборы по 3 шт (категория «Наборы» из админки) и сертификат открыткой.
-// QD сюда не входят: это обычные полотенца, они в каталоге по назначению.
-export function Gifts({ items = [] }: { items?: Product[] }) {
-  const lines: GiftLineView[] = items.map((p) => {
-    const [min, max] = priceRange(p);
-    return {
-      key: p.id,
-      name: p.title,
-      meta: "3 шт",
-      density: p.density,
-      colors: p.colors.map((c) => ({ name: c.name, swatch: c.swatch })),
-      sizes: [`3 полотенца: ${p.sizes[0]?.note ?? ""}`.replace(/: $/, "")],
-      price:
-        p.source !== "woo" || !min
-          ? "Цена по запросу"
-          : min === max
-            ? `${min} BYN`
-            : `от ${min} BYN`,
-      href: `/catalog/${p.id}`,
-      image: p.colors[0]?.image,
-      position: p.colors[0]?.position,
-    };
-  });
-  return (
-    <section
-      id="gifts"
-      className={s.gifts}
-      aria-labelledby="gifts-title"
-      data-screen
-    >
-      <GiftsShowcase
-        lines={lines}
-        head={
-          <div className={s.giftsHead}>
-            <p className={`caps ${s.giftEyebrow}`}>Подарки · сертификат</p>
-            <h2 id="gifts-title" className={s.h2}>
-              Подарить
-            </h2>
-            <p className={s.giftsLead}>
-              Полотенца дарят на новоселье, свадьбу и просто так. Если не
-              знаете цвет — подарите сертификат.
-            </p>
-          </div>
-        }
-        cert={<Certificate phoneHint={contacts.phone} />}
-      />
-    </section>
-  );
+// Подарить (2026-11-17): только подарочный сертификат — открытка-превью и форма заявки (components/GiftCertificate.tsx).
+export function Gifts() {
+  return <GiftCertificate phone={contacts.phone} phoneHref={contacts.phoneHref} />;
 }
 
 // Для бизнеса на главной (2026-11-17): один экран — факты, поле «Телефон» с кнопкой «Получить предложение»

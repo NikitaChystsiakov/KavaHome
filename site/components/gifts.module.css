@@ -1,0 +1,309 @@
+/* ───────── подарить: сертификат. Слева открытка-превью, справа шаги и форма ───────── */
+.section {
+  background: var(--paper);
+  min-height: max(680px, calc(100svh - var(--hdr)));
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+}
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(32px, 6svh, 72px) clamp(24px, 4vw, 72px);
+  background:
+    radial-gradient(120% 90% at 30% 20%, #efe6d9 0%, transparent 60%),
+    var(--sand);
+}
+/* вторая открытка позади, чуть повёрнута: стопка, а не плоская карточка */
+.back,
+.card {
+  grid-area: 1 / 1;
+  width: min(660px, 100%);
+  aspect-ratio: 1.62;
+}
+.back {
+  background: #dccfbd;
+  transform: rotate(-4.5deg) translate(-14px, 10px);
+  box-shadow: 0 24px 50px -30px rgba(50, 32, 20, 0.5);
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(22px, 3vw, 40px) clamp(26px, 3.4vw, 46px);
+  background-color: var(--milk);
+  /* бланк: гильош-узор по углам и двойная рамка */
+  background-image:
+    repeating-radial-gradient(circle at 100% 0, transparent 0 7px, rgba(75, 61, 61, 0.05) 7px 8px),
+    repeating-radial-gradient(circle at 0 100%, transparent 0 7px, rgba(75, 61, 61, 0.05) 7px 8px);
+  box-shadow:
+    0 30px 60px -28px rgba(50, 32, 20, 0.55),
+    inset 0 0 0 8px var(--milk),
+    inset 0 0 0 9px rgba(75, 61, 61, 0.5),
+    inset 0 0 0 12px var(--milk),
+    inset 0 0 0 13px rgba(75, 61, 61, 0.22);
+  transform: rotate(1.2deg);
+}
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.cardLogo {
+  width: clamp(70px, 8vw, 104px);
+  height: auto;
+  color: var(--logo);
+}
+.stamp {
+  width: clamp(96px, 11vw, 150px);
+  height: auto;
+  color: var(--logo);
+  transform: rotate(-8deg);
+}
+.kicker {
+  margin-top: auto;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.amount {
+  font-family: var(--serif);
+  font-size: clamp(54px, 7vw, 96px);
+  line-height: 1;
+  margin: 4px 0 clamp(12px, 2.4vw, 26px);
+  transition: color 0.2s;
+}
+.amount small {
+  font-size: 0.32em;
+  letter-spacing: 0.16em;
+  margin-left: 12px;
+  color: var(--ink-2);
+}
+.amount[data-empty] {
+  color: rgba(42, 34, 34, 0.28);
+}
+.lines {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.lines span {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(42, 34, 34, 0.32);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.lines em {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--hand);
+  font-style: normal;
+  font-size: clamp(20px, 2.1vw, 28px);
+  line-height: 1.1;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+}
+.lines [data-empty] em {
+  color: rgba(42, 34, 34, 0.3);
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(10px, 1.8svh, 18px);
+  padding: clamp(28px, 5svh, 56px) clamp(24px, 3.6vw, 64px);
+}
+.eyebrow {
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 600;
+}
+.title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(44px, 5vw, 76px);
+  line-height: 1;
+}
+.lead {
+  max-width: 46ch;
+  color: var(--ink-2);
+}
+.steps {
+  list-style: none;
+  counter-reset: step;
+  display: grid;
+  gap: 8px;
+  margin: 4px 0 6px;
+}
+.steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: baseline;
+  font-size: 15px;
+}
+.steps li::before {
+  content: counter(step);
+  font-family: var(--serif);
+  font-size: 20px;
+  color: var(--ink-2);
+}
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.8fr;
+  gap: 14px 20px;
+  padding-top: clamp(10px, 2svh, 20px);
+  border-top: 1px solid var(--ink);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.field span {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.field input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(42, 34, 34, 0.35);
+  border-radius: 0;
+  background: transparent;
+  padding: 6px 0;
+  font-size: 18px;
+  color: var(--ink);
+}
+.field:nth-of-type(-n + 2) input {
+  font-family: var(--hand);
+  font-size: 24px;
+  padding: 2px 0 4px;
+}
+.field input::placeholder {
+  color: rgba(42, 34, 34, 0.32);
+}
+.field input:focus {
+  outline: none;
+  border-bottom-color: var(--ink);
+}
+.field:nth-of-type(4) {
+  grid-column: 1 / -1;
+}
+.error {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  color: #8a2b22;
+}
+.foot {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px 22px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  height: 52px;
+  padding: 0 26px;
+  border: 0;
+  background: var(--ink);
+  color: var(--milk);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.btn:hover {
+  background: #000;
+}
+.btn:disabled {
+  opacity: 0.6;
+}
+.phone {
+  font-size: 14px;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.note {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.note a {
+  text-decoration: underline;
+}
+.done {
+  padding-top: 18px;
+  border-top: 1px solid var(--ink);
+  font-size: 18px;
+  line-height: 1.45;
+  max-width: 46ch;
+}
+
+/* планшет: колонки равные, форма в два столбца */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .section {
+    grid-template-columns: 1fr 1fr;
+  }
+  .form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field:nth-of-type(3) {
+    grid-column: auto;
+  }
+}
+/* низкий ноутбук: без абзаца, чтобы форма влезла */
+@media (min-width: 761px) and (max-height: 760px) {
+  .lead {
+    display: none;
+  }
+}
+/* телефон: открытка сверху, под ней форма */
+@media (max-width: 760px) {
+  .section {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .stage {
+    padding: 28px 22px 34px;
+  }
+  .card {
+    width: 100%;
+  }
+  .side {
+    padding: 22px var(--pad) 32px;
+  }
+  .title {
+    font-size: 44px;
+  }
+  .form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field:nth-of-type(3) {
+    grid-column: 1 / -1;
+  }
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
