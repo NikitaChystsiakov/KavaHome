@@ -1,0 +1,369 @@
+/* Страница «Для бизнеса»: листается по экранам, как главная (PresentationScroll).
+   Экраны: первый → направления → нам доверяют → заявка → подвал. */
+
+.kicker {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.btn,
+.btnLine {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  padding: 0 28px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--ink);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.btn {
+  background: var(--ink);
+  color: var(--milk);
+}
+.btn:hover {
+  background: transparent;
+  color: var(--ink);
+}
+.btnLine {
+  color: var(--ink);
+  letter-spacing: 0.06em;
+}
+.btnLine:hover {
+  background: var(--ink);
+  color: var(--milk);
+}
+
+/* ───────── первый экран ───────── */
+.hero {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-top: var(--hdr);
+  background: var(--milk);
+}
+.heroMain {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+}
+.heroText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(18px, 3svh, 30px);
+  padding: clamp(32px, 5svh, 64px) var(--pad) clamp(32px, 5svh, 64px) clamp(var(--pad), 4vw, 72px);
+}
+.hero h1 {
+  font: 400 clamp(46px, 5.2vw, 84px) / 1.02 var(--serif);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.lead {
+  max-width: 480px;
+  font-size: 17px;
+  line-height: 1.65;
+  color: rgba(42, 34, 34, 0.8);
+}
+.heroCta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+}
+.mosaic {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: var(--gap);
+  min-height: 420px;
+  background: var(--paper);
+}
+.mosaic figure {
+  position: relative;
+  overflow: hidden;
+  background: var(--sand);
+}
+.mosaicBig {
+  grid-row: 1 / 3;
+}
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+.facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(18px, 3svh, 30px) var(--pad);
+  border-right: 1px solid var(--line);
+}
+.facts > div:last-child {
+  border-right: 0;
+}
+.facts dt {
+  font: 400 clamp(26px, 2.5vw, 38px) / 1.1 var(--serif);
+}
+.facts dd {
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(42, 34, 34, 0.78);
+  max-width: 260px;
+}
+
+/* ───────── направления ───────── */
+.offers {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - var(--hdr));
+  background: var(--paper);
+  padding: clamp(20px, 3.4svh, 40px) var(--pad) var(--pad);
+  scroll-margin-top: var(--hdr);
+}
+.offersHead {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  align-items: end;
+  gap: 16px 40px;
+  margin-bottom: clamp(16px, 3svh, 32px);
+}
+.offersHead .kicker {
+  grid-column: 1 / -1;
+}
+.offersHead h2 {
+  grid-column: 1 / -1;
+  max-width: 900px;
+  font: 400 clamp(32px, 3.6vw, 56px) / 1.04 var(--serif);
+  text-wrap: balance;
+}
+.offerGrid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: minmax(90px, 1fr) auto;
+  gap: 0 var(--gap);
+}
+.offer {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  background: var(--white);
+  scroll-margin-top: calc(var(--hdr) + 16px);
+}
+.offerPhoto {
+  position: relative;
+  min-height: 0;
+  background: var(--sand);
+  overflow: hidden;
+}
+.num {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 8px 12px;
+  background: var(--milk);
+  font: 400 15px/1 var(--serif);
+  letter-spacing: 0.06em;
+}
+.offerBody {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(16px, 2.4svh, 26px) clamp(16px, 1.6vw, 26px) clamp(18px, 2.8svh, 30px);
+}
+.offerBody h3 {
+  font: 400 clamp(23px, 1.9vw, 30px) / 1.1 var(--serif);
+  text-wrap: balance;
+}
+.offerBody p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(42, 34, 34, 0.82);
+}
+.offerLinks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: auto;
+  min-height: 76px;
+  padding-top: 4px;
+  font-size: 13px;
+}
+.offerCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 18px;
+  background: var(--ink);
+  color: var(--milk);
+  border: 1px solid var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.offerCta svg {
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+.offerCta:hover {
+  background: transparent;
+  color: var(--ink);
+}
+.offerLinks > a:not(.offerCta) {
+  border-bottom: 1px solid var(--ink-3);
+  padding-bottom: 2px;
+}
+.offerLinks > a:not(.offerCta):hover {
+  border-bottom-color: var(--ink);
+}
+
+/* ───────── заявка ───────── */
+.request {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(32px, 5vw, 96px);
+  min-height: calc(100svh - var(--hdr));
+  padding: clamp(24px, 4svh, 56px) clamp(var(--pad), 4vw, 72px);
+  background: var(--sand);
+  scroll-margin-top: var(--hdr);
+}
+.requestText h2 {
+  margin: 14px 0 20px;
+  font: 400 clamp(32px, 3.4vw, 54px) / 1.06 var(--serif);
+  text-wrap: balance;
+}
+.requestLead {
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: rgba(42, 34, 34, 0.84);
+}
+.steps {
+  list-style: none;
+  display: grid;
+  gap: 0;
+  margin-top: clamp(20px, 4svh, 40px);
+  max-width: 520px;
+  border-top: 1px solid rgba(42, 34, 34, 0.3);
+}
+.steps li {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 16px;
+  padding: clamp(10px, 1.8svh, 18px) 0;
+  border-bottom: 1px solid rgba(42, 34, 34, 0.3);
+}
+.steps li > span {
+  font: 400 26px/1 var(--serif);
+}
+.steps b {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+}
+.steps p {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(42, 34, 34, 0.78);
+}
+.requestCard {
+  background: var(--white);
+  padding: clamp(22px, 3.4svh, 40px) clamp(20px, 2.6vw, 44px) clamp(22px, 3.4svh, 40px);
+  box-shadow: 0 1px 0 rgba(42, 34, 34, 0.06);
+}
+.requestCard h3 {
+  font: 400 clamp(26px, 2.2vw, 34px) / 1.1 var(--serif);
+}
+
+/* ───────── планшет и телефон: обычная прокрутка ───────── */
+@media (max-width: 1100px) {
+  .offerGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    gap: var(--gap);
+  }
+  .offer {
+    grid-row: auto;
+    grid-template-rows: auto 1fr;
+  }
+  .offerPhoto {
+    aspect-ratio: 16 / 9;
+  }
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .facts > div:nth-child(2) {
+    border-right: 0;
+  }
+  .facts > div:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+}
+@media (max-width: 900px) {
+  .hero {
+    min-height: 0;
+  }
+  .heroMain {
+    grid-template-columns: 1fr;
+  }
+  .mosaic {
+    order: -1;
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+  .heroText {
+    padding: 28px var(--pad) 36px;
+  }
+  .offersHead {
+    grid-template-columns: 1fr;
+  }
+  .request {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 40px var(--pad);
+    gap: 32px;
+  }
+}
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 42px;
+  }
+  .lead {
+    font-size: 15px;
+  }
+  .heroCta > * {
+    flex: 1 1 100%;
+  }
+  .offerGrid {
+    grid-template-columns: 1fr;
+  }
+  .facts > div {
+    padding: 16px var(--pad);
+  }
+  .facts dt {
+    font-size: 24px;
+  }
+  .facts dd {
+    font-size: 13px;
+  }
+}

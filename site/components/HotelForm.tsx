@@ -25,7 +25,7 @@ export function HotelForm({
   compact?: boolean;
   moreHref?: string;
 }) {
-  const [needs, setNeeds] = useState<string[]>([initial]);
+  const [needs, setNeeds] = useState<string[]>(detailed ? [] : [initial]);
   const [item, setItem] = useState("");
   useEffect(() => {
     if (!detailed) return;
@@ -54,7 +54,7 @@ export function HotelForm({
 
   return (
     <form
-      className={compact ? s.hotelsForm : s.form}
+      className={compact ? s.hotelsForm : detailed ? `${s.form} ${s.formBig}` : s.form}
       onSubmit={async (e) => {
         e.preventDefault();
         const data = Object.fromEntries(
@@ -133,8 +133,9 @@ export function HotelForm({
           Уточнить цену: <strong>{item}</strong>
         </p>
       )}
+      {!detailed && (
       <fieldset className={s.needs}>
-        <legend className="caps">Что нужно</legend>
+        <legend className="caps">Что вас интересует</legend>
         {NEEDS.map((n) => {
           const on = needs.includes(n);
           return (
@@ -151,6 +152,7 @@ export function HotelForm({
           );
         })}
       </fieldset>
+      )}
       <label className={s.field}>
         <span className="caps">Имя</span>
         <input
@@ -173,19 +175,11 @@ export function HotelForm({
       {detailed && (
         <>
           <label className={s.field}>
-            <span className="caps">Компания · необязательно</span>
-            <input
-              name="company"
-              autoComplete="organization"
-              placeholder="Название отеля или магазина"
-            />
-          </label>
-          <label className={s.field}>
-            <span className="caps">Ваша задача · необязательно</span>
+            <span className="caps">Что нужно · необязательно</span>
             <textarea
               name="comment"
               rows={3}
-              placeholder="Количество, размеры, желаемые сроки"
+              placeholder="Например: полотенца для отеля на 40 номеров, с вышивкой логотипа"
             />
           </label>
         </>

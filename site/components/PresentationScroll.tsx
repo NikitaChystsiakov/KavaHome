@@ -5,11 +5,13 @@ import { useEffect } from "react";
 // Листание как у презентации на компьютере: один жест колесом/тачпадом/клавишей — ровно один экран.
 // На телефоне работает нативная привязка (scroll-snap) — свайп и так листает по экрану; в каталоге она выключена.
 // Экран выше окна (каталог) прокручивается внутри обычным способом, но не дальше своего края.
-export function PresentationScroll() {
+export function PresentationScroll({ snapMobile = true }: { snapMobile?: boolean }) {
   useEffect(() => {
     const desktop = window.matchMedia("(hover: hover) and (pointer: fine)");
     const html = document.documentElement;
     if (!desktop.matches) {
+      // страницы с высокими экранами (Для бизнеса) на телефоне листаются обычной прокруткой
+      if (!snapMobile) return;
       // телефон: нативная привязка к экранам; внутри каталога выключается — он длинный и меняет высоту от фильтров
       html.dataset.snap = "true";
       const cat = document.getElementById("catalog");
@@ -197,6 +199,6 @@ export function PresentationScroll() {
       window.removeEventListener("keydown", onKey);
       delete document.documentElement.dataset.paged;
     };
-  }, []);
+  }, [snapMobile]);
   return null;
 }
