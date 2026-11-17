@@ -509,3 +509,67 @@
   color: var(--sand);
   pointer-events: none;
 }
+
+/* Доставка: один экран — текст слева, карта во всю высоту справа */
+.dlv {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  min-height: 100svh;
+  padding-top: var(--hdr);
+}
+.dlvText {
+  padding: clamp(32px, 5vw, 72px) var(--pad);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+.dlvText > p:first-child {
+  font-size: 11px;
+  color: var(--ink-2);
+}
+.dlvText h1 {
+  font: 400 clamp(44px, 5vw, 80px)/1.02 var(--serif);
+  letter-spacing: -0.025em;
+}
+.dlvLead {
+  max-width: 480px;
+  color: var(--ink-2);
+}
+.dlvText .facts {
+  margin-top: 8px;
+}
+.dlvText .facts > div {
+  padding: 16px 0;
+}
+.dlvMap {
+  position: relative;
+  min-height: 420px;
+  background: var(--paper);
+}
+.dlvMap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  filter: grayscale(0.35) sepia(0.12);
+}
+.dlvMap a {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  padding: 12px 18px;
+  background: var(--milk);
+  font-size: 13px;
+}
+@media (max-width: 900px) {
+  .dlv {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .dlvMap {
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+  }
+}
