@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Honeypot } from "./Honeypot";
@@ -8,10 +9,11 @@ import { Stamp } from "./Stamp";
 import g from "./gifts.module.css";
 
 const STEPS = [
-  "Укажите, кому и от кого, и сумму",
-  "Менеджер перезвонит и согласует оформление и оплату",
-  "Получите сертификат и подарите",
+  { title: "Заполните открытку", text: "Кому, от кого и сумма" },
+  { title: "Мы позвоним", text: "Менеджер согласует оформление и оплату" },
+  { title: "Дарите", text: "Получите сертификат и вручите" },
 ];
+const QUICK = ["50", "100", "150", "200"];
 
 // Подарить = подарочный сертификат (2026-11-17). Слева открытка, которая заполняется вместе с формой,
 // справа шаги и форма. Заявка уходит менеджеру в Telegram через /api/lead, как у «Для бизнеса».
@@ -74,31 +76,53 @@ export function GiftCertificate({
       data-screen
     >
       <div className={g.stage}>
-        <div className={g.back} aria-hidden="true" />
-        <div className={g.card} role="img" aria-label="Подарочный сертификат KAVA HOME">
-          <div className={g.cardTop}>
-            <Logo className={g.cardLogo} />
-            <Stamp
-              id="cert"
-              ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·"
-              center="★"
-              sub="МИНСК"
-              className={g.stamp}
-            />
+        <Image
+          src="/img/florence-beige.webp"
+          alt=""
+          fill
+          sizes="(max-width: 760px) 100vw, 55vw"
+          quality={70}
+          className={g.bg}
+          style={{ objectFit: "cover", objectPosition: "50% 78%" }}
+        />
+        <div className={g.veil} aria-hidden="true" />
+        <div className={g.pack}>
+          <div className={g.envelope} aria-hidden="true">
+            <i className={g.flapL} />
+            <i className={g.flapR} />
           </div>
-          <p className={g.kicker}>Подарочный сертификат</p>
-          <p className={g.amount} data-empty={!amount || undefined}>
-            {amount || "100"}
-            <small>BYN</small>
-          </p>
-          <div className={g.lines}>
-            <span data-empty={!to || undefined}>
-              Кому <em>{to || "маме"}</em>
-            </span>
-            <span data-empty={!from || undefined}>
-              От кого <em>{from || "с любовью"}</em>
-            </span>
+          <div
+            className={g.card}
+            role="img"
+            aria-label="Подарочный сертификат KAVA HOME"
+          >
+            <div className={g.cardTop}>
+              <Logo className={g.cardLogo} />
+              <Stamp
+                id="cert"
+                ring="ПОДАРОК · REGALO · СЕРТИФИКАТ · KAVA HOME ·"
+                center="★"
+                sub="МИНСК"
+                className={g.stamp}
+              />
+            </div>
+            <p className={g.kicker}>Подарочный сертификат</p>
+            <p className={g.amount} data-empty={!amount || undefined}>
+              {amount || "100"}
+              <small>BYN</small>
+            </p>
+            <div className={g.lines}>
+              <span data-empty={!to || undefined}>
+                Кому <em>{to || "маме"}</em>
+              </span>
+              <span data-empty={!from || undefined}>
+                От кого <em>{from || "с любовью"}</em>
+              </span>
+            </div>
           </div>
+          <span className={g.seal} aria-hidden="true">
+            K
+          </span>
         </div>
       </div>
 
@@ -112,8 +136,11 @@ export function GiftCertificate({
           выберет полотенца. Срок действия и условия уточнит менеджер.
         </p>
         <ol className={g.steps}>
-          {STEPS.map((t) => (
-            <li key={t}>{t}</li>
+          {STEPS.map((x) => (
+            <li key={x.title}>
+              <b>{x.title}</b>
+              <span>{x.text}</span>
+            </li>
           ))}
         </ol>
 
@@ -125,6 +152,7 @@ export function GiftCertificate({
         ) : (
           <form className={g.form} onSubmit={submit}>
             <Honeypot />
+            <p className={`caps ${g.formTitle}`}>Заполните открытку — она слева</p>
             <label className={g.field}>
               <span className="caps">Кому</span>
               <input
@@ -157,6 +185,20 @@ export function GiftCertificate({
                 autoComplete="off"
               />
             </label>
+            <span className={g.quick}>
+                <em>Сумма:</em>
+                {QUICK.map((q) => (
+                  <button
+                    key={q}
+                    type="button"
+                    data-on={amount === q || undefined}
+                    onClick={() => setAmount(q)}
+                  >
+                    {q}
+                  </button>
+                ))}
+              </span>
+
             <label className={g.field}>
               <span className="caps">Телефон для связи</span>
               <input
