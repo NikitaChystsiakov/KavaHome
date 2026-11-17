@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Shell } from "@/components/Shell";
+import { PresentationScroll } from "@/components/PresentationScroll";
 import { contacts } from "@/lib/collections";
 import s from "@/components/editorial.module.css";
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export default function DeliveryPage() {
   const q = encodeURIComponent(contacts.mapQuery);
   return (
     <Shell>
-      <section className={s.dlv} aria-label="Доставка и оплата">
+      <section className={s.dlv} data-screen aria-label="Доставка и оплата">
         <div className={s.dlvText}>
           <p className="caps">Доставка и оплата</p>
           <h1>
@@ -63,6 +64,7 @@ export default function DeliveryPage() {
           </a>
         </div>
       </section>
+      <PresentationScroll />
     </Shell>
   );
 }

@@ -515,21 +515,22 @@
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
   min-height: 100svh;
+  box-sizing: border-box;
   padding-top: var(--hdr);
 }
 .dlvText {
-  padding: clamp(32px, 5vw, 72px) var(--pad);
+  padding: clamp(20px, 4vh, 64px) var(--pad);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 24px;
+  gap: clamp(14px, 2.6vh, 24px);
 }
 .dlvText > p:first-child {
   font-size: 11px;
   color: var(--ink-2);
 }
 .dlvText h1 {
-  font: 400 clamp(44px, 5vw, 80px)/1.02 var(--serif);
+  font: 400 clamp(36px, min(5vw, 8vh), 80px)/1.02 var(--serif);
   letter-spacing: -0.025em;
 }
 .dlvLead {
@@ -540,7 +541,7 @@
   margin-top: 8px;
 }
 .dlvText .facts > div {
-  padding: 16px 0;
+  padding: clamp(10px, 1.8vh, 16px) 0;
 }
 .dlvMap {
   position: relative;
@@ -571,5 +572,19 @@
   .dlvMap {
     min-height: 0;
     aspect-ratio: 1 / 1;
+  }
+}
+@media (min-width: 901px) and (max-height: 860px) {
+  .dlvText .facts > div {
+    grid-template-columns: 110px 1fr;
+    gap: 16px;
+  }
+  .dlvText .facts dd {
+    max-width: none;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .dlvLead {
+    font-size: 15px;
   }
 }
