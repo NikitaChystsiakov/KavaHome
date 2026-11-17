@@ -369,6 +369,7 @@ export function Catalog({
               Каталог
             </h2>
           )}
+          <p className={`${s.group} ${s.onlyPanel}`}>Категория</p>
           <nav aria-label="Категории">
             <ul className={s.cats}>
               <li>
@@ -398,7 +399,7 @@ export function Catalog({
 
           <div className={s.extraFilters}>
             <label>
-              Размер
+              <span>Размер</span>
               <select
                 value={f.razmer}
                 onChange={(e) => update({ razmer: e.target.value })}
@@ -410,7 +411,7 @@ export function Catalog({
               </select>
             </label>
             <label>
-              Плотность
+              <span>Плотность</span>
               <select
                 value={f.plotnost}
                 onChange={(e) => update({ plotnost: e.target.value })}
@@ -442,13 +443,6 @@ export function Catalog({
                 />
               </div>
             </fieldset>
-            <button
-              type="button"
-              className={s.applyFilters}
-              onClick={() => setPanel(false)}
-            >
-              Показать товары · {list.length}
-            </button>
           </div>
 
           <p className={s.group}>Коллекции</p>
@@ -487,6 +481,24 @@ export function Catalog({
             ))}
           </ul>
 
+          <div className={s.panelFoot}>
+            {(active.length > 0 || f.nazn) && (
+              <button
+                type="button"
+                className={s.panelReset}
+                onClick={() => update({ ...EMPTY, vid: f.vid })}
+              >
+                Сбросить
+              </button>
+            )}
+            <button
+              type="button"
+              className={s.applyFilters}
+              onClick={() => setPanel(false)}
+            >
+              Показать товары · {list.length}
+            </button>
+          </div>
         </div>
       </aside>
 

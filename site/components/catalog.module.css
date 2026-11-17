@@ -503,3 +503,165 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ───────── фильтры: поля в рамке, подписи, нижняя панель (2026-11-17) ───────── */
+.onlyPanel,
+.panelFoot {
+  display: none;
+}
+.extraFilters {
+  gap: 16px;
+  margin-top: 26px;
+}
+.extraFilters label > span,
+.extraFilters legend {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.extraFilters select,
+.extraFilters input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  background-color: var(--white);
+  font-size: 14px;
+  color: var(--ink);
+  border-radius: 0;
+  transition: border-color 0.2s ease;
+}
+.extraFilters select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%232a2222' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 10px 6px;
+}
+.extraFilters input::placeholder {
+  color: var(--ink-3);
+}
+.extraFilters select:hover,
+.extraFilters input:hover {
+  border-color: rgba(42, 34, 34, 0.4);
+}
+.extraFilters select:focus,
+.extraFilters input:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+.extraFilters input[type="number"] {
+  -moz-appearance: textfield;
+}
+.extraFilters input::-webkit-outer-spin-button,
+.extraFilters input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.extraFilters fieldset div {
+  gap: 8px;
+}
+.families {
+  gap: 8px;
+}
+.families button {
+  width: 32px;
+  height: 32px;
+}
+.families button:hover:not([aria-pressed="true"]) {
+  border-color: var(--line);
+}
+
+/* планшет и телефон: панель «Фильтры» — аккуратный лист, один столбец, кнопки-чипы */
+@media (max-width: 1100px) {
+  .side[data-open="true"] {
+    background: var(--milk);
+  }
+  .sideInner {
+    display: block;
+    padding: 4px var(--pad) 0;
+  }
+  .sideInner > nav {
+    grid-row: auto;
+  }
+  .onlyPanel {
+    display: block;
+  }
+  .group {
+    margin: 22px 0 10px;
+  }
+  .extraFilters {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 22px;
+  }
+  .extraFilters fieldset {
+    grid-column: 1 / -1;
+  }
+  .cats,
+  .cities {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .cats button,
+  .cities button {
+    width: auto;
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .cats button[aria-pressed="true"],
+  .cities button[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--milk);
+  }
+  .cats button[aria-pressed="true"]::before,
+  .cities button[aria-pressed="true"]::before {
+    display: none;
+  }
+  .families button {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+  }
+  .panelFoot {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    gap: 10px;
+    margin: 24px calc(var(--pad) * -1) 0;
+    padding: 12px var(--pad);
+    background: var(--milk);
+    border-top: 1px solid var(--line);
+  }
+  .applyFilters {
+    flex: 1 1 auto;
+    height: 50px;
+    padding: 0 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .panelReset {
+    height: 50px;
+    padding: 0 18px;
+    border: 1px solid var(--line);
+    font-size: 13px;
+  }
+}
+@media (max-width: 480px) {
+  .extraFilters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
