@@ -51,7 +51,7 @@ const groups: { title: string; items: { q: string; a: React.ReactNode }[] }[] =
             <p>
               Да, коллекции поставляются в эстетичной упаковке, а в линейке есть
               готовые подарочные наборы.{" "}
-              <Link href="/catalog?kat=gifts">Смотреть подарочные наборы</Link>
+              <Link href="/catalog?kat=sets">Смотреть наборы по 3 шт</Link>
             </p>
           ),
         },

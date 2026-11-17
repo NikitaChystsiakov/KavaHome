@@ -8,7 +8,7 @@ import { Hero, Gifts, Hotels, Footer } from "./Sections";
 import { Trust } from "./Partners";
 
 // Главная после звонка 2026-11-09: первый экран → веер открыток-коллекций (выбран заказчиком 2026-11-11) →
-// каталог по схеме Zara Home → подарочные наборы QD → нам доверяют (отели, сети и маркетплейсы одним экраном)
+// каталог по схеме Zara Home → «Подарить» (наборы по 3 шт + сертификат) → нам доверяют (отели, сети и маркетплейсы одним экраном)
 // → вход «для бизнеса» → подвал. Эскизы других вариантов (/v/*) удалены 2026-11-15, они есть в истории git.
 // products: товары из WooCommerce (app/page.tsx)
 export function HomePage({ products }: { products: Product[] }) {
@@ -21,7 +21,7 @@ export function HomePage({ products }: { products: Product[] }) {
           <Wheel items={collections} mode="flow" products={products} />
         </section>
         <Catalog collections={collections} products={products} />
-        <Gifts items={products.filter((p) => p.category === "gifts")} />
+        <Gifts items={products.filter((p) => p.category === "sets")} />
         <Trust />
         <Hotels />
       </main>

@@ -3,7 +3,7 @@
 // Это заглушки: настоящие товары приходят из WooCommerce (lib/woo.ts) в тех же типах. Заглушки остаются
 // запасным вариантом, пока раздел (например, халаты или QD) не заведён в админке, и для эскизов /v/*.
 
-export type CategoryId = "bath" | "kitchen" | "mats" | "robes" | "sets" | "gifts" | "hotel"; // hotel — без пункта в меню, через чипсу «Для отелей»
+export type CategoryId = "bath" | "kitchen" | "mats" | "robes" | "sets" | "hotel"; // hotel — без пункта в меню, через чипсу «Для отелей»
 export type PurposeId = "vannaya" | "kuhnya" | "banya-plyazh" | "halaty" | "kovriki" | "podarki" | "oteli";
 export type FamilyId = "white" | "beige" | "brown" | "grey" | "graphite" | "green" | "pink";
 
@@ -13,7 +13,6 @@ export const categories: { id: CategoryId; label: string }[] = [
   { id: "mats", label: "Коврики" },
   { id: "robes", label: "Халаты" },
   { id: "sets", label: "Наборы по 3 шт" },
-  { id: "gifts", label: "Подарочные наборы QD" },
 ];
 
 export const purposeChips: { id: PurposeId; label: string }[] = [
@@ -280,10 +279,10 @@ export function hasSet(p: Product) {
   return p.sizes.some((s) => s.label.startsWith("Набор"));
 }
 
-// Подарочные коллекции QD (лист прайса): не города, отдельной подборкой.
-export type GiftLine = { name: string; density: number; sizes: string; colors: { name: string; swatch: string }[]; from: number };
+// Линейка QD (лист прайса): обычные полотенца, продаются поштучно, не города. В каталоге — как «Махровые полотенца», по назначению «Ванная».
+export type QdLine = { name: string; density: number; sizes: string; colors: { name: string; swatch: string }[]; from: number };
 
-export const giftLines: GiftLine[] = [
+export const qdLines: QdLine[] = [
   {
     name: "QD",
     density: 550,
@@ -372,7 +371,7 @@ export const giftLines: GiftLine[] = [
   },
 ];
 
-// QD в каталоге: одна карточка на линию, цвета квадратами. Фото пока одно общее (рулоны QD со старого сайта),
+// QD в каталоге: одна карточка на линию, цвета квадратами. Фото пока одно общее (рулоны QD со старого сайта, заглушка),
 // нарезано по рулонам; по каждой линии нужны свои фото от клиента.
 const QD_FAMILY: Record<string, FamilyId> = {
   ваниль: "white",
@@ -407,14 +406,14 @@ const QD_PHOTO: Record<FamilyId, string> = {
 };
 const qdPhoto = (name: string, family: FamilyId) => (/сирен|фиолет|лаванд/.test(name) ? "/img/qd-lilac.webp" : QD_PHOTO[family]);
 
-for (const g of giftLines) {
+for (const g of qdLines) {
   const sizes = g.sizes.split(", ");
   products.push({
     id: g.name.toLowerCase().replace(/\s+/g, "-"),
-    name: "Подарочное полотенце",
+    name: "Полотенце махровое",
     title: g.name,
-    category: "gifts",
-    purposes: ["podarki", "vannaya"],
+    category: "bath",
+    purposes: ["vannaya"],
     density: g.density,
     sizes: sizes.map((label, i) => ({ label, note: i === sizes.length - 1 ? "банное" : "для лица", price: g.from + i * 8 })),
     colors: g.colors.map((c) => {

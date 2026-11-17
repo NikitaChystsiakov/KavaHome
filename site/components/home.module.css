@@ -232,6 +232,16 @@
 .giftPhoto:hover img {
   transform: scale(1.03);
 }
+/* фото набора поверх общего: появляется при наведении на строку списка */
+.giftPhoto img.giftSwap {
+  opacity: 0;
+  transition:
+    opacity 0.45s ease,
+    transform 1.2s var(--ease-out);
+}
+.giftPhoto img.giftSwap[data-on] {
+  opacity: 1;
+}
 /* подпись на молочной плашке, как у веера коллекций; маленькая, чтобы не закрывать полотенца */
 .giftTag {
   position: absolute;

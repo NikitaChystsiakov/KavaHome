@@ -3,21 +3,27 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
+import { plural } from "@/lib/catalog";
 import s from "./home.module.css";
 
 export type GiftLineView = {
   key: string;
   name: string;
+  /** подпись справа в строке списка */
+  meta: string;
   density: number;
+  /** фото набора для показа при наведении */
+  image?: string;
+  position?: string;
   colors: { name: string; swatch: string }[];
   sizes: string[];
   price: string;
   href: string;
 };
 
-// «Подарить» на компьютере: наведение на линию QD в списке показывает её на плашке поверх фото —
-// цвета с названиями, размеры, плотность, цена — и палитру полосой по низу фото.
-// До наведения плашка говорит обо всех линиях сразу. На телефоне плашки нет, только список.
+// «Подарить» на компьютере: наведение на набор в списке показывает его фото, на плашке — цвета с названиями,
+// размеры, плотность, цену, и палитру полосой по низу фото. Когда курсор уходит, возвращается общее фото.
+// До наведения плашка говорит обо всех наборах сразу. На телефоне плашки нет, только список.
 export function GiftsShowcase({
   lines,
   head,
@@ -41,18 +47,34 @@ export function GiftsShowcase({
   return (
     <>
       <Link
-        href={line?.href ?? "/catalog?kat=gifts"}
+        href={line?.href ?? "/catalog?kat=sets"}
         className={s.giftPhoto}
-        aria-label={line ? `${line.name}: открыть` : "Все подарочные наборы QD"}
+        aria-label={line ? `Набор ${line.name}: открыть` : "Все наборы по 3 шт"}
       >
         <Image
           src="/img/gift-qd.webp"
-          alt="Подарочные полотенца QD: ментол, ваниль, персик, сирень"
+          alt="Рулоны махровых полотенец: ментол, ваниль, персик, сирень"
           fill
           sizes="(max-width: 760px) 100vw, 55vw"
           style={{ objectFit: "cover" }}
           quality={75}
         />
+        {lines.map(
+          (l, i) =>
+            l.image && (
+              <Image
+                key={l.key}
+                src={l.image}
+                alt=""
+                fill
+                sizes="(max-width: 760px) 100vw, 55vw"
+                quality={70}
+                className={s.giftSwap}
+                data-on={cur === i || undefined}
+                style={{ objectFit: "cover", objectPosition: l.position ?? "50% 50%" }}
+              />
+            ),
+        )}
         <span className={s.giftTag} key={line?.key ?? "all"}>
           {line ? (
             <>
@@ -82,13 +104,13 @@ export function GiftsShowcase({
           ) : (
             <>
               <span className={s.giftKicker}>
-                {lines.length} линий
+                {lines.length} {plural(lines.length, "набор", "набора", "наборов")}
                 {dens.length > 0 &&
                   ` · ${Math.min(...dens)}–${Math.max(...dens)} г/м²`}
               </span>
-              <b>Подарочные наборы QD</b>
+              <b>Наборы по 3 шт</b>
               <span className={s.giftHint}>
-                Наведите на линию в списке — покажем её цвета и размеры
+                Наведите на набор в списке — покажем его цвета и размеры
               </span>
               <span className={s.giftMore}>
                 Смотреть все
@@ -109,7 +131,7 @@ export function GiftsShowcase({
         {head}
         <ul
           className={s.giftList}
-          aria-label="Подарочные линии QD"
+          aria-label="Наборы по 3 шт"
           onMouseLeave={() => setCur(null)}
         >
           {lines.map((l, i) => (
@@ -126,9 +148,7 @@ export function GiftsShowcase({
                     <i key={c.name} style={{ background: c.swatch }} />
                   ))}
                 </span>
-                <span className={s.giftDensity}>
-                  {l.density ? `${l.density} г/м²` : ""}
-                </span>
+                <span className={s.giftDensity}>{l.meta}</span>
                 <svg viewBox="0 0 12 12" aria-hidden="true">
                   <path d="M1 6h10M7 2l4 4-4 4" />
                 </svg>

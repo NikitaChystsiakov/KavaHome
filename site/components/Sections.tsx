@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { contacts } from "@/lib/collections";
-import { giftLines, priceRange, purposeChips, type Product } from "@/lib/catalog";
+import { priceRange, purposeChips, type Product } from "@/lib/catalog";
 import { Certificate } from "./Certificate";
 import { GiftsShowcase, type GiftLineView } from "./GiftsShowcase";
 import { Logo } from "./Logo";
@@ -60,38 +60,30 @@ export function Hero() {
   );
 }
 
-// Подарить (2026-11-16): слева фото QD во всю высоту с плашкой выбранной линии, справа заголовок,
-// все подарочные линии списком (наведение показывает линию на фото) и сертификат открыткой.
-// items: подарочные товары каталога (категория gifts); без них строки ведут на подборку QD в каталоге.
+// Подарить (2026-11-17): слева фото во весь рост, при наведении на набор в списке показывается его фото, цвета,
+// размеры и цена; справа заголовок, наборы по 3 шт (категория «Наборы» из админки) и сертификат открыткой.
+// QD сюда не входят: это обычные полотенца, они в каталоге по назначению.
 export function Gifts({ items = [] }: { items?: Product[] }) {
-  const lines: GiftLineView[] =
-    items.length > 0
-      ? items.map((p) => {
-          const [min, max] = priceRange(p);
-          return {
-            key: p.id,
-            name: p.title,
-            density: p.density,
-            colors: p.colors.map((c) => ({ name: c.name, swatch: c.swatch })),
-            sizes: p.sizes.map((z) => z.label),
-            price:
-              p.source !== "woo" || !min
-                ? "Цена по запросу"
-                : min === max
-                  ? `${min} BYN`
-                  : `от ${min} BYN`,
-            href: `/catalog/${p.id}`,
-          };
-        })
-      : giftLines.map((g) => ({
-          key: g.name,
-          name: g.name,
-          density: g.density,
-          colors: g.colors,
-          sizes: g.sizes.split(", "),
-          price: "Цена по запросу",
-          href: "/catalog?kat=gifts",
-        }));
+  const lines: GiftLineView[] = items.map((p) => {
+    const [min, max] = priceRange(p);
+    return {
+      key: p.id,
+      name: p.title,
+      meta: "3 шт",
+      density: p.density,
+      colors: p.colors.map((c) => ({ name: c.name, swatch: c.swatch })),
+      sizes: [`3 полотенца: ${p.sizes[0]?.note ?? ""}`.replace(/: $/, "")],
+      price:
+        p.source !== "woo" || !min
+          ? "Цена по запросу"
+          : min === max
+            ? `${min} BYN`
+            : `от ${min} BYN`,
+      href: `/catalog/${p.id}`,
+      image: p.colors[0]?.image,
+      position: p.colors[0]?.position,
+    };
+  });
   return (
     <section
       id="gifts"

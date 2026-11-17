@@ -88,7 +88,7 @@ export default async function CollectionsPage() {
       </ul>
       <section className={s.indexMore}>
         <p>
-          Кроме городов есть подарочные наборы QD, халаты и полотенца для
+          Кроме городов есть линейка QD, халаты и полотенца для
           отелей — они в каталоге.
         </p>
         <Link href="/catalog" className={s.btn}>

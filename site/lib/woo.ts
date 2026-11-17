@@ -280,13 +280,11 @@ export async function getWooProducts(): Promise<Product[] | null> {
         ? "mats"
         : /халат/i.test(kind)
           ? "robes"
-          : /^qd/i.test(coll)
-            ? "gifts"
-            : cats.has("kuhnya")
-              ? "kitchen"
-              : cats.has("dlya-otelej")
-                ? "hotel"
-                : "bath";
+          : cats.has("kuhnya")
+            ? "kitchen"
+            : cats.has("dlya-otelej")
+              ? "hotel"
+              : "bath";
     const noteKind =
       category === "mats"
         ? "mats"
@@ -406,7 +404,7 @@ export async function getWooProducts(): Promise<Product[] | null> {
 }
 
 /**
- * Каталог витрины: товары из WooCommerce, а разделы, которых в админке ещё нет (халаты, QD…), — заглушками прототипа.
+ * Каталог витрины: товары из WooCommerce, а разделы, которых в админке ещё нет (халаты, QD…; QD — обычные полотенца, category bath), — заглушками прототипа.
  * Без ключей или при ошибке API — исключение (страница ошибки с телефоном), а не заглушки с выдуманными ценами.
  * На практике посетитель его почти не увидит: готовые страницы хранятся, и при неудачном обновлении остаётся прежняя версия.
  */
