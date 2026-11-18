@@ -137,6 +137,12 @@ const groups: { title: string; items: { q: string; a: React.ReactNode }[] }[] =
     },
   ];
 
+const blurbs = [
+  "Состав, размеры, уход и подарки",
+  "Как заказать, оплатить и получить",
+  "Отели, опт и логотип на полотенцах",
+];
+
 export default function FaqPage() {
   return (
     <Shell>
@@ -145,14 +151,16 @@ export default function FaqPage() {
         style={{ paddingTop: "calc(var(--hdr) + clamp(40px, 7svh, 88px))" }}
         aria-labelledby="faq-title"
       >
-        <div className={s.split}>
-          <div className={`${s.stack} ${s.faqIntro}`}>
+        <header className={s.faqHead}>
+          <div className={s.stack}>
             <p className={`caps ${s.kicker}`} style={{ marginBottom: 0 }}>
               Покупателям
             </p>
             <h1 id="faq-title" className={s.h1}>
               Вопросы и ответы
             </h1>
+          </div>
+          <div className={s.faqHelp}>
             <p className={s.text}>
               Не нашли ответ? Позвоните:{" "}
               <a href={contacts.phoneHref}>{contacts.phone}</a>,{" "}
@@ -166,20 +174,25 @@ export default function FaqPage() {
               ))}
             </nav>
           </div>
-          <div className={s.faq}>
-            {groups.map((g, i) => (
-              <div key={g.title} id={`faq-${i}`} className={s.faqTopic}>
-                <h2 className={s.faqGroup}>{g.title}</h2>
-                {g.items.map((x) => (
-                  <details key={x.q}>
-                    <summary>{x.q}</summary>
-                    <div className={s.answer}>{x.a}</div>
-                  </details>
-                ))}
-              </div>
-            ))}
+        </header>
+
+        {groups.map((g, i) => (
+          <div key={g.title} id={`faq-${i}`} className={s.faqRow}>
+            <div className={s.faqSide}>
+              <span className={s.faqNum}>0{i + 1}</span>
+              <h2 className={s.faqTitle}>{g.title}</h2>
+              <p className={s.faqBlurb}>{blurbs[i]}</p>
+            </div>
+            <div className={s.faq}>
+              {g.items.map((x) => (
+                <details key={x.q}>
+                  <summary>{x.q}</summary>
+                  <div className={s.answer}>{x.a}</div>
+                </details>
+              ))}
+            </div>
           </div>
-        </div>
+        ))}
       </section>
     </Shell>
   );
