@@ -37,7 +37,6 @@ export function Thanks({ order: initial = "" }: { order?: string }) {
             <div className={`${s.face} ${s.back}`}>
               <span className={s.postage} aria-hidden="true">
                 <Logo className={s.postageLogo} />
-                <span>KAVA HOME</span>
               </span>
               <div className={s.letter}>
                 <p className={s.hello}>Спасибо за заказ!</p>

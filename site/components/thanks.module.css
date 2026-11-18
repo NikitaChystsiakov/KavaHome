@@ -111,9 +111,11 @@
   top: calc(var(--w) * 0.06);
   width: calc(var(--w) * 0.18);
   aspect-ratio: 4 / 5;
-  padding: 8%;
+  /* проценты считались бы от ширины всей открытки — на логотип оставалось 12px */
+  padding: calc(var(--w) * 0.025);
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* колонка во всю ширину марки: логотип с width: 100% иначе сжимался до точки */
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
   background: #efe5d6;
   color: var(--logo);
@@ -133,11 +135,6 @@
 }
 .postageLogo {
   width: 100%;
-}
-.postage > span {
-  font-family: var(--serif);
-  font-size: max(7px, calc(var(--w) * 0.017));
-  letter-spacing: 0.1em;
 }
 .postmark {
   position: absolute;

@@ -708,10 +708,14 @@
 }
 .formBig .formFoot {
   flex-direction: column;
+  /* в колонке перенос строк уводил «или позвоните» за правый край телефона */
+  flex-wrap: nowrap;
   align-items: stretch;
   gap: 12px;
 }
 .formBig .formFoot .btnLight {
+  /* на телефоне у кнопок flex: 1 1 100% — в колонке это сжимало кнопку по высоте */
+  flex: none;
   height: 56px;
   justify-content: center;
 }

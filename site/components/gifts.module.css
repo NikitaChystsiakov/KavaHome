@@ -469,11 +469,52 @@
   .field:nth-of-type(3) {
     grid-column: auto;
   }
-}
-/* низкий ноутбук: без абзаца, чтобы форма влезла */
-@media (min-width: 761px) and (max-height: 760px) {
-  .lead {
+  /* узкая открытка: высота по содержимому, иначе сумма и строки «Кому / От кого» обрезались краем */
+  .pack {
+    aspect-ratio: auto;
+    padding-bottom: 48px;
+  }
+  .card {
+    aspect-ratio: auto;
+    gap: 6px;
+    padding: 20px 22px 22px;
+  }
+  .kicker {
+    margin-top: 18px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+  }
+  .kicker i,
+  .kicker span:last-child {
     display: none;
+  }
+  .amount {
+    font-size: clamp(46px, 6vw, 64px);
+    margin-bottom: 10px;
+  }
+  .lines {
+    gap: 14px;
+  }
+  .lines span {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+  .lines em {
+    font-size: 18px;
+  }
+}
+/* невысокий ноутбук (1366×768, 1280×720): без абзаца и подписей к шагам, чтобы форма влезла в экран */
+@media (min-width: 761px) and (max-height: 820px) {
+  .lead,
+  .steps span {
+    display: none;
+  }
+  .title {
+    font-size: clamp(44px, 4.4vw, 64px);
+  }
+  .steps li {
+    padding: 32px 14px 12px;
   }
 }
 /* телефон: открытка сверху, под ней форма */

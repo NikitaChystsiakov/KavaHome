@@ -154,6 +154,20 @@
   gap: 22px;
   flex: none;
 }
+/* кнопки назначения в одну строку; не помещаются рядом с поиском и сортировкой — инструменты уходят
+   строкой ниже (раньше кнопки сжимались в узкий столбик на планшете) */
+@media (min-width: 761px) {
+  .bar {
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+  .chips {
+    flex: 1 1 auto;
+  }
+  .tools {
+    margin-left: auto;
+  }
+}
 .find {
   display: flex;
   align-items: center;
@@ -173,16 +187,17 @@
   flex: none;
 }
 .find input {
-  width: 170px;
+  width: 190px;
   font-size: 13px;
   outline: none;
 }
 .find input::placeholder {
   color: var(--ink-3);
 }
-@media (max-width: 1100px) {
-  .find input {
-    width: 130px;
+/* планшет: инструменты стоят своей строкой, места под поиск хватает; кнопки чуть уже — все в одну строку */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .chips button {
+    padding: 0 11px;
   }
 }
 @media (max-width: 760px) {
