@@ -111,17 +111,33 @@
   min-height: 0;
   overflow: hidden;
 }
+.heroMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.heroVideo {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+.heroVideoOn {
+  opacity: 1;
+}
 /* молочная дымка снизу: текст предложения читается чернилами на светлом кадре */
 .heroShade {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(
-    0deg,
-    rgba(251, 248, 243, 0.82),
-    rgba(251, 248, 243, 0.4) 20%,
-    rgba(251, 248, 243, 0) 38%
-  );
+  background:
+    linear-gradient(
+      0deg,
+      rgba(251, 248, 243, 0.82),
+      rgba(251, 248, 243, 0.4) 20%,
+      rgba(251, 248, 243, 0) 38%
+    ),
+    rgba(251, 248, 243, 0.14);
 }
 .heroOffer {
   position: absolute;

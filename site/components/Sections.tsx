@@ -1,4 +1,5 @@
 import { HotelForm } from "./HotelForm";
+import { HeroVideo } from "./HeroVideo";
 import Image from "next/image";
 import Link from "next/link";
 import { contacts } from "@/lib/collections";
@@ -13,15 +14,7 @@ export function Hero() {
   return (
     <section className={s.hero} aria-label="KAVA HOME" data-screen>
       <div className={s.heroPhoto}>
-        <Image
-          src="/img/florence-beige.webp"
-          alt="Бежевые полотенца Флоренция с рельефом «ёлочка» на белом комоде"
-          fill
-          preload
-          sizes="100vw"
-          style={{ objectFit: "cover", objectPosition: "50% 80%" }}
-          quality={85}
-        />
+        <HeroVideo alt="Полотенца и халаты KAVA HOME: стопки, рельеф, цвета" />
       </div>
       <div className={s.heroShade} />
       <h1 className="visually-hidden">
