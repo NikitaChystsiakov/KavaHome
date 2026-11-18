@@ -59,7 +59,22 @@ COLL2 = {
           "махровое:кремовый": [31, 32, 105, 90, 33, 107], "вафельное:красный": [7, 3, 16, 15, 4, 17],
           "вафельное:зеленый": [8, 5, 6, 1, 11], "вафельное:белый": [9, 12, 14, 13, 19]}),
 }
-BATCHES = {"batch1": COLL, "batch2": COLL2}
+# 2026-11-17: QD с фото от клиента. names — файлы из photos-src/<папка> по цветам (первый файл = главное фото).
+# Прайс 13.11: QD-RAVON, QD-TIFFANI, QD-TANGAEV есть с ценами. Tangaev: персиковый на фото, в прайсе такого цвета нет — добавлен с ценами группы 50×90/70×140 (уточнить у Эллы).
+def _mg(*n): return [f"_MG_{i}.jpg" for i in n]
+_QD_TXT = "Махровое полотенце из 100% хлопка плотностью {d} г/м². Мягкое, плотное, хорошо впитывает влагу."
+COLL3 = {
+ "QD-RAVON": dict(slug="qd-ravon", title="QD Ravon", table="QD Ravon", folder=SRC/"QD-RAVON", cats="Ванная", name="Полотенце махровое", text=_QD_TXT.format(d=550),
+   names={"ментол": _mg(9397, 9398, 9399), "синий": _mg(9400, 9401, 9402), "зеленый": _mg(9404, 9405, 9406, 9407),
+          "ваниль": _mg(9408, 9409, 9410, 9411), "капучино": _mg(9412, 9413, 9414, 9415)}, no_sets=True),
+ "QD-TIFFANI": dict(slug="qd-tiffani", title="QD Tiffani", table="QD Tiffani", folder=SRC/"QD-TIFFANI", cats="Ванная", name="Полотенце махровое", text=_QD_TXT.format(d=550),
+   names={"серый": _mg(9384, 9385, 9386, 9387), "сиреневый": _mg(9388, 9389, 9390, 9391), "ваниль": _mg(9392, 9393, 9394, 9395)}, no_sets=True),
+ "QD-TANGAEV": dict(slug="qd-tangaev", title="QD Tangaev", table="QD Tangaev", folder=SRC/"QD-TANGAEV 70_140,50_90,50_100", cats="Ванная", name="Полотенце махровое", text=_QD_TXT.format(d=550),
+   names={"ваниль": _mg(9416, 9420), "мятный": _mg(9422, 9423, 9424, 9426),
+          "персиковый": _mg(9432, 9427, 9428, 9429, 9430, 9431),
+          "лаванда": _mg(9433, 9434, 9435, 9436, 9437)}, no_sets=True),
+}
+BATCHES = {"batch1": COLL, "batch2": COLL2, "qd1": COLL3}
 
 def sheet_files(sheet):
     idx = dict(l.split("\t", 1) for l in (ROOT / "import" / "_sheets" / f"{sheet}_index.txt").read_text().splitlines())
@@ -118,6 +133,10 @@ EXTRA_PRICE = [
  dict(collection="Милан", name="Полотенце махровое", is_set=False, composition="100% хлопок", density=480, size="30×60", color="терракотовый", barcode=None, price_site=7),
  dict(collection="Милан", name="Полотенце махровое", is_set=False, composition="100% хлопок", density=480, size="50×80", color="терракотовый", barcode=None, price_site=16),
 ] + [
+ # 2026-11-18: QD Tangaev персиковый есть на фото, в прайсе такого цвета нет — размеры и цены как у группы 50×90 / 70×140, уточнить у Эллы
+ dict(collection="QD-TANGAEV", name=None, is_set=False, composition="100% хлопок", density=550, size=sz, color="персиковый", barcode=None, price_site=pr)
+ for sz, pr in [("50×90", 16), ("70×140", 33)]
+] + [
  # 2026-11-12: Флоренция во всех цветах в трёх размерах 30×60, 50×90, 70×140
  dict(collection="Флоренция", name="Полотенце махровое", is_set=False, composition="100% хлопок", density=450, size=sz, color=c, barcode=None, price_site=pr)
  for c, sz, pr in [("графит", "50×90", 16), ("бежевый", "30×60", 7), ("серый", "50×90", 16)]
@@ -128,7 +147,8 @@ def model_kind(name):
     return "вафельное" if "ваф" in n else "махровое"
 
 def build(batch):
-    price = json.loads((ROOT / "import" / "price.json").read_text()) + EXTRA_PRICE
+    price = json.loads((ROOT / "import" / "price.json").read_text())
+    price += EXTRA_PRICE
     desc = descriptions(); outdir = ROOT / "photos-webp" / batch; outdir.mkdir(parents=True, exist_ok=True)
     rows, report, nprod, nvar = [], [], 0, 0
     for coll, cfg in BATCHES[batch].items():
@@ -147,6 +167,8 @@ def build(batch):
             if pick and (cfg.get("extra_dirs") or {}).get(color) and key not in cfg.get("picks", {}):
                 files = imgs(cfg["extra_dirs"][color]) + (pick(cfg["append_picks"]) if cfg.get("append_picks") else [])
                 base = f'{cfg["slug"]}-{slug(color)}'
+            elif cfg.get("names"):
+                files = [cfg["folder"] / n for n in cfg["names"].get(color, [])]; base = f'{cfg["slug"]}-{slug(color)}'
             elif pick and cfg.get("shared_picks"): files = pick(cfg["shared_picks"]); base = cfg["slug"]
             elif pick: files = pick(cfg["picks"].get(key, [])); base = f'{cfg["slug"]}-' + (f"{slug(kind)}-" if len(kinds) > 1 else "") + slug(color)
             else:
@@ -163,11 +185,11 @@ def build(batch):
             for n, f in enumerate(files, 1):
                 fn = f"{base}-{n:02d}.webp"; to_webp(f, outdir / fn); names.append(fn)
             var = sorted([r for r in towels if r["color"].strip() == color and model_kind(r["name"]) == kind], key=lambda r: size_key(r["size"]))
-            if any(not r["price_site"] for r in var): report.append(f"{coll} {key}: есть размер без цены")
-            var = [r for r in var if r["price_site"]]
+            if not cfg.get("noprice") and any(not r["price_site"] for r in var): report.append(f"{coll} {key}: есть размер без цены")
+            if not cfg.get("noprice"): var = [r for r in var if r["price_site"]]
             if not var: continue
             comp = re.sub(r"\s+", " ", var[0]["composition"]).replace(" %", "%")
-            dens = f'{var[0]["density"]} г/м²'
+            dens = f'{var[0]["density"]} г/м²' if var[0]["density"] else None
             city = cfg.get("table", coll)
             full = (f"<p>{text}</p>" if text else "") + f"<p><b>Уход:</b> {CARE}</p>"
             tname_base = cfg.get("name") or (str(var[0]["name"]).strip()[0].upper() + str(var[0]["name"]).strip()[1:])
@@ -176,13 +198,13 @@ def build(batch):
             sizes = [r["size"].replace("-", "–") for r in var]
             cats = cfg["cats"] + (", Баня и пляж" if any(size_key(r["size"])[0] >= 100 for r in var) and "Баня" not in cfg["cats"] else "")
             if coll == "Новогодняя": cats += ", Кухня" if kind == "вафельное" else ", Ванная"
-            att = [("Размер", ", ".join(sizes)), ("Цвет", color)] + ([] if cfg.get("nocoll") else [("Коллекция", city)]) + [("Плотность", dens), ("Состав", comp)]
+            att = [("Размер", ", ".join(sizes)), ("Цвет", color)] + ([] if cfg.get("nocoll") else [("Коллекция", city)]) + ([("Плотность", dens)] if dens else []) + [("Состав", comp)]
             rows.append(row(Type="variable", SKU=psku, Name=tname, Published=-1, **{"Visibility in catalog": "visible",
                 "Short description": text, "Description": full, "Tax status": "none", "In stock?": 1},
                 Categories=cats, Images=", ".join(names), **attrs(att)))
             for r, sz in zip(var, sizes):
                 rows.append(row(Type="variation", SKU=r["barcode"] or f'{psku}-{slug(r["size"])}'.upper(), Name=f'{tname}, {sz}',
-                    Published=1, **{"Visibility in catalog": "visible", "Tax status": "none", "In stock?": 1, "Regular price": r["price_site"]},
+                    Published=1, **{"Visibility in catalog": "visible", "Tax status": "none", "In stock?": 1, "Regular price": r["price_site"] or ""},
                     Parent=psku, **{"Attribute 1 name": "Размер", "Attribute 1 value(s)": sz, "Attribute 1 global": 1}))
             nprod += 1; nvar += len(var)
             if cfg.get("no_sets"): continue
