@@ -1,0 +1,755 @@
+/* Страница «О бренде»: листается по экранам, как главная (PresentationScroll).
+   Экраны: первый → из чего сделано → цвета → где купить → куда дальше → подвал.
+   У каждого свой фон (молочный, бежевый, песочный) и свой ритм, чтобы листать было интересно. */
+
+.kicker {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.h2 {
+  font: 400 clamp(36px, 4.2vw, 68px) / 1.04 var(--serif);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  align-self: flex-start;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 6px;
+  font-size: 13px;
+  transition: gap 0.7s var(--ease-out);
+}
+.textLink:hover {
+  gap: 40px;
+}
+
+/* ───────── появление при листании ───────── */
+:global(html[data-reveal-ready]) [data-r] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.8s var(--ease-out),
+    transform 0.9s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 110ms + 80ms);
+}
+:global(html[data-reveal-ready]) [data-in="true"] [data-r] {
+  opacity: 1;
+  transform: none;
+}
+:global(html[data-reveal-ready]) [data-r="fade"] {
+  transform: none;
+}
+/* фото открывается шторкой слева направо */
+:global(html[data-reveal-ready]) [data-r="wipe"] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.2s var(--ease-out);
+  transition-delay: 0.05s;
+}
+:global(html[data-reveal-ready]) [data-in="true"] [data-r="wipe"] {
+  clip-path: inset(0 0 0 0);
+}
+
+/* ───────── 1. первый экран ───────── */
+.hero {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-top: var(--hdr);
+  background: var(--milk);
+}
+.heroMain {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+}
+.heroText {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(18px, 3svh, 30px);
+  padding: clamp(32px, 5svh, 64px) var(--pad) clamp(32px, 5svh, 64px) clamp(var(--pad), 4vw, 72px);
+}
+.hero h1 {
+  font: 400 clamp(46px, 5.6vw, 92px) / 1 var(--serif);
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.hero h1 em {
+  font-style: normal;
+  color: #9a7a5c;
+}
+.lead {
+  max-width: 460px;
+  font-size: 17px;
+  line-height: 1.65;
+  color: rgba(42, 34, 34, 0.8);
+}
+.heroPhoto {
+  position: relative;
+  min-height: 420px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.heroPhoto img {
+  object-fit: cover;
+}
+.heroPhoto figcaption {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  padding: 8px 12px;
+  background: var(--milk);
+  font-size: 11px;
+}
+/* круглая печать-отметка поверх фото */
+.seal {
+  position: absolute;
+  top: clamp(16px, 4svh, 40px);
+  right: clamp(16px, 3vw, 40px);
+  width: clamp(92px, 9vw, 132px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  text-align: center;
+  background: var(--milk);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line), inset 0 0 0 6px var(--milk), inset 0 0 0 7px var(--line);
+  rotate: 8deg;
+}
+.seal b {
+  font: 400 clamp(30px, 3vw, 44px) / 1 var(--serif);
+}
+.seal span {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-top: 2px;
+}
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+.strip > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: clamp(16px, 2.6svh, 28px) var(--pad);
+  border-right: 1px solid var(--line);
+}
+.strip > div:first-child {
+  padding-left: clamp(var(--pad), 4vw, 72px);
+}
+.strip > div:last-child {
+  border-right: 0;
+}
+.strip dt {
+  font: 400 clamp(24px, 2.3vw, 36px) / 1.1 var(--serif);
+}
+.strip dd {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+/* ───────── 2. из чего сделано ───────── */
+.feel {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  min-height: calc(100svh - var(--hdr));
+  background: var(--paper);
+}
+.feelPhoto {
+  position: relative;
+  background: var(--sand);
+  overflow: hidden;
+}
+.feelPhoto img {
+  object-fit: cover;
+}
+.feelPhoto figcaption {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  padding: 8px 12px;
+  background: var(--milk);
+  font-size: 11px;
+}
+.feelBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(18px, 3.2svh, 34px);
+  padding: clamp(28px, 5svh, 64px) var(--pad) clamp(28px, 5svh, 64px) clamp(var(--pad), 4.5vw, 84px);
+}
+.feelList {
+  list-style: none;
+  border-top: 1px solid var(--ink);
+}
+.feelList li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 8px 16px;
+  padding: clamp(14px, 2.4svh, 24px) 0;
+  border-bottom: 1px solid var(--line);
+}
+.feelList span {
+  grid-row: 1 / 3;
+  font: 400 clamp(30px, 2.8vw, 44px) / 1 var(--serif);
+  color: #9a7a5c;
+}
+.feelList h3 {
+  font: 400 clamp(22px, 2vw, 30px) / 1.15 var(--serif);
+}
+.feelList p {
+  max-width: 400px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* ───────── 3. цвета ───────── */
+.colors {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.4svh, 26px);
+  min-height: calc(100svh - var(--hdr));
+  padding: clamp(16px, 2.6svh, 30px) var(--pad) clamp(16px, 2.6svh, 28px);
+  background: var(--sand);
+}
+.colorsHead {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: 48px;
+  align-items: end;
+}
+.colorsHead .h2 {
+  font-size: clamp(32px, 3.6vw, 56px);
+  white-space: nowrap;
+}
+.colorsHead .kicker {
+  margin-bottom: 10px;
+}
+.colorsHead > p {
+  max-width: 420px;
+  justify-self: end;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.panels {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: var(--gap);
+  min-height: 300px;
+  container-type: inline-size;
+  transition: grid-template-columns 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.panels:has(.panel:nth-child(1):hover),
+.panels:has(.panel:nth-child(1):focus-visible) {
+  grid-template-columns: 2.4fr 1fr 1fr 1fr;
+}
+.panels:has(.panel:nth-child(2):hover),
+.panels:has(.panel:nth-child(2):focus-visible) {
+  grid-template-columns: 1fr 2.4fr 1fr 1fr;
+}
+.panels:has(.panel:nth-child(3):hover),
+.panels:has(.panel:nth-child(3):focus-visible) {
+  grid-template-columns: 1fr 1fr 2.4fr 1fr;
+}
+.panels:has(.panel:nth-child(4):hover),
+.panels:has(.panel:nth-child(4):focus-visible) {
+  grid-template-columns: 1fr 1fr 1fr 2.4fr;
+}
+.panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+  outline: 0;
+}
+/* фото фиксированной ширины по центру панели: рамка расширяется и «выдвигает» кадр,
+   а сама картинка не пересчитывается каждый кадр — отсюда плавность без лагов */
+.panel img {
+  object-fit: cover;
+  left: 50% !important;
+  right: auto !important;
+  width: 46cqw !important;
+  transform: translateX(-50%) scale(1.06);
+  will-change: transform;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.panel:hover img,
+.panel:focus-visible img {
+  transform: translateX(-50%) scale(1);
+}
+.panel figcaption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--milk);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.panel figcaption em {
+  font-style: normal;
+  color: var(--ink-2);
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-width 0.6s var(--ease-out),
+    opacity 0.5s ease;
+}
+.panel:hover figcaption em,
+.panel:focus-visible figcaption em {
+  max-width: 200px;
+  opacity: 1;
+}
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(42, 34, 34, 0.22);
+}
+.colorsFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.colorsFoot .textLink {
+  color: var(--ink);
+}
+
+/* ───────── 4. где купить ───────── */
+.where {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 2.2svh, 24px);
+  min-height: calc(100svh - var(--hdr));
+  padding: clamp(16px, 2.6svh, 30px) var(--pad) clamp(16px, 2.6svh, 28px);
+  background: var(--milk);
+}
+.whereHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 40px;
+}
+.whereHead .kicker {
+  margin-bottom: 10px;
+}
+.whereHead .h2 {
+  font-size: clamp(30px, 3.4vw, 54px);
+  white-space: nowrap;
+}
+.score {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.score b {
+  font: 400 clamp(48px, 4.4vw, 72px) / 1 var(--serif);
+}
+.score span {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+.mpRow {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+  min-height: 240px;
+}
+.mp {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+}
+.mp img {
+  object-fit: cover;
+  transition: transform 1.6s var(--ease-out);
+}
+.mp:hover img {
+  transform: scale(1.05);
+}
+.mpPlate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  /* фиксированная высота: иначе плашка растёт вместе с логотипом (у Emall он выше) и край фото идёт лесенкой */
+  height: clamp(64px, 9.5svh, 84px);
+  padding: 0 clamp(16px, 1.8vw, 28px);
+  background: var(--milk);
+}
+.mpPlate span {
+  font-size: 12px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  transition: transform 0.7s var(--ease-out);
+}
+.mp:hover .mpPlate span {
+  transform: translateX(4px);
+}
+.shops {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-block: 1px solid var(--line);
+}
+.shops li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(70px, 11svh, 110px);
+  padding: 12px;
+  border-left: 1px solid var(--line);
+  transition: background-color 0.7s var(--ease-out);
+}
+.shops li:first-child {
+  border-left: 0;
+}
+.shops li:hover {
+  background: var(--paper);
+}
+
+/* ───────── 5. отели ───────── */
+.hotels {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  min-height: calc(100svh - var(--hdr));
+  background: var(--paper);
+}
+.hotelsPhoto {
+  position: relative;
+  overflow: hidden;
+  background: var(--sand);
+}
+.hotelsPhoto img {
+  object-fit: cover;
+}
+.hotelsPhoto figcaption {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  padding: 10px 14px;
+  background: var(--milk);
+  font-size: 12px;
+}
+.hotelsPhoto figcaption b {
+  font: 400 26px / 1 var(--serif);
+  margin-right: 4px;
+}
+.hotelsBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(16px, 3svh, 30px);
+  padding: clamp(28px, 5svh, 64px) var(--pad) clamp(28px, 5svh, 64px) clamp(var(--pad), 4.5vw, 84px);
+}
+.hotelsLead {
+  max-width: 440px;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.hotelGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--ink);
+}
+.hotelGrid li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: clamp(96px, 15svh, 150px);
+  padding: 16px 8px;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+.hotelGrid li:nth-child(3n) {
+  border-right: 0;
+}
+.hotelGrid li > span:last-child {
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
+/* ───────── 6. розница или опт ───────── */
+.paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: var(--gap);
+  min-height: calc(100svh - var(--hdr));
+  background: var(--sand);
+}
+.pathsHead {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: end;
+  padding: clamp(16px, 2.6svh, 30px) var(--pad) clamp(14px, 2.2svh, 24px);
+  background: var(--milk);
+}
+.pathsHead .kicker {
+  margin-bottom: 12px;
+}
+.pathsHead .h2 {
+  font-size: clamp(30px, 3.4vw, 52px);
+}
+.pathsHead > p {
+  max-width: 460px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  justify-self: end;
+}
+.path {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  background: var(--paper);
+}
+.pathPhoto {
+  position: relative;
+  min-height: 220px;
+  overflow: hidden;
+  background: var(--sand);
+}
+.pathPhoto img {
+  object-fit: cover;
+  transition: transform 1.8s var(--ease-out);
+}
+.path:hover .pathPhoto img {
+  transform: scale(1.05);
+}
+.tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 8px 14px;
+  background: var(--milk);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.pathBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(14px, 2.4svh, 24px);
+  padding: clamp(18px, 3svh, 36px) clamp(18px, 2.4vw, 36px);
+}
+.pathBody h3 {
+  font: 400 clamp(24px, 2.4vw, 38px) / 1.1 var(--serif);
+}
+.pathBody ul {
+  align-self: stretch;
+  list-style: none;
+  border-top: 1px solid var(--ink);
+}
+.pathBody li {
+  position: relative;
+  padding: clamp(7px, 1.2svh, 12px) 0 clamp(7px, 1.2svh, 12px) 22px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.pathBody li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  width: 8px;
+  height: 1px;
+  background: var(--ink);
+}
+.pathGo {
+  display: inline-flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 24px;
+  border: 1px solid var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.7s var(--ease-out),
+    color 0.7s var(--ease-out);
+}
+.path:hover .pathGo {
+  background: var(--ink);
+  color: var(--milk);
+}
+
+/* ───────── планшет и телефон: обычная прокрутка, секции по содержимому ───────── */
+@media (max-width: 900px) {
+  .heroMain,
+  .feel,
+  .where,
+  .hotels {
+    grid-template-columns: 1fr;
+  }
+  .hero,
+  .feel,
+  .colors,
+  .where,
+  .paths {
+    min-height: 0;
+  }
+  .heroPhoto {
+    order: -1;
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+  .heroText {
+    padding: 36px var(--pad) 44px;
+  }
+  .hero h1 {
+    font-size: clamp(44px, 9vw, 70px);
+  }
+  .strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .strip > div,
+  .strip > div:first-child {
+    padding: 18px var(--pad);
+    border-bottom: 1px solid var(--line);
+  }
+  .strip > div:nth-child(2n) {
+    border-right: 0;
+  }
+  .feelPhoto {
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+  }
+  .feelBody {
+    padding: 36px var(--pad) 48px;
+  }
+  .colors {
+    padding: 44px var(--pad) 36px;
+  }
+  .colorsHead {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .colorsHead > p {
+    justify-self: start;
+  }
+  .panels,
+  .panels:has(.panel:hover) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-height: 0;
+  }
+  .panel {
+    aspect-ratio: 3 / 4;
+  }
+  .colorsFoot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .where {
+    padding: 44px var(--pad) 32px;
+  }
+  .whereHead {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .mpRow {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .mp {
+    aspect-ratio: 16 / 10;
+  }
+  .whereHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .whereHead .h2,
+  .colorsHead .h2 {
+    white-space: normal;
+  }
+  .shops {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .shops li:nth-child(odd) {
+    border-left: 0;
+  }
+  .panel img {
+    width: 100% !important;
+    left: 0 !important;
+    transform: none !important;
+  }
+  .hotels,
+  .hotels .hotelsPhoto {
+    min-height: 0;
+  }
+  .hotelsPhoto {
+    aspect-ratio: 4 / 3;
+  }
+  .hotelsBody {
+    padding: 36px var(--pad) 44px;
+  }
+  .paths {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+  .pathsHead {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 36px var(--pad) 28px;
+  }
+  .pathsHead > p {
+    justify-self: start;
+  }
+  .path {
+    grid-template-columns: 1fr;
+  }
+  .pathPhoto {
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+  }
+  .pathBody {
+    padding: 24px var(--pad) 32px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .colorsHead .h2,
+  .whereHead .h2 {
+    white-space: normal;
+  }
+}
