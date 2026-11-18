@@ -115,10 +115,23 @@ export function PresentationScroll({ snapMobile = true }: { snapMobile?: boolean
       else if (dir < 0) go(0);
     };
 
+    // внутри вложенной прокручиваемой панели (фильтры каталога) колесо листает её, а не страницу
+    const innerScroller = (t: EventTarget | null, dy: number) => {
+      for (let el = t instanceof Element ? (t as HTMLElement) : null; el && el !== document.body; el = el.parentElement) {
+        if (el.scrollHeight <= el.clientHeight + 1) continue;
+        const oy = getComputedStyle(el).overflowY;
+        if (oy !== "auto" && oy !== "scroll") continue;
+        // дошла до края в эту сторону — отдаём странице (не перелистываем, см. ниже)
+        return dy > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 0;
+      }
+      return false;
+    };
+
     const menuOpen = () => document.documentElement.style.overflow === "hidden";
 
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY) || menuOpen()) return;
+      if (innerScroller(e.target, e.deltaY)) return;
       const px = Math.abs(
         e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY,
       );

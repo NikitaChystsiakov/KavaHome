@@ -16,6 +16,7 @@
   top: var(--hdr);
   max-height: calc(100svh - var(--hdr));
   overflow-y: auto;
+  overscroll-behavior: contain;
   scrollbar-width: none;
   padding: 28px var(--pad) 40px;
 }
