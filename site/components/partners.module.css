@@ -545,13 +545,24 @@ div.trustLabel :global(.caps) {
   .trustNote {
     margin-top: 0;
   }
+  /* узкая ячейка: логотип сжимается до её ширины, иначе Wildberries наезжал на Ozon */
   .trustShop {
-    padding: 10px 0;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+    padding: 10px 6px;
     gap: 8px;
   }
   .trustShop .shopGo {
+    display: block;
     font-size: 10px;
     letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .trustShop .shopGo svg {
+    display: inline-block;
+    margin-left: 4px;
+    vertical-align: -1px;
   }
 }
 

@@ -63,6 +63,10 @@ a {
   color: inherit;
   text-decoration: none;
 }
+/* номер телефона не рвётся на две строки («101-58-» / «58») */
+a[href^="tel:"] {
+  white-space: nowrap;
+}
 
 button,
 input,
