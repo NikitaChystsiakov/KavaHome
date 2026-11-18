@@ -1,37 +1,68 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Shell } from "@/components/Shell";
-import { MapBlock } from "@/components/MapBlock";
+import { PresentationScroll } from "@/components/PresentationScroll";
 import { contacts } from "@/lib/collections";
-import s from "@/components/editorial.module.css";
+import { SITE_URL } from "@/lib/site";
+import s from "@/components/kontakty.module.css";
+
 export const metadata: Metadata = {
-  title: "Контакты и шоурум — KAVA HOME",
-  description: `Телефон ${contacts.phone}. Шоурум и самовывоз: ${contacts.pickup}.`,
+  title: "Контакты KAVA HOME — магазин полотенец, шоурум под Минском, телефон и адрес",
+  description: `Купить полотенца KAVA HOME: звоните ${contacts.phone} (${contacts.hours}). Шоурум и самовывоз: ${contacts.pickupShort}, Минский район. Доставка по Беларуси, поставки для отелей и магазинов.`,
+  alternates: { canonical: "/kontakty" },
 };
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Store",
+  name: "KAVA HOME",
+  description: "Магазин махровых и вафельных полотенец из 100% хлопка, наборы, халаты. Розница и опт.",
+  url: SITE_URL,
+  telephone: "+375291015858",
+  email: contacts.email,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Брестское шоссе, 1",
+    addressLocality: "д. Волковичи",
+    addressRegion: "Минская область",
+    addressCountry: "BY",
+  },
+  geo: { "@type": "GeoCoordinates", longitude: 27.401572, latitude: 53.81045 },
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "09:00",
+    closes: "18:00",
+  },
+  areaServed: "BY",
+};
+
 export default function ContactsPage() {
+  const q = encodeURIComponent(contacts.mapQuery);
   return (
     <Shell>
-      <header className={s.infoTop}>
-        <p className="caps">Будем на связи</p>
-        <h1>
-          Звоните, пишите.
-          <br />И приезжайте знакомиться.
-        </h1>
-        <p>
-          Поможем выбрать полотенца для дома, подготовим заказ к самовывозу или
-          обсудим поставку для вашего бизнеса.
-        </p>
-      </header>
-      <section className={s.deliveryGrid} aria-label="Контактная информация">
-        <div>
-          <h2>Как нас найти</h2>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
+      <section className={s.screen} data-screen aria-labelledby="contacts-title">
+        <div className={s.text}>
+          <p className="caps">Контакты · KAVA HOME</p>
+          <h1 id="contacts-title">
+            Контакты магазина полотенец KAVA HOME
+          </h1>
+          <p className={s.lead}>
+            Поможем выбрать полотенца из 100% хлопка, соберём заказ к самовывозу в шоуруме под Минском
+            или обсудим поставку для бизнеса.
+          </p>
+          <a className={s.phone} href={contacts.phoneHref}>
+            {contacts.phone}
+          </a>
+          <p className={s.hours}>{contacts.hours}</p>
           <dl className={s.facts}>
             <div>
-              <dt>Телефон</dt>
+              <dt>Шоурум и самовывоз</dt>
               <dd>
-                <a href={contacts.phoneHref}>{contacts.phone}</a>
-                <br />
-                {contacts.hours}
+                {contacts.pickup}. Время приезда согласуйте по телефону.
               </dd>
             </div>
             <div>
@@ -41,28 +72,34 @@ export default function ContactsPage() {
               </dd>
             </div>
             <div>
-              <dt>Шоурум и склад</dt>
-              <dd>
-                {contacts.pickup}.<br />
-                Перед поездкой согласуйте время посещения по телефону.
-              </dd>
-            </div>
-            <div>
               <dt>Реквизиты</dt>
-              <dd>
-                {contacts.company}
-                <br />
-                Адрес компании отличается от адреса самовывоза.
-              </dd>
+              <dd>{contacts.company}</dd>
             </div>
           </dl>
-          <div className={s.jumpNav}>
-            <Link href="/dostavka">Доставка и оплата ↗</Link>
-            <Link href="/biznes#zayavka">Заявка для бизнеса ↗</Link>
+          <div className={s.btns}>
+            <a className={s.btnInk} href={contacts.phoneHref}>
+              Позвонить
+            </a>
+            <a className={s.btnLine} href="/dostavka">
+              Доставка и оплата
+            </a>
+            <a className={s.btnLine} href="/biznes#zayavka">
+              Для бизнеса
+            </a>
           </div>
         </div>
-        <MapBlock />
+        <div className={s.map}>
+          <iframe
+            src={`https://yandex.by/map-widget/v1/?ll=${contacts.mapPoint}&pt=${contacts.mapPoint},pm2dkm&z=14`}
+            title={`Карта: ${contacts.pickup}`}
+            allowFullScreen
+          />
+          <a href={`https://yandex.by/maps/?text=${q}`} target="_blank" rel="noopener noreferrer">
+            Построить маршрут ↗
+          </a>
+        </div>
       </section>
+      <PresentationScroll />
     </Shell>
   );
 }
