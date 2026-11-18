@@ -6,8 +6,8 @@ import { SITE_URL } from "@/lib/site";
 import s from "@/components/kontakty.module.css";
 
 export const metadata: Metadata = {
-  title: "Контакты KAVA HOME — магазин полотенец, шоурум под Минском, телефон и адрес",
-  description: `Купить полотенца KAVA HOME: звоните ${contacts.phone} (${contacts.hours}). Шоурум и самовывоз: ${contacts.pickupShort}, Минский район. Доставка по Беларуси, поставки для отелей и магазинов.`,
+  title: "Контакты KAVA HOME — телефон, шоурум и самовывоз под Минском",
+  description: `Магазин полотенец KAVA HOME: ${contacts.phone} (${contacts.hours}). Шоурум и самовывоз: ${contacts.pickupShort}, Минский район. Доставка по Беларуси.`,
   alternates: { canonical: "/kontakty" },
 };
 

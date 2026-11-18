@@ -4,7 +4,7 @@ import { PresentationScroll } from "@/components/PresentationScroll";
 import { contacts } from "@/lib/collections";
 import s from "@/components/editorial.module.css";
 export const metadata: Metadata = {
-  title: "Доставка и оплата — KAVA HOME",
+  title: "Доставка полотенец по Беларуси, самовывоз, оплата ЕРИП — KAVA HOME",
   description:
     "Доставка по Беларуси, самовывоз из Волковичей. Оплата через ЕРИП или по реквизитам после подтверждения заказа.",
 };

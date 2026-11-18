@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { collections } from "@/lib/collections";
 import { getProducts } from "@/lib/woo";
 import { SITE_URL } from "@/lib/site";
+import { categoryPages, categoryPath } from "@/lib/categories";
 
 // Карта сайта: страницы, коллекции и товары из WooCommerce (обновляется вместе с каталогом).
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -14,6 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     page("", 1),
     page("/catalog", 0.9),
+    ...categoryPages.map((c) => page(categoryPath(c), 0.9)),
     page("/kollekcii", 0.7),
     ...collections.map((c) => page(`/kollekcii/${c.slug}`, 0.7)),
     ...products.map((p) => page(`/catalog/${p.id}`, p.source === "woo" ? 0.8 : 0.4)),
@@ -22,6 +24,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     page("/kontakty", 0.5),
     page("/o-nas", 0.5),
     page("/faq", 0.4),
-    page("/privacy", 0.1),
+    // /privacy закрыта noindex — в карту сайта не входит
   ];
 }

@@ -37,6 +37,11 @@ export const metadata: Metadata = {
     locale: "ru_BY",
     siteName: "KAVA HOME",
   },
+  // подтверждение прав в Яндекс Вебмастере и Google Search Console: коды задаются переменными окружения
+  verification: {
+    yandex: process.env.YANDEX_VERIFICATION,
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+  },
   // демо закрыто от поисковиков; на боевом домене SITE_INDEX=1 (lib/site.ts)
   robots: INDEXABLE ? undefined : { index: false, follow: false },
 };

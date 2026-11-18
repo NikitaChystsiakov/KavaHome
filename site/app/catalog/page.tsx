@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { collections } from "@/lib/collections";
 import { getProducts } from "@/lib/woo";
+import { CATALOG_TITLE } from "@/lib/categories";
 import { Catalog } from "@/components/Catalog";
 import { Shell } from "@/components/Shell";
 
 export const metadata: Metadata = {
-  title: "Каталог махровых полотенец — KAVA HOME, Минск",
+  title: CATALOG_TITLE,
   description:
-    "Банные, кухонные и пляжные полотенца, наборы по 3 шт, коврики и халаты из 100% хлопка. Цвета и размеры на выбор, доставка по Беларуси.",
+    "Махровые и вафельные полотенца, наборы по 3 шт, коврики и халаты из 100% хлопка. Размеры от 30×30 до 100×150, много цветов, доставка по Беларуси.",
 };
 
 export default async function CatalogPage() {

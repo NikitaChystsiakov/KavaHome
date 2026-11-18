@@ -8,3 +8,24 @@ export const SITE_URL = (
   process.env.SITE_URL ?? (vercel ? `https://${vercel}` : "https://kavahome.by")
 ).replace(/\/$/, "");
 export const INDEXABLE = process.env.SITE_INDEX === "1";
+
+// общая часть превью ссылок: страница с собственным openGraph заменяет корневой целиком, поэтому повторяем
+export const OG = { type: "website", locale: "ru_BY", siteName: "KAVA HOME" } as const;
+
+// хлебные крошки для поисковиков (BreadcrumbList); путь без адреса сайта
+export function breadcrumbs(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((x, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: x.name,
+      item: `${SITE_URL}${x.path}`,
+    })),
+  };
+}
+
+export const jsonLd = (data: unknown) => ({
+  __html: JSON.stringify(data).replace(/</g, "\\u003c"),
+});

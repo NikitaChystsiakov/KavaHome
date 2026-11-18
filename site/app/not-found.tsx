@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Shell } from "@/components/Shell";
 import s from "@/components/editorial.module.css";
-export const metadata: Metadata = { title: "Страница не найдена — KAVA HOME" };
+export const metadata: Metadata = {
+  title: "Страница не найдена — KAVA HOME",
+  description: "Такой страницы нет. Перейдите в каталог полотенец KAVA HOME или на главную.",
+  alternates: { canonical: null },
+};
 export default function NotFound() {
   return (
     <Shell>

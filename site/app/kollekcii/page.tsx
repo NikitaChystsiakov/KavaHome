@@ -9,7 +9,7 @@ import { Shell } from "@/components/Shell";
 import s from "@/components/collection.module.css";
 
 export const metadata: Metadata = {
-  title: "Коллекции полотенец — KAVA HOME",
+  title: "Коллекции махровых полотенец: Верона, Венеция, Милан — KAVA HOME",
   description:
     "Коллекции KAVA HOME названы в честь городов: Верона, Венеция, Римини, Флоренция, Неаполь, Милан, Бергамо, Лион. Махровые и вафельные полотенца, коврики, 100% хлопок.",
 };
@@ -24,7 +24,9 @@ export default async function CollectionsPage() {
       <section className={s.indexTop}>
         <div>
           <p className="caps">KAVA HOME · {collections.length} городов</p>
-          <h1>Коллекции</h1>
+          <h1>
+            Коллекции<span className="visually-hidden"> полотенец KAVA HOME</span>
+          </h1>
         </div>
         <p>
           Каждая коллекция названа в честь города и повторяет что-то из его

@@ -8,6 +8,7 @@ import { collections, legKm } from "@/lib/collections";
 import { sizeNote } from "@/lib/colors";
 import { stories } from "@/lib/stories";
 import { getProducts } from "@/lib/woo";
+import { OG, breadcrumbs, jsonLd } from "@/lib/site";
 import { CatalogCard } from "@/components/Catalog";
 import { Shell } from "@/components/Shell";
 import { Stamp } from "@/components/Stamp";
@@ -22,6 +23,13 @@ type Params = { params: Promise<{ slug: string }> };
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+// для скрытого продолжения H1: «Верона — коллекция махровых полотенец»
+function kindOf(p?: { name: string; category: string }) {
+  if (p?.category === "mats") return "ковриков для ванной";
+  if (p && /вафел/i.test(p.name)) return "вафельных полотенец";
+  return "махровых полотенец";
+}
+
 export function generateStaticParams() {
   return collections.map((x) => ({ slug: x.slug }));
 }
@@ -32,16 +40,17 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!col) return { title: "Коллекция не найдена — KAVA HOME" };
   const { product, colors } = forCollection(slug, await getProducts());
   const kind = product?.name.toLowerCase() ?? "полотенца";
+  // «Классика на каждый день…» → «Коллекция Верона — классика на каждый день…»
+  const t = stories[slug]?.tagline;
+  const tagline = t ? t[0].toLowerCase() + t.slice(1) : "";
   return {
     openGraph: {
-      type: "website",
-      locale: "ru_BY",
-      siteName: "KAVA HOME",
-      title: `Коллекция ${col.city} — KAVA HOME`,
+      ...OG,
+      title: `Коллекция ${col.city} — ${kind} | KAVA HOME`,
       images: [{ url: col.image, alt: `Полотенца коллекции ${col.city}` }],
     },
     title: `Коллекция ${col.city} — ${kind}${product ? `, ${product.density} г/м²` : ""} | KAVA HOME`,
-    description: `${col.city}: ${stories[slug]?.tagline ?? ""} ${colors.length ? `${colors.length} ${plural(colors.length, "цвет", "цвета", "цветов")}: ${colors.map((x) => x.name).join(", ")}.` : ""} ${product?.composition ?? "100% хлопок"}. Доставка по Беларуси.`.replace(/\s+/g, " "),
+    description: `Коллекция ${col.city}${tagline ? ` — ${tagline}` : "."} ${colors.length ? `${colors.length} ${plural(colors.length, "цвет", "цвета", "цветов")}: ${colors.map((x) => x.name).join(", ")}.` : ""} ${product?.composition ?? "100% хлопок"}. Доставка по Беларуси.`.replace(/\s+/g, " "),
   };
 }
 
@@ -81,6 +90,16 @@ async function CollectionView({ params }: Params) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={jsonLd(
+          breadcrumbs([
+            { name: "Главная", path: "" },
+            { name: "Коллекции", path: "/kollekcii" },
+            { name: col.city, path: `/kollekcii/${slug}` },
+          ]),
+        )}
+      />
       <section className={s.hero} aria-labelledby="col-title">
         <figure className={s.heroPhoto}>
           <Image
@@ -97,7 +116,10 @@ async function CollectionView({ params }: Params) {
           <p className="caps">
             <Link href="/kollekcii">Коллекции</Link> · {pad(index + 1)} из {pad(collections.length)}
           </p>
-          <h1 id="col-title">{col.city}</h1>
+          <h1 id="col-title">
+            {col.city}
+            <span className="visually-hidden"> — коллекция {kindOf(product)}</span>
+          </h1>
           <p className={s.latin}>
             {col.latin} · {col.countryLatin} · {col.coords}
           </p>

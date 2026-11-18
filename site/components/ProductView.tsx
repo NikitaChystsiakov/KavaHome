@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cart } from "@/lib/cart";
-import { categories, priceRange, type Product, type Size } from "@/lib/catalog";
+import { priceRange, type Product, type Size } from "@/lib/catalog";
+import { categoryPath, productCategory } from "@/lib/categories";
 import type { Collection } from "@/lib/collections";
 import { contacts } from "@/lib/collections";
 import { warm } from "@/lib/warm";
@@ -81,7 +82,7 @@ export function ProductView({
   };
 
   const [min, max] = priceRange(p);
-  const cat = categories.find((c) => c.id === p.category);
+  const cat = productCategory(p);
   const isSet = p.category === "sets";
 
   const add = () => {
@@ -211,7 +212,7 @@ export function ProductView({
             {cat && (
               <>
                 <span aria-hidden="true">/</span>
-                <Link href={`/catalog?kat=${cat.id}`}>{cat.label}</Link>
+                <Link href={categoryPath(cat)}>{cat.h1}</Link>
               </>
             )}
           </nav>

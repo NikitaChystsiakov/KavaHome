@@ -147,6 +147,7 @@ export function GiftCertificate({
         <p className={`caps ${g.eyebrow}`}>Подарочный сертификат</p>
         <h2 id="gifts-title" className={g.title}>
           Подарить
+          <span className="visually-hidden"> подарочный сертификат на полотенца</span>
         </h2>
         <p className={g.lead}>
           Не знаете цвет или размер — подарите сертификат: получатель сам

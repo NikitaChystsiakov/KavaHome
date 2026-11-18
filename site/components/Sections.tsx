@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { contacts } from "@/lib/collections";
 import { purposeChips } from "@/lib/catalog";
+import { categoryPages, categoryPath, purposeHref } from "@/lib/categories";
 import { GiftCertificate } from "./GiftCertificate";
 import { Logo } from "./Logo";
 import s from "./home.module.css";
@@ -47,7 +48,7 @@ export function Hero() {
         {purposeChips.map((p) => (
           <a
             key={p.id}
-            href={`?nazn=${p.id}#catalog`}
+            href={purposeHref(p.id)}
             data-filter-nazn={p.id}
             className="caps"
           >
@@ -123,7 +124,15 @@ export function Footer() {
     <footer className={s.footer} data-screen>
       <div className={s.footCols}>
         <div>
-          <h3 className="caps">Покупателям</h3>
+          <p className="caps">Каталог</p>
+          {categoryPages.map((c) => (
+            <Link key={c.slug} href={categoryPath(c)}>
+              {c.label}
+            </Link>
+          ))}
+        </div>
+        <div>
+          <p className="caps">Покупателям</p>
           <Link href="/catalog">Каталог</Link>
           <Link href="/kollekcii">Коллекции</Link>
           <Link href="/dostavka">Доставка и оплата</Link>
@@ -132,14 +141,14 @@ export function Footer() {
           <Link href="/korzina">Корзина</Link>
         </div>
         <div>
-          <h3 className="caps">Бизнесу</h3>
+          <p className="caps">Бизнесу</p>
           <Link href="/biznes">Для отелей и санаториев</Link>
           <Link href="/biznes#opt">Опт</Link>
           <Link href="/biznes#logo">Полотенца с логотипом</Link>
           <Link href="/biznes#certificate">Подарочные сертификаты</Link>
         </div>
         <div>
-          <h3 className="caps">Контакты</h3>
+          <p className="caps">Контакты</p>
           <a href={contacts.phoneHref} className={s.footPhone}>
             {contacts.phone}
           </a>

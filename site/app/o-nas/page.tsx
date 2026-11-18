@@ -9,7 +9,7 @@ import { stores, hotels, marketplaces, rating } from "@/lib/partners";
 import s from "@/components/about.module.css";
 
 export const metadata: Metadata = {
-  title: "О бренде — KAVA HOME",
+  title: "О бренде KAVA HOME — полотенца из 100% хлопка, Минск",
   description:
     "Полотенца KAVA HOME из 100% хлопка: махровые и вафельные, наборы, халаты. Купить полотенца оптом и в розницу в Минске, доставка по Беларуси, поставки для отелей.",
 };
@@ -61,6 +61,7 @@ export default function AboutPage() {
             </p>
             <h1 id="about-title" data-r style={{ "--i": 1 } as React.CSSProperties}>
               Вещи, с которыми <em>хорошо дома</em>
+              <span className="visually-hidden"> — полотенца KAVA HOME</span>
             </h1>
             <p className={s.lead} data-r style={{ "--i": 2 } as React.CSSProperties}>
               Мягкая махра, знакомые оттенки, любимое полотенце после душа. Мы
@@ -134,7 +135,7 @@ export default function AboutPage() {
           </ol>
           <Link
             className={s.textLink}
-            href="/catalog?kat=bath"
+            href="/catalog/mahrovye-polotenca"
             data-r
             style={{ "--i": 5 } as React.CSSProperties}
           >
@@ -186,7 +187,7 @@ export default function AboutPage() {
         </div>
         <div className={s.colorsFoot} data-r="fade" style={{ "--i": 6 } as React.CSSProperties}>
           <span>Венеция · на примере одной коллекции</span>
-          <Link className={s.textLink} href="/catalog?kat=sets">
+          <Link className={s.textLink} href="/catalog/nabory-polotenec">
             Посмотреть наборы <span>↗</span>
           </Link>
         </div>

@@ -17,7 +17,10 @@ export function HomePage({ products }: { products: Product[] }) {
       <TopBar />
       <main>
         <Hero />
-        <section id="kollekcii" aria-label="Коллекции" data-screen>
+        <section id="kollekcii" aria-labelledby="kollekcii-title" data-screen>
+          <h2 id="kollekcii-title" className="visually-hidden">
+            Коллекции полотенец
+          </h2>
           <Wheel items={collections} mode="flow" products={products} />
         </section>
         <Catalog collections={collections} products={products} />

@@ -665,3 +665,60 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ───────── текст раздела под сеткой: страницы категорий и /catalog ───────── */
+.title[data-long] {
+  font-size: 30px;
+  line-height: 1.05;
+}
+.seo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 300px);
+  gap: clamp(32px, 6vw, 96px);
+  padding: clamp(40px, 7svh, 72px) var(--pad) clamp(56px, 10svh, 112px);
+  border-top: 1px solid var(--line);
+}
+.seoText {
+  max-width: 68ch;
+}
+.seoText h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(26px, 2.6vw, 34px);
+  line-height: 1.1;
+  margin-bottom: 18px;
+}
+.seoText p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2, var(--ink));
+}
+.seoText p + p {
+  margin-top: 12px;
+}
+.seoText a,
+.seoNav a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--line);
+}
+.seoText a:hover,
+.seoNav a:hover {
+  text-decoration-color: currentColor;
+}
+.seoNav ul {
+  list-style: none;
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+}
+.seoNav a[aria-current="page"] {
+  text-decoration: none;
+  color: var(--ink-3);
+}
+@media (max-width: 760px) {
+  .seo {
+    grid-template-columns: 1fr;
+  }
+}

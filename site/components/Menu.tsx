@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { collections, contacts } from "@/lib/collections";
 import { categories, purposeChips } from "@/lib/catalog";
+import { catHref, purposeHref } from "@/lib/categories";
 import s from "./menu.module.css";
 
 type Props = { open: boolean; onClose: () => void };
@@ -95,7 +96,7 @@ export function Menu({ open, onClose }: Props) {
           <ul className={s.links}>
             {categories.map((c) => (
               <li key={c.id}>
-                <a href={`/catalog?kat=${c.id}`} data-filter-kat={c.id} onClick={onClose}>
+                <a href={catHref(c.id)} data-filter-kat={c.id} onClick={onClose}>
                   {c.label}
                 </a>
               </li>
@@ -108,7 +109,7 @@ export function Menu({ open, onClose }: Props) {
               .filter((p) => p.id !== "oteli")
               .map((p) => (
                 <li key={p.id}>
-                  <a href={`/catalog?nazn=${p.id}`} data-filter-nazn={p.id} onClick={onClose}>
+                  <a href={purposeHref(p.id)} data-filter-nazn={p.id} onClick={onClose}>
                     {p.label}
                   </a>
                 </li>

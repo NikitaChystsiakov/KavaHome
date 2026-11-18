@@ -4,6 +4,8 @@ import { Shell } from "@/components/Shell";
 
 export const metadata: Metadata = {
   title: "Корзина — KAVA HOME",
+  description: "Корзина KAVA HOME: проверьте товары и оформите заказ, менеджер перезвонит.",
+  alternates: { canonical: null },
   robots: { index: false, follow: false },
 };
 

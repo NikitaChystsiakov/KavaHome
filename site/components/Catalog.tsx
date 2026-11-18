@@ -4,6 +4,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { warm } from "@/lib/warm";
 import { slugify } from "@/lib/colors";
 import { SwapPhoto } from "./SwapPhoto";
+import {
+  catalogIntro,
+  categoryByPath,
+  categoryBySlug,
+  categoryFor,
+  categoryPages,
+  categoryPath,
+  CATALOG_TITLE,
+  type Tkan,
+} from "@/lib/categories";
 import type { Collection } from "@/lib/collections";
 import {
   allCards,
@@ -33,6 +43,7 @@ type Filters = {
   max: string;
   kat: CategoryId | null;
   nazn: PurposeId | null;
+  tkan: Tkan | null;
   kol: string | null;
   cvet: FamilyId | null;
   sort: Sort;
@@ -46,14 +57,17 @@ const EMPTY: Filters = {
   max: "",
   kat: null,
   nazn: null,
+  tkan: null,
   kol: null,
   cvet: null,
   sort: "pop",
   vid: null,
 };
 
+// страница категории (/catalog/kuhonnye-polotenca) задаёт фильтр адресом, остальное — параметрами
 function readUrl(): Filters {
   const q = new URLSearchParams(window.location.search);
+  const base = categoryByPath(window.location.pathname)?.preset ?? {};
   const pick = <T extends string>(key: string, ok: readonly string[]) => {
     const v = q.get(key);
     return v && ok.includes(v) ? (v as T) : null;
@@ -65,14 +79,17 @@ function readUrl(): Filters {
     plotnost: q.get("plotnost") ?? "",
     min: /^\d+(\.\d+)?$/.test(q.get("min") ?? "") ? q.get("min")! : "",
     max: /^\d+(\.\d+)?$/.test(q.get("max") ?? "") ? q.get("max")! : "",
-    kat: pick<CategoryId>(
-      "kat",
-      categories.map((c) => c.id),
-    ),
-    nazn: pick<PurposeId>(
-      "nazn",
-      purposeChips.map((c) => c.id),
-    ),
+    kat:
+      pick<CategoryId>(
+        "kat",
+        categories.map((c) => c.id),
+      ) ?? base.kat ?? null,
+    nazn:
+      pick<PurposeId>(
+        "nazn",
+        purposeChips.map((c) => c.id),
+      ) ?? base.nazn ?? null,
+    tkan: pick<Tkan>("tkan", ["vafelnye"]) ?? base.tkan ?? null,
     kol: q.get("kol"),
     cvet: pick<FamilyId>(
       "cvet",
@@ -83,23 +100,30 @@ function readUrl(): Filters {
   };
 }
 
-function writeUrl(f: Filters) {
+// page: на /catalog и страницах категорий адрес ведёт на страницу категории, если она есть под этот фильтр
+function writeUrl(f: Filters, page: boolean) {
   const q = new URLSearchParams();
+  const cat = page ? categoryFor(f) : undefined;
   if (f.q.trim()) q.set("q", f.q.trim());
   for (const key of ["razmer", "plotnost", "min", "max"] as const)
     if (f[key]) q.set(key, f[key]);
-  if (f.kat) q.set("kat", f.kat);
-  if (f.nazn) q.set("nazn", f.nazn);
+  if (!cat) {
+    if (f.kat) q.set("kat", f.kat);
+    if (f.nazn) q.set("nazn", f.nazn);
+    if (f.tkan) q.set("tkan", f.tkan);
+  }
   if (f.kol) q.set("kol", f.kol);
   if (f.cvet) q.set("cvet", f.cvet);
   if (f.sort !== "pop") q.set("sort", f.sort);
   if (f.vid) q.set("vid", String(f.vid));
   const qs = q.toString();
+  const path = page ? (cat ? categoryPath(cat) : "/catalog") : window.location.pathname;
   window.history.replaceState(
     null,
     "",
-    `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`,
+    `${path}${qs ? `?${qs}` : ""}${window.location.hash}`,
   );
+  if (page) document.title = cat?.title ?? CATALOG_TITLE;
 }
 
 // поиск: каждое слово запроса должно найтись в названии, коллекции, цвете или размере
@@ -155,20 +179,24 @@ function match(c: Card, f: Filters, hay?: string) {
   if (f.kat && (f.kat === "sets" ? !hasSet(p) : p.category !== f.kat))
     return false;
   if (f.nazn && !p.purposes.includes(f.nazn)) return false;
+  if (f.tkan === "vafelnye" && !/вафел/i.test(p.name)) return false;
   if (f.kol && p.collection !== f.kol) return false;
   if (f.cvet && !p.colors.some((x) => x.family === f.cvet)) return false;
   return true;
 }
 
 // page — отдельная страница /catalog: заголовок H1 и поле поиска (в шапке «Найти полотенце» ведёт сюда с ?poisk=1)
+// category — страница категории /catalog/<slug>: сервер сразу отдаёт отфильтрованную сетку, свой H1 и текст
 export function Catalog({
   collections,
   products,
   page = false,
+  category,
 }: {
   collections: Collection[];
   products?: Product[];
   page?: boolean;
+  category?: string;
 }) {
   const cards = useMemo(() => allCards(products), [products]);
   const hay = useMemo(
@@ -212,7 +240,10 @@ export function Catalog({
   }, [cards, collections]);
   const search = useRef<HTMLInputElement>(null);
   const root = useRef<HTMLElement>(null);
-  const [f, setF] = useState<Filters>(EMPTY);
+  const [f, setF] = useState<Filters>(() => ({
+    ...EMPTY,
+    ...(category ? categoryBySlug(category)?.preset : undefined),
+  }));
   const [panel, setPanel] = useState(false);
   const [mobile, setMobile] = useState(false);
 
@@ -256,15 +287,15 @@ export function Catalog({
   // адрес обновляется после рендера: replaceState внутри setState задевает роутер Next
   const loaded = useRef(false);
   useEffect(() => {
-    if (loaded.current) writeUrl(f);
+    if (loaded.current) writeUrl(f, page);
     loaded.current = true;
-  }, [f]);
+  }, [f, page]);
 
   // ссылки-фильтры с других частей страницы (первый экран, оборот открытки, меню) работают без перезагрузки
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       const a = (e.target as HTMLElement).closest<HTMLAnchorElement>(
-        "a[data-filter-nazn], a[data-filter-kol], a[data-filter-kat]",
+        "a[data-filter-nazn], a[data-filter-kol], a[data-filter-kat], a[data-filter-tkan]",
       );
       if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
       e.preventDefault();
@@ -274,6 +305,7 @@ export function Catalog({
         nazn: (a.dataset.filterNazn as PurposeId) ?? null,
         kol: a.dataset.filterKol ?? null,
         kat: (a.dataset.filterKat as CategoryId) ?? null,
+        tkan: (a.dataset.filterTkan as Tkan) ?? null,
       };
       setF(next);
       root.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -317,6 +349,9 @@ export function Catalog({
     return out;
   }, [f, cards, hay]);
 
+  const current = page ? categoryFor(f) : undefined;
+  const intro = current ?? (page ? catalogIntro : undefined);
+
   const cols = mobile ? (f.vid === 1 ? 1 : 2) : f.vid === 1 ? 2 : (f.vid ?? 4);
   const views = mobile ? [1, 2] : [2, 4, 6];
   const active = [
@@ -324,6 +359,7 @@ export function Catalog({
       key: "kat",
       label: categories.find((c) => c.id === f.kat)!.label,
     },
+    f.tkan && { key: "tkan", label: "Вафельные" },
     f.kol && {
       key: "kol",
       label: collectionOptions.find((c) => c.slug === f.kol)?.city ?? f.kol,
@@ -360,13 +396,20 @@ export function Catalog({
       <aside className={s.side} data-open={panel}>
         <div className={s.sideInner}>
           {page ? (
-            <h1 id="catalog-title" className={s.title}>
-              Каталог
-              <span className="visually-hidden"> махровых полотенец в Минске</span>
-            </h1>
+            current ? (
+              <h1 id="catalog-title" className={s.title} data-long={current.h1.length > 12 || undefined}>
+                {current.h1}
+              </h1>
+            ) : (
+              <h1 id="catalog-title" className={s.title}>
+                Каталог
+                <span className="visually-hidden"> полотенец в Минске</span>
+              </h1>
+            )
           ) : (
             <h2 id="catalog-title" className={s.title}>
               Каталог
+              <span className="visually-hidden"> полотенец</span>
             </h2>
           )}
           <p className={`${s.group} ${s.onlyPanel}`}>Категория</p>
@@ -504,7 +547,7 @@ export function Catalog({
 
       <div className={s.main}>
         <p className={s.mTitle} aria-hidden="true">
-          Каталог
+          {(page && current?.h1) || "Каталог"}
         </p>
         <div className={s.bar}>
           <ul className={s.chips} aria-label="Назначение">
@@ -643,6 +686,34 @@ export function Catalog({
           {list.some((c) => c.product.source !== "woo") &&
             " Цены подарочных наборов и халатов уточняются."}
         </p>
+        {intro && (
+          <div className={s.seo}>
+            <div className={s.seoText}>
+              <h2>{intro.h2}</h2>
+              {intro.text.map((t, i) => (
+                <p key={i}>{t}</p>
+              ))}
+            </div>
+            <nav className={s.seoNav} aria-label="Разделы каталога">
+              <p className="caps">Разделы каталога</p>
+              <ul>
+                {categoryPages.map((c) => (
+                  <li key={c.slug}>
+                    <a
+                      href={categoryPath(c)}
+                      aria-current={c === current ? "page" : undefined}
+                      data-filter-kat={c.preset.kat}
+                      data-filter-nazn={c.preset.nazn}
+                      data-filter-tkan={c.preset.tkan}
+                    >
+                      {c.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        )}
       </div>
     </section>
   );

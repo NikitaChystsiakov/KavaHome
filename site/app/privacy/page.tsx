@@ -5,6 +5,8 @@ import s from "@/components/info.module.css";
 
 export const metadata: Metadata = {
   title: "Политика обработки персональных данных — KAVA HOME",
+  description: "Какие персональные данные собирает сайт KAVA HOME, зачем и как долго их хранит, какие у вас права.",
+  alternates: { canonical: null },
   robots: { index: false, follow: true },
 };
 

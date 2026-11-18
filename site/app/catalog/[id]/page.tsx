@@ -4,8 +4,9 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { allCards, plural, priceRange } from "@/lib/catalog";
 import { collections } from "@/lib/collections";
+import { categoryPath, productCategory } from "@/lib/categories";
 import { getProducts } from "@/lib/woo";
-import { SITE_URL } from "@/lib/site";
+import { OG, SITE_URL, breadcrumbs, jsonLd } from "@/lib/site";
 import { CatalogCard } from "@/components/Catalog";
 import { ProductView } from "@/components/ProductView";
 import { Shell } from "@/components/Shell";
@@ -24,19 +25,34 @@ export async function generateMetadata({
   const p = (await getProducts()).find((x) => x.id === id);
   if (!p) return { title: "Товар не найден — KAVA HOME" };
   const [min, max] = priceRange(p);
-  const title = `${p.name} ${p.title}`;
-  const description = `${p.name} ${p.title}: ${p.colors.map((x) => x.name).join(", ")}. ${p.density ? `${p.density} г/м², ` : ""}${p.composition ?? "100% хлопок"}. ${p.source === "woo" ? `Цена ${min}–${max} BYN.` : "Цену уточнит менеджер."} Доставка по Беларуси.`;
+  const name = `${p.name} ${p.title}`;
+  const woo = p.source === "woo";
+  const price = min === max ? `${min} BYN` : `от ${min} BYN`;
+  // размеры — частая часть запроса («полотенце 70×140»), в описании их перечисляем
+  const sizes = [...new Set(p.colors.flatMap((c) => (c.sizes?.length ? c.sizes : p.sizes).map((z) => z.label)))]
+    .filter((z) => /^\d/.test(z)) // «Набор 3 шт» — не размер
+    .sort((a, b) => a.localeCompare(b, "ru", { numeric: true }));
+  const colors = p.colors.length > 1
+    ? `${p.colors.length} ${plural(p.colors.length, "цвет", "цвета", "цветов")}: ${p.colors.map((x) => x.name).join(", ")}`
+    : `Цвет: ${p.colors[0].name}`;
+  const description = [
+    `${name} из ${p.composition === "100% хлопок" || !p.composition ? "100% хлопка" : p.composition}${p.density ? `, ${p.density} г/м²` : ""}.`,
+    sizes.length > 1 ? `Размеры: ${sizes.join(", ")}.` : sizes.length ? `Размер ${sizes[0]}.` : "",
+    `${colors}.`,
+    woo ? `Цена ${min === max ? `${min}` : `${min}–${max}`} BYN, доставка по Беларуси.` : "Цену уточнит менеджер, доставка по Беларуси.",
+  ].filter(Boolean).join(" ");
+  // бренд в конце, только если title помещается в выдачу (~70 знаков)
+  const base = `${name} — купить в Минске, ${woo ? price : "цена по запросу"}`;
+  const title = base.length + 12 <= 70 ? `${base} | KAVA HOME` : base;
   return {
     // превью ссылки: фото первого цвета вместо общей картинки сайта
     openGraph: {
-      type: "website",
-      locale: "ru_BY",
-      siteName: "KAVA HOME",
-      title,
+      ...OG,
+      title: `${name} — KAVA HOME`,
       description,
-      images: [{ url: p.colors[0].image, alt: title }],
+      images: [{ url: p.colors[0].image, alt: name }],
     },
-    title: `${p.name} ${p.title} — ${p.colors.length > 1 ? `${p.colors.length} ${plural(p.colors.length, "цвет", "цвета", "цветов")}, ` : ""}${p.source === "woo" ? `от ${min} BYN` : "цена по запросу"} | KAVA HOME`,
+    title,
     description,
   };
 }
@@ -63,7 +79,14 @@ async function Product({
   const more = allCards([...same, ...near]).slice(0, 8);
 
   const [min, max] = priceRange(p);
-  const jsonLd = {
+  const cat = productCategory(p);
+  const crumbs = breadcrumbs([
+    { name: "Главная", path: "" },
+    { name: "Каталог", path: "/catalog" },
+    ...(cat ? [{ name: cat.h1, path: categoryPath(cat) }] : []),
+    { name: `${p.name} ${p.title}`, path: `/catalog/${p.id}` },
+  ]);
+  const product = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: `${p.name} ${p.title}`,
@@ -88,10 +111,8 @@ async function Product({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(product)} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(crumbs)} />
       <ProductView product={p} collection={collection} />
       {more.length > 0 && (
         <section className={s.related} aria-labelledby="related-title">

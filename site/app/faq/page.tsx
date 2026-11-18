@@ -6,7 +6,7 @@ import { marketplaces, rating, stores } from "@/lib/partners";
 import s from "@/components/info.module.css";
 
 export const metadata: Metadata = {
-  title: "Вопросы и ответы — KAVA HOME",
+  title: "Вопросы о полотенцах: размеры, уход, доставка — KAVA HOME",
   description:
     "Как выбрать размер полотенца, как ухаживать, как заказать и получить, работаете ли вы с отелями и оптом.",
 };
@@ -51,7 +51,7 @@ const groups: { title: string; items: { q: string; a: React.ReactNode }[] }[] =
             <p>
               Да, коллекции поставляются в эстетичной упаковке, а в линейке есть
               готовые подарочные наборы.{" "}
-              <Link href="/catalog?kat=sets">Смотреть наборы по 3 шт</Link>
+              <Link href="/catalog/nabory-polotenec">Смотреть наборы по 3 шт</Link>
             </p>
           ),
         },
