@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { cart } from "@/lib/cart";
 import { priceRange, type Product, type Size } from "@/lib/catalog";
 import { categoryPath, productCategory } from "@/lib/categories";
@@ -29,8 +29,6 @@ export function ProductView({
   product: Product;
   collection?: Collection;
 }) {
-  const zoom = useRef<HTMLDialogElement>(null);
-  const [zoomShot, setZoomShot] = useState(0);
   const confirmed = p.source === "woo";
   const [ci, setCi] = useState(0);
   const color = p.colors[ci];
@@ -41,6 +39,9 @@ export function ProductView({
   const size = sizes.find((z) => z.label === sizeLabel) ?? defaultSize(sizes);
   const [shot, setShot] = useState(0);
   const [done, setDone] = useState(false);
+  // Фото цвета показываются разом: пока все не догрузились, галерея прозрачна, потом проявляется целиком
+  const list = useRef<HTMLUListElement>(null);
+  const [wait, setWait] = useState(false);
 
   // цвет и размер из адреса — после гидрации (страница отдаётся статично); до этого адрес не переписываем
   const ready = useRef(false);
@@ -69,6 +70,38 @@ export function ProductView({
     const list = color.images?.length ? color.images : [color.image];
     return [...new Set(list)];
   }, [color]);
+
+  useLayoutEffect(() => {
+    const imgs = Array.from(list.current?.querySelectorAll("img") ?? []);
+    // ждём только фото в экране: остальные грузятся лениво и могут не прийти до прокрутки
+    const pending = imgs.filter((i) => {
+      if (i.complete && i.naturalWidth > 0) return false;
+      const r = i.getBoundingClientRect();
+      return r.top < window.innerHeight && r.left < window.innerWidth;
+    });
+    if (!pending.length) {
+      setWait(false);
+      return;
+    }
+    setWait(true);
+    let left = pending.length;
+    const finish = () => setWait(false);
+    const one = () => {
+      if (--left <= 0) finish();
+    };
+    pending.forEach((i) => {
+      i.addEventListener("load", one, { once: true });
+      i.addEventListener("error", one, { once: true });
+    });
+    const t = window.setTimeout(finish, 3000);
+    return () => {
+      window.clearTimeout(t);
+      pending.forEach((i) => {
+        i.removeEventListener("load", one);
+        i.removeEventListener("error", one);
+      });
+    };
+  }, [photos, color.name]);
 
   const pickColor = (i: number) => {
     setCi(i);
@@ -110,8 +143,10 @@ export function ProductView({
       <div className={s.gallery} aria-label="Фото">
         <ul
           key={color.name}
+          ref={list}
           className={s.photos}
           data-count={photos.length}
+          data-wait={wait ? "" : undefined}
           onScroll={(e) => {
             const el = e.currentTarget;
             setShot(Math.round(el.scrollLeft / el.clientWidth));
@@ -119,15 +154,6 @@ export function ProductView({
         >
           {photos.map((src, i) => (
             <li key={src}>
-              <button
-                type="button"
-                className={s.photoButton}
-                aria-label={`Увеличить фото ${i + 1}`}
-                onClick={() => {
-                  setZoomShot(i);
-                  zoom.current?.showModal();
-                }}
-              >
                 <Image
                   src={src}
                   alt={`${p.name} ${p.title}, ${color.name}, фото ${i + 1}`}
@@ -141,10 +167,6 @@ export function ProductView({
                   preload={i === 0}
                   quality={85}
                 />
-                <span className={s.zoomHint} aria-hidden="true">
-                  Рассмотреть +
-                </span>
-              </button>
             </li>
           ))}
         </ul>
@@ -155,56 +177,6 @@ export function ProductView({
         )}
       </div>
 
-      <dialog
-        ref={zoom}
-        className={s.zoom}
-        aria-label="Фото товара крупным планом"
-        onClick={(e) => {
-          if (e.target === e.currentTarget) zoom.current?.close();
-        }}
-      >
-        <div className={s.zoomBar}>
-          <span>
-            {p.title} · {color.name} · {zoomShot + 1}/{photos.length}
-          </span>
-          <button
-            type="button"
-            autoFocus
-            onClick={() => zoom.current?.close()}
-            aria-label="Закрыть фото"
-          >
-            Закрыть ×
-          </button>
-        </div>
-        <div className={s.zoomImage}>
-          <Image
-            src={photos[zoomShot] ?? photos[0]}
-            alt={`${p.title}, ${color.name}, крупный план`}
-            fill
-            sizes="100vw"
-            quality={85}
-            style={{ objectFit: "contain" }}
-          />
-        </div>
-        {photos.length > 1 && (
-          <div className={s.zoomNav}>
-            <button
-              type="button"
-              onClick={() =>
-                setZoomShot((zoomShot + photos.length - 1) % photos.length)
-              }
-            >
-              ← Предыдущее
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoomShot((zoomShot + 1) % photos.length)}
-            >
-              Следующее →
-            </button>
-          </div>
-        )}
-      </dialog>
       <div className={s.panel}>
         <div className={s.sticky}>
           <nav className={`caps ${s.crumbs}`} aria-label="Навигация">

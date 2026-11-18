@@ -488,7 +488,15 @@ export function Catalog({
             </fieldset>
           </div>
 
-          <p className={s.group}>Коллекции</p>
+          <details className={s.coll} open={f.kol ? true : undefined}>
+            <summary>
+              <span>Коллекции</span>
+              {f.kol && (
+                <span className={s.collPick}>
+                  {collectionOptions.find((c) => c.slug === f.kol)?.city}
+                </span>
+              )}
+            </summary>
           <ul className={s.cities}>
             {collectionOptions.map((c) => (
               <li key={c.slug}>
@@ -504,6 +512,7 @@ export function Catalog({
               </li>
             ))}
           </ul>
+          </details>
 
           <p className={s.group}>Цвет</p>
           <ul className={s.families}>

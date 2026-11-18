@@ -208,11 +208,14 @@
   gap: 10px 30px;
 }
 .heroNav a {
+  text-decoration-line: underline;
   text-underline-offset: 6px;
   text-decoration-thickness: 1px;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.45s ease;
 }
 .heroNav a:hover {
-  text-decoration-line: underline;
+  text-decoration-color: currentColor;
 }
 
 /* ───────── общие ───────── */

@@ -1,5 +1,5 @@
-# Монтаж видео первого экрана (2026-11-19): исходники из «Видео/» (в git не входят), результат — site/public/video/.
-# Запуск: симлинки R/MB/V/RW/RC/RL.mov в src/, затем python3 hero-video.py wide|tall; после — пережать до 1600x900 crf 31 (tall: crf 31).
+# Монтаж видео первого экрана: исходники из «Видео/» (в git не входят), результат — site/public/video/.
+# Компьютер: python3 hero-video.py one (один ролик 16:9, hero-one → hero-wide.mp4); телефон: tall. Симлинки R/MB/V/RW/RC/RL.mov в src/.
 import subprocess, sys
 S="/private/tmp/claude-501/-Users-nikita-Desktop---------KavaHome/475ed2aa-e045-41d4-bf32-9557d22cc8e0/scratchpad"
 SRC=S+"/src/"
@@ -11,10 +11,11 @@ def build(name, scenes, W, H, panels, crf):
     inputs=[]; fc=[]
     for si,sc in enumerate(scenes):
         labels=[]
-        for pi,(f,t) in enumerate(sc):
+        for pi,item in enumerate(sc):
+            f,t=item[0],item[1]; yf=item[2] if len(item)>2 else 0.5
             idx=len(inputs)//6
             inputs += ["-ss",str(t),"-t",str(L+0.1),"-i",SRC+f]
-            fc.append(f"[{idx}:v]fps=30,scale={pw}:{H}:force_original_aspect_ratio=increase,crop={pw}:{H},setsar=1,setpts=PTS-STARTPTS[p{si}_{pi}]")
+            fc.append(f"[{idx}:v]fps=30,scale={pw}:{H}:force_original_aspect_ratio=increase,crop={pw}:{H}:0:(ih-{H})*{yf},setsar=1,setpts=PTS-STARTPTS[p{si}_{pi}]")
             labels.append(f"p{si}_{pi}")
         if panels==1:
             fc.append(f"[{labels[0]}]format=yuv420p,trim=duration={L},setpts=PTS-STARTPTS[s{si}]")
@@ -51,6 +52,9 @@ wide.append(wide[0])
 tall=[
  [("R.mov",0)],[("MB.mov",14.5)],[("RL.mov",0)],[("V.mov",20)],[("R.mov",0)],
 ]
+one=[[("R.mov",0,.72)],[("MB.mov",14.5,.5)],[("V.mov",3,.7)],[("R.mov",21.5,.5)]]
+one.append(one[0])
 which=sys.argv[1]
-if which=="wide": build("hero-wide",wide,1920,1080,3,28)
+if which=="one": build("hero-one",one,1600,900,1,31)
+elif which=="wide": build("hero-wide",wide,1920,1080,3,28)
 else: build("hero-tall",tall,720,1280,1,27)

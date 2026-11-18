@@ -15,6 +15,13 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--gap);
 }
+.photos {
+  transition: opacity 0.7s ease;
+}
+/* пока не догрузились все фото цвета — галерея прозрачна, потом проявляется целиком */
+.photos[data-wait] {
+  opacity: 0;
+}
 .photos li {
   position: relative;
   aspect-ratio: 3 / 4;
@@ -318,87 +325,5 @@
   .size {
     grid-template-columns: 80px 1fr auto;
     padding: 12px 10px;
-  }
-}
-
-.photoButton {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  cursor: zoom-in;
-}
-.zoomHint {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  background: var(--milk);
-  padding: 6px 10px;
-  font-size: 11px;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.photoButton:hover .zoomHint,
-.photoButton:focus-visible .zoomHint {
-  opacity: 1;
-}
-.zoom {
-  position: fixed;
-  inset: 0;
-  margin: auto;
-  width: 100vw;
-  height: 100dvh;
-  max-width: 100vw;
-  max-height: 100dvh;
-  border: 0;
-  padding: 20px;
-  background: var(--milk);
-  color: var(--ink);
-}
-.zoom::backdrop {
-  background: rgba(42, 34, 34, 0.8);
-}
-.zoomBar,
-.zoomNav {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  font-size: 13px;
-}
-.zoomBar button,
-.zoomNav button {
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 1px solid var(--line);
-}
-.zoomImage {
-  position: relative;
-  height: calc(100dvh - 156px);
-  margin: 12px 0;
-}
-.zoomNav {
-  justify-content: center;
-}
-body:has(.zoom[open]) {
-  overflow: hidden;
-}
-@media (max-width: 960px) {
-  .zoomHint {
-    opacity: 1;
-    right: auto;
-    left: 12px;
-    bottom: 12px;
-  }
-  .zoom {
-    padding: 12px;
-  }
-  .zoomBar {
-    font-size: 12px;
-  }
-  .zoomBar > span {
-    max-width: 60%;
-  }
-  .zoomImage {
-    height: calc(100dvh - 160px);
   }
 }
