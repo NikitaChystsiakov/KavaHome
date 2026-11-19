@@ -111,7 +111,9 @@ export async function POST(req: Request) {
       { status: 400 },
     );
 
-  if (process.env.ORDER_DRY_RUN === "1") {
+  const dry = process.env.ORDER_DRY_RUN;
+  // ORDER_DRY_RUN=telegram: в Woo не пишем, но в Telegram шлём (проверка формата).
+  if (dry === "1") {
     console.log(
       "[order] пробный заказ, не отправлен:",
       JSON.stringify({ ...clean, lines }),
@@ -120,10 +122,13 @@ export async function POST(req: Request) {
   }
 
   let number: string | null = null;
-  try {
-    number = await createWooOrder(clean, lines);
-  } catch (e) {
-    console.error("[order] WooCommerce:", e);
+  if (dry === "telegram") number = "ПРОБА";
+  else {
+    try {
+      number = await createWooOrder(clean, lines);
+    } catch (e) {
+      console.error("[order] WooCommerce:", e);
+    }
   }
   let telegram = false;
   try {
