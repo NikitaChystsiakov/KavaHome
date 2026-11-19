@@ -82,6 +82,7 @@ export function ProductView({
   );
   const size = sizes.find((z) => z.label === sizeLabel) ?? defaultSize(sizes);
   const [shot, setShot] = useState(0);
+  const [zoom, setZoom] = useState<number | null>(null);
   const [done, setDone] = useState(false);
   // Фото цвета показываются разом: пока все не догрузились, галерея прозрачна, потом проявляется целиком
   const list = useRef<HTMLUListElement>(null);
@@ -114,6 +115,23 @@ export function ProductView({
     const list = color.images?.length ? color.images : [color.image];
     return [...new Set(list)];
   }, [color]);
+
+  useEffect(() => {
+    if (zoom === null) return;
+    const n = photos.length;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setZoom(null);
+      else if (e.key === "ArrowRight") setZoom((z) => (z === null ? z : (z + 1) % n));
+      else if (e.key === "ArrowLeft") setZoom((z) => (z === null ? z : (z - 1 + n) % n));
+    };
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [zoom, photos.length]);
 
   const video = p.category === "robes" ? ROBE_VIDEOS[color.name] : undefined;
   const total = photos.length + (video ? 1 : 0);
@@ -214,6 +232,12 @@ export function ProductView({
                   preload={i === 0}
                   quality={85}
                 />
+                <button
+                  type="button"
+                  className={s.zoomBtn}
+                  aria-label={`Открыть фото ${i + 1} на весь экран`}
+                  onClick={() => setZoom(i)}
+                />
             </li>
           ))}
           {video && (
@@ -225,6 +249,59 @@ export function ProductView({
             </li>
           )}
         </ul>
+        {zoom !== null && photos[zoom] && (
+          <div
+            className={s.lightbox}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Фото на весь экран"
+            onClick={() => setZoom(null)}
+          >
+            <Image
+              key={photos[zoom]}
+              src={photos[zoom]}
+              alt={`${p.name} ${p.title}, ${color.name}, фото ${zoom + 1}`}
+              fill
+              sizes="100vw"
+              quality={90}
+              style={{ objectFit: "contain" }}
+            />
+            <button
+              type="button"
+              className={s.lbClose}
+              aria-label="Закрыть"
+              onClick={() => setZoom(null)}
+            >
+              ×
+            </button>
+            {photos.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className={`${s.lbNav} ${s.lbPrev}`}
+                  aria-label="Предыдущее фото"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setZoom((zoom - 1 + photos.length) % photos.length);
+                  }}
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  className={`${s.lbNav} ${s.lbNext}`}
+                  aria-label="Следующее фото"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setZoom((zoom + 1) % photos.length);
+                  }}
+                >
+                  ›
+                </button>
+              </>
+            )}
+          </div>
+        )}
         {total > 1 && (
           <p className={s.counter} aria-hidden="true">
             {shot + 1} / {total}
