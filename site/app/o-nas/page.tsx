@@ -260,7 +260,7 @@ export default function AboutPage() {
             data-r="wipe"
           />
           <figcaption>
-            <b>500</b> г/м² · плотность для отелей и спа
+            <b>450–750</b> г/м² · плотность для отелей и спа
           </figcaption>
         </figure>
         <div className={s.hotelsBody}>

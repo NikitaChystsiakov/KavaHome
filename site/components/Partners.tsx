@@ -65,7 +65,7 @@ export function Partners({
         </div>
         <p className={s.lead}>
           Более трёх лет KAVA HOME поставляет полотенца в&nbsp;крупнейшие
-          торговые сети Беларуси. Текстиль повышенной плотности 500&nbsp;г/м²
+          торговые сети Беларуси. Текстиль повышенной плотности до&nbsp;750&nbsp;г/м²
           выбирают гостиницы, курорты и&nbsp;фитнес-клубы.
         </p>
       </div>
@@ -83,7 +83,7 @@ export function Partners({
             />
             <figcaption>
               <span className="caps">Для отелей</span>
-              <b>500 г/м²</b>
+              <b>450–750 г/м²</b>
               <span>сохраняют форму и цвет после десятков стирок</span>
             </figcaption>
           </figure>
@@ -224,7 +224,7 @@ export function Trust() {
               <dd>года поставок в&nbsp;сети Беларуси</dd>
             </div>
             <div>
-              <dt>500+</dt>
+              <dt>до 750</dt>
               <dd>г/м² — плотность для отелей</dd>
             </div>
             <div>
