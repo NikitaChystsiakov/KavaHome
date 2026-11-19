@@ -17,6 +17,50 @@ import s from "./product.module.css";
 
 const BATH = /^\d+×\d+$/;
 
+// Ролики халатов от клиента (2026-11-19): по цвету, лежат в public/video (исходники в «Видео/», в git не входят).
+// Кремового ролика пока нет.
+const ROBE_VIDEOS: Record<string, string> = {
+  лиловый: "halat-lilovyj",
+  белый: "halat-belyj",
+  капучино: "halat-kapuchino",
+};
+
+// Играет, только пока в кадре; при «уменьшить движение» остаётся постер с кнопкой по умолчанию.
+function ColorVideo({ name, label }: { name: string; label: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      v.controls = true;
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) v.play().catch(() => {});
+        else v.pause();
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <video
+      ref={ref}
+      muted
+      loop
+      playsInline
+      preload="none"
+      poster={`/video/${name}.jpg`}
+      aria-label={label}
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+    >
+      <source src={`/video/${name}.mp4`} type="video/mp4" />
+    </video>
+  );
+}
+
 function defaultSize(sizes: Size[]) {
   // самый ходовой — банное (70×1xx); иначе первый размер
   return sizes.find((z) => z.label.startsWith("70×")) ?? sizes[0];
@@ -70,6 +114,9 @@ export function ProductView({
     const list = color.images?.length ? color.images : [color.image];
     return [...new Set(list)];
   }, [color]);
+
+  const video = p.category === "robes" ? ROBE_VIDEOS[color.name] : undefined;
+  const total = photos.length + (video ? 1 : 0);
 
   useLayoutEffect(() => {
     const imgs = Array.from(list.current?.querySelectorAll("img") ?? []);
@@ -145,7 +192,7 @@ export function ProductView({
           key={color.name}
           ref={list}
           className={s.photos}
-          data-count={photos.length}
+          data-count={total}
           data-wait={wait ? "" : undefined}
           onScroll={(e) => {
             const el = e.currentTarget;
@@ -169,10 +216,18 @@ export function ProductView({
                 />
             </li>
           ))}
+          {video && (
+            <li key="video">
+              <ColorVideo
+                name={video}
+                label={`${p.name} ${p.title}, ${color.name}: видео`}
+              />
+            </li>
+          )}
         </ul>
-        {photos.length > 1 && (
+        {total > 1 && (
           <p className={s.counter} aria-hidden="true">
-            {shot + 1} / {photos.length}
+            {shot + 1} / {total}
           </p>
         )}
       </div>
