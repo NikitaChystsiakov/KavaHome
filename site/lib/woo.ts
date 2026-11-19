@@ -17,12 +17,40 @@ import { colorInfo, sizeArea, sizeNote, slugify } from "./colors";
  * Подарочные новогодние полотенца лежат в пакете с открыткой «Рождество»; кадр ставится первым
  * в карточке и в галерее. Файлы в public/img, исходники — Drive «Рождество НГ» (_MG_4130, _MG_4166).
  */
-function packPhoto(collSlug: string, kind: string): string | undefined {
+function packPhoto(
+  collSlug: string,
+  kind: string,
+  isSet: boolean,
+  family: string,
+): string | undefined {
+  if (isSet) return SET_PACK[collSlug]?.[family] ?? SET_PACK[collSlug]?.["*"];
   if (collSlug !== slugify("Новогодняя")) return undefined;
   if (/вафел/i.test(kind)) return "/img/ng-pack-waffle.webp";
   if (/махров/i.test(kind)) return "/img/ng-pack-terry.webp";
   return undefined;
 }
+
+/**
+ * Наборы по 3 шт в фирменной упаковке (лента, бирка), 19.11.2026: Элла просит показывать, что это набор.
+ * Кадры из папок «Упаковка» коллекций на Drive; ключ — семейство цвета, «*» — для любого цвета.
+ * У Венеции, Римини и Марселя папок с упаковкой нет — остаются кадры из админки.
+ */
+const SET_PACK: Record<string, Record<string, string>> = {
+  verona: {
+    grey: "/img/pack-verona-grey.webp",
+    beige: "/img/pack-verona-beige.webp",
+    graphite: "/img/pack-verona-graphite.webp",
+    brown: "/img/pack-verona-brown.webp",
+    green: "/img/pack-verona-green.webp",
+  },
+  milan: {
+    grey: "/img/pack-milan-grey.webp",
+    graphite: "/img/pack-milan-graphite.webp",
+    green: "/img/pack-milan-green.webp",
+    pink: "/img/pack-milan-pink.webp",
+  },
+  bergamo: { "*": "/img/pack-bergamo.webp" },
+};
 
 // WooCommerce = админка. Витрина читает товары через REST API v3 (ключи в .env: WOO_URL, WOO_KEY, WOO_SECRET)
 // и переводит их в типы прототипа (lib/catalog.ts), поэтому компоненты не знают, откуда данные.
@@ -347,7 +375,7 @@ export async function getWooProducts(): Promise<Product[] | null> {
       }
       const known = demoProduct?.colors.find((c) => c.name === color);
       const info = colorInfo(color);
-      const pack = packPhoto(collSlug, kind);
+      const pack = packPhoto(collSlug, kind, isSet, known?.family ?? info.family);
       const images = [...(pack ? [pack] : []), ...p.images.map((i) => i.src)];
       return {
         name: color,
