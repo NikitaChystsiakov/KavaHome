@@ -12,7 +12,7 @@ export type Partner = {
   boost?: number;
 };
 
-/** Отели, курорты и спорт: полотенца повышенной плотности 500 г/м². */
+/** Отели, курорты и спорт: полотенца повышенной плотности до 750 г/м². */
 export const hotels: Partner[] = [
   { name: "Европа", kind: "гостиница", logo: "/partners/europe.svg", ratio: 0.75 },
   { name: "Минск", kind: "отель", logo: "/partners/minsk.png", ratio: 1 },
