@@ -51,7 +51,7 @@ export function GiftCertificate({
           website: data.website,
           name: from,
           phone: data.phone,
-          needs: ["Сертификаты"],
+          kind: "certificate",
           comment: [
             `Кому: ${to || "—"}`,
             `От кого: ${from || "—"}`,

@@ -1,6 +1,6 @@
 import { isBot, tooMany } from "@/lib/guard";
 
-// POST /api/lead — заявка «Для бизнеса» (отели, опт, логотип, сертификаты) менеджеру в Telegram.
+// POST /api/lead — заявка «Для бизнеса» (отели, опт, логотип) и заказ подарочного сертификата (kind: "certificate") менеджеру в Telegram.
 // ORDER_DRY_RUN=1 — не отправлять (локальная проверка).
 const esc = (s: string) =>
   s.replace(
@@ -51,9 +51,12 @@ export async function POST(req: Request) {
       { status: 400 },
     );
 
+  const certificate = body.kind === "certificate";
   const text = [
-    "<b>Заявка «Для бизнеса»</b>",
-    needs.length ? `Интересует: ${esc(needs.join(", "))}` : "",
+    certificate
+      ? "<b>Подарочный сертификат</b>"
+      : "<b>Заявка «Для бизнеса»</b>",
+    !certificate && needs.length ? `Интересует: ${esc(needs.join(", "))}` : "",
     `${esc(name || "Без имени")}, ${esc(phone)}`,
     company ? `Компания: ${esc(company)}` : "",
     comment ? `Комментарий: ${esc(comment)}` : "",
