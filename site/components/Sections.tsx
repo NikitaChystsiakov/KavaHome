@@ -136,6 +136,7 @@ export function Footer() {
         <div>
           <p className="caps">Бизнесу</p>
           <Link href="/biznes">Для отелей и санаториев</Link>
+          <Link href="/biznes#zayavka">Для профсоюзных организаций</Link>
           <Link href="/biznes#opt">Опт</Link>
           <Link href="/biznes#logo">Полотенца с логотипом</Link>
           <Link href="/biznes#certificate">Подарочные сертификаты</Link>
@@ -147,7 +148,7 @@ export function Footer() {
           </a>
           <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
           <span>{contacts.hours}</span>
-          <Link href="/kontakty">Шоурум: {contacts.pickupShort}</Link>
+          <Link href="/kontakty">Шоурум: Минский р-н, {contacts.pickupShort}</Link>
         </div>
       </div>
       <Logo className={s.footLogo} />
