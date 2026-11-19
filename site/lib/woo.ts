@@ -12,6 +12,18 @@ import {
 } from "./catalog";
 import { colorInfo, sizeArea, sizeNote, slugify } from "./colors";
 
+/**
+ * Фото упаковки (19.11.2026, просьба Эллы: «показать, что это набор вот так упакован»).
+ * Подарочные новогодние полотенца лежат в пакете с открыткой «Рождество»; кадр ставится первым
+ * в карточке и в галерее. Файлы в public/img, исходники — Drive «Рождество НГ» (_MG_4130, _MG_4166).
+ */
+function packPhoto(collSlug: string, kind: string): string | undefined {
+  if (collSlug !== slugify("Новогодняя")) return undefined;
+  if (/вафел/i.test(kind)) return "/img/ng-pack-waffle.webp";
+  if (/махров/i.test(kind)) return "/img/ng-pack-terry.webp";
+  return undefined;
+}
+
 // WooCommerce = админка. Витрина читает товары через REST API v3 (ключи в .env: WOO_URL, WOO_KEY, WOO_SECRET)
 // и переводит их в типы прототипа (lib/catalog.ts), поэтому компоненты не знают, откуда данные.
 //
@@ -335,7 +347,8 @@ export async function getWooProducts(): Promise<Product[] | null> {
       }
       const known = demoProduct?.colors.find((c) => c.name === color);
       const info = colorInfo(color);
-      const images = p.images.map((i) => i.src);
+      const pack = packPhoto(collSlug, kind);
+      const images = [...(pack ? [pack] : []), ...p.images.map((i) => i.src)];
       return {
         name: color,
         swatch: known?.swatch ?? info.swatch,
