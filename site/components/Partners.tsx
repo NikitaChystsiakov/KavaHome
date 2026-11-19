@@ -224,11 +224,11 @@ export function Trust() {
               <dd>года поставок в&nbsp;сети Беларуси</dd>
             </div>
             <div>
-              <dt>500</dt>
+              <dt>500+</dt>
               <dd>г/м² — плотность для отелей</dd>
             </div>
             <div>
-              <dt>{hotels.length + stores.length + marketplaces.length}</dt>
+              <dt>{hotels.length + stores.length + marketplaces.length}+</dt>
               <dd>партнёров и&nbsp;площадок</dd>
             </div>
           </dl>
