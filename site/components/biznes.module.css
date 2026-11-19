@@ -164,8 +164,24 @@
   background: var(--sand);
   overflow: hidden;
 }
+.mosaic {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+}
+.mosaic > div {
+  position: relative;
+  overflow: hidden;
+}
+.mosaic > div[data-big] {
+  grid-row: span 2;
+}
 .num {
   position: absolute;
+  z-index: 1;
   top: 0;
   left: 0;
   padding: 8px 12px;

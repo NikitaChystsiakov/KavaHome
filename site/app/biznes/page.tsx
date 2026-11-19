@@ -58,6 +58,11 @@ const offers = [
     photo: "/img/jacquard-logo.webp",
     alt: "Белое махровое полотенце с жаккардовым логотипом отеля",
     pos: "50% 30%",
+    gallery: [
+      { src: "/img/logo-embroidery-ar.webp", alt: "Золотая вышивка монограммы на белом махровом халате", pos: "50% 50%" },
+      { src: "/img/logo-jacquard-oval.webp", alt: "Жаккардовый логотип в овале на бежевом полотенце", pos: "50% 50%" },
+      { src: "/img/logo-jacquard-wreath.webp", alt: "Жаккардовый логотип отеля с лавровым венком на белом полотенце", pos: "50% 50%" },
+    ],
   },
   {
     id: "certificate",
@@ -168,14 +173,31 @@ export default function BusinessPage() {
           {offers.map((o) => (
             <article className={s.offer} id={o.id} key={o.id}>
               <div className={s.offerPhoto}>
-                <Image
-                  src={o.photo}
-                  alt={o.alt}
-                  fill
-                  sizes="(max-width: 900px) 100vw, 25vw"
-                  quality={75}
-                  style={{ objectFit: "cover", objectPosition: o.pos }}
-                />
+                {o.gallery ? (
+                  <div className={s.mosaic}>
+                    {o.gallery.map((g) => (
+                      <div key={g.src} data-big={g === o.gallery[0] ? "" : undefined}>
+                        <Image
+                          src={g.src}
+                          alt={g.alt}
+                          fill
+                          sizes="(max-width: 900px) 50vw, 13vw"
+                          quality={75}
+                          style={{ objectFit: "cover", objectPosition: g.pos }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Image
+                    src={o.photo}
+                    alt={o.alt}
+                    fill
+                    sizes="(max-width: 900px) 100vw, 25vw"
+                    quality={75}
+                    style={{ objectFit: "cover", objectPosition: o.pos }}
+                  />
+                )}
                 <span className={s.num}>{o.num}</span>
               </div>
               <div className={s.offerBody}>
