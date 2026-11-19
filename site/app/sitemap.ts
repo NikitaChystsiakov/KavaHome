@@ -1,5 +1,4 @@
 import type { MetadataRoute } from "next";
-import { collections } from "@/lib/collections";
 import { getProducts } from "@/lib/woo";
 import { SITE_URL } from "@/lib/site";
 import { categoryPages, categoryPath } from "@/lib/categories";
@@ -17,7 +16,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     page("/catalog", 0.9),
     ...categoryPages.map((c) => page(categoryPath(c), 0.9)),
     page("/kollekcii", 0.7),
-    ...collections.map((c) => page(`/kollekcii/${c.slug}`, 0.7)),
     ...products.map((p) => page(`/catalog/${p.id}`, p.source === "woo" ? 0.8 : 0.4)),
     page("/biznes", 0.6),
     page("/dostavka", 0.5),
