@@ -49,8 +49,10 @@ export function TopBar({ compact = false }: { compact?: boolean }) {
       const hdrH = mobile ? 56 : 64;
       const yBig = mobile ? hdrH + (vh - hdrH) * 0.4 : top + avail / 2;
       const y = yBig + (hdrH / 2 - yBig) * e;
-      el.style.width = `${big}px`;
-      el.style.transform = `translate(-50%, -50%) translateY(${y}px) scale(${scale})`;
+      // размер меняем шириной, а не scale: у растрового слоя с will-change после уменьшения лого
+      // оставалось мыльным при возврате наверх (браузер не перерисовывает вектор в новом масштабе)
+      el.style.width = `${big * scale}px`;
+      el.style.transform = `translate(-50%, -50%) translateY(${y}px)`;
       hdr.dataset.solid = p >= 0.9 ? "true" : "false";
     };
 
