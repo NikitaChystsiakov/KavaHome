@@ -51,7 +51,7 @@ const groups: { title: string; items: { q: string; a: React.ReactNode }[] }[] =
             <p>
               Да, коллекции поставляются в эстетичной упаковке, а в линейке есть
               готовые подарочные наборы.{" "}
-              <Link href="/catalog/nabory-polotenec">Смотреть наборы по 3 шт</Link>
+              <Link href="/catalog/nabory-polotenec">Смотреть наборы</Link>
             </p>
           ),
         },

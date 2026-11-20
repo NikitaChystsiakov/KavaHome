@@ -33,7 +33,7 @@ function packPhoto(
 /**
  * Наборы по 3 шт в фирменной упаковке (лента, бирка), 19.11.2026: Элла просит показывать, что это набор.
  * Кадры из папок «Упаковка» коллекций на Drive; ключ — семейство цвета, «*» — для любого цвета.
- * У Венеции, Римини и Марселя папок с упаковкой нет — остаются кадры из админки.
+ * У Марселя папки с упаковкой нет — остаются кадры из админки.
  */
 const SET_PACK: Record<string, Record<string, string>> = {
   verona: {
@@ -50,6 +50,16 @@ const SET_PACK: Record<string, Record<string, string>> = {
     pink: "/img/pack-milan-pink.webp",
   },
   bergamo: { "*": "/img/pack-bergamo.webp" },
+  // 20.11.2026: кадры из «Новая упаковка» (Венеция, Римини); для остальных цветов — кадры из админки
+  venice: {
+    grey: "/img/pack-venice-grey.webp",
+    beige: "/img/pack-venice-beige.webp",
+  },
+  rimini: {
+    pink: "/img/pack-rimini-pink.webp",
+    grey: "/img/pack-rimini-grey.webp",
+    beige: "/img/pack-rimini-beige.webp",
+  },
 };
 
 // WooCommerce = админка. Витрина читает товары через REST API v3 (ключи в .env: WOO_URL, WOO_KEY, WOO_SECRET)
@@ -365,8 +375,11 @@ export async function getWooProducts(): Promise<Product[] | null> {
       } else {
         sizes = [
           {
-            label: isSet ? "Набор 3 шт" : "1 шт",
-            note: isSet ? towelSizes() : "",
+            // «Набор 2 шт», «Набор 3 шт»: число из названия товара, размеры — оттуда же, иначе по коллекции
+            label: isSet ? `Набор ${/(\d+)\s*шт/i.exec(p.name)?.[1] ?? 3} шт` : "1 шт",
+            note: isSet
+              ? (p.name.match(/\d+\s*[×xх]\s*\d+/i)?.[0].replace(/\s*[xх]\s*/i, "×") ?? towelSizes())
+              : "",
             price: money(p.price),
             id: p.id,
             sku: p.sku,

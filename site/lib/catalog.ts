@@ -12,7 +12,7 @@ export const categories: { id: CategoryId; label: string }[] = [
   { id: "kitchen", label: "Кухонные" },
   { id: "mats", label: "Коврики" },
   { id: "robes", label: "Халаты" },
-  { id: "sets", label: "Наборы по 3 шт" },
+  { id: "sets", label: "Наборы" },
 ];
 
 export const purposeChips: { id: PurposeId; label: string }[] = [
