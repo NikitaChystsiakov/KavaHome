@@ -72,6 +72,14 @@ export default function ContactsPage() {
               </dd>
             </div>
             <div>
+              <dt>Instagram</dt>
+              <dd>
+                <a href={contacts.instagram} target="_blank" rel="noopener noreferrer">
+                  {contacts.instagramName}
+                </a>
+              </dd>
+            </div>
+            <div>
               <dt>Реквизиты</dt>
               <dd>{contacts.company}</dd>
             </div>

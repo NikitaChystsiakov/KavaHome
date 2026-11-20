@@ -237,6 +237,9 @@ export const contacts = {
   phoneHref: "tel:+375291015858",
   email: "kavahometextile@gmail.com",
   hours: "Пн–Пт, 9:00–18:00",
+  /** Instagram магазина (Элла, 2026-11-20) */
+  instagram: "https://www.instagram.com/kava_hometextile/",
+  instagramName: "@kava_hometextile",
   company: "ООО «Альянс Бетон Групп», УНП 692126463, Минск, ул. Рафиева, 55",
   /** самовывоз, шоурум и склад (Элла, 2026-11-13) */
   pickup: "Минская обл., Минский р-н, д. Волковичи, Брестское шоссе, 1",

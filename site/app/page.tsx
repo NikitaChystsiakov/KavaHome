@@ -17,7 +17,7 @@ const brand = {
       logo: `${SITE_URL}/apple-icon.png`,
       email: contacts.email,
       telephone: "+375291015858",
-      sameAs: marketplaces.map((m) => m.url),
+      sameAs: [contacts.instagram, ...marketplaces.map((m) => m.url)],
     },
     {
       "@type": "WebSite",

@@ -148,6 +148,9 @@ export function Footer() {
           </a>
           <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
           <span>{contacts.hours}</span>
+          <a href={contacts.instagram} target="_blank" rel="noopener noreferrer">
+            Instagram {contacts.instagramName}
+          </a>
           <Link href="/kontakty">Шоурум: Минский р-н, {contacts.pickupShort}</Link>
         </div>
       </div>
