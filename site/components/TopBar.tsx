@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cartCount, plural, useCart } from "@/lib/cart";
+import { contacts } from "@/lib/collections";
 import { Logo } from "./Logo";
 import { Menu } from "./Menu";
 import { CartAdded } from "./CartAdded";
+import { InstagramIcon } from "./InstagramIcon";
 import s from "./home.module.css";
 
 // Шапка и логотип. На первом экране логотип на всю ширину поверх светлых кадров; при прокрутке
@@ -111,6 +113,15 @@ export function TopBar({ compact = false }: { compact?: boolean }) {
             </svg>
             <span className={s.hideMobile}>Найти полотенце</span>
           </Link>
+          <a
+            href={contacts.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${s.barLink} ${s.hideMobile}`}
+            aria-label="Instagram KAVA HOME"
+          >
+            <InstagramIcon className={s.icon} />
+          </a>
           <Link
             href="/korzina"
             className={`caps ${s.barLink}`}

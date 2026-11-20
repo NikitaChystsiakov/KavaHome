@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Shell } from "@/components/Shell";
+import { InstagramIcon } from "@/components/InstagramIcon";
 import { PresentationScroll } from "@/components/PresentationScroll";
 import { contacts } from "@/lib/collections";
 import { SITE_URL } from "@/lib/site";
@@ -74,7 +75,13 @@ export default function ContactsPage() {
             <div>
               <dt>Instagram</dt>
               <dd>
-                <a href={contacts.instagram} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={contacts.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+                >
+                  <InstagramIcon />
                   {contacts.instagramName}
                 </a>
               </dd>

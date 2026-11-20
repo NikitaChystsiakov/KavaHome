@@ -143,6 +143,21 @@
   color: var(--ink-2);
   font-size: 13px;
 }
+.social {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.socialIcon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
 .phone {
   font-family: var(--serif);
   font-size: 26px;

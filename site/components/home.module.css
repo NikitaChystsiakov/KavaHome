@@ -459,6 +459,19 @@
   font-size: 30px;
   line-height: 1.1;
 }
+.footSocial {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.footIcon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
 .footLogo {
   display: block;
   width: min(100%, 1400px, 120svh);

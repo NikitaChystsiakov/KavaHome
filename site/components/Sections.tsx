@@ -6,6 +6,7 @@ import { contacts } from "@/lib/collections";
 import { purposeChips } from "@/lib/catalog";
 import { categoryPages, categoryPath, purposeHref } from "@/lib/categories";
 import { GiftCertificate } from "./GiftCertificate";
+import { InstagramIcon } from "./InstagramIcon";
 import { Logo } from "./Logo";
 import s from "./home.module.css";
 
@@ -148,8 +149,15 @@ export function Footer() {
           </a>
           <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
           <span>{contacts.hours}</span>
-          <a href={contacts.instagram} target="_blank" rel="noopener noreferrer">
-            Instagram {contacts.instagramName}
+          <a
+            href={contacts.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={s.footSocial}
+            aria-label={`Instagram ${contacts.instagramName}`}
+          >
+            <InstagramIcon className={s.footIcon} />
+            {contacts.instagramName}
           </a>
           <Link href="/kontakty">Шоурум: Минский р-н, {contacts.pickupShort}</Link>
         </div>

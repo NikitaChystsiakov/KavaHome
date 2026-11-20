@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { collections, contacts } from "@/lib/collections";
 import { categories, purposeChips } from "@/lib/catalog";
 import { catHref, purposeHref } from "@/lib/categories";
+import { InstagramIcon } from "./InstagramIcon";
 import s from "./menu.module.css";
 
 type Props = { open: boolean; onClose: () => void };
@@ -133,6 +134,16 @@ export function Menu({ open, onClose }: Props) {
             {contacts.phone}
           </a>
           <span>{contacts.hours}</span>
+          <a
+            href={contacts.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={s.social}
+            aria-label={`Instagram ${contacts.instagramName}`}
+          >
+            <InstagramIcon className={s.socialIcon} />
+            {contacts.instagramName}
+          </a>
         </div>
       </div>
     </div>
