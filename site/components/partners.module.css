@@ -406,6 +406,7 @@ div.trustLabel :global(.caps) {
   .trust[data-screen] {
     display: flex;
     flex-direction: column;
+    height: calc(100svh - var(--hdr));
     padding-top: clamp(16px, 2.6svh, 28px);
     padding-bottom: clamp(24px, 4svh, 48px);
   }
@@ -416,7 +417,23 @@ div.trustLabel :global(.caps) {
     min-height: 0;
   }
   .trust[data-screen] .head {
-    margin-bottom: clamp(20px, 3.4svh, 40px);
+    margin-bottom: clamp(14px, 2.6svh, 40px);
+  }
+  /* заголовок и цифры зависят от высоты окна, чтобы экран не вылезал за 100svh */
+  .trust[data-screen] .h2 {
+    font-size: clamp(30px, min(4.4vw, 6.4svh), 64px);
+  }
+  .trust[data-screen] .kicker {
+    margin-bottom: clamp(6px, 1.4svh, 14px);
+  }
+  .trust[data-screen] .facts dt {
+    font-size: clamp(34px, min(5vw, 7.6svh), 76px);
+  }
+  .trust[data-screen] .trustAside .lead {
+    max-width: 420px;
+    margin-top: clamp(8px, 1.4svh, 14px);
+    font-size: clamp(14px, 1.9svh, 16px);
+    line-height: 1.5;
   }
   .trust[data-screen] .trustLabel,
   .trust[data-screen] div.trustLabel :global(.caps) {

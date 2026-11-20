@@ -174,7 +174,7 @@ export default function BusinessPage() {
             <article className={s.offer} id={o.id} key={o.id}>
               <div className={s.offerPhoto}>
                 {o.gallery ? (
-                  <div className={s.mosaic}>
+                  <div className={s.offerMosaic}>
                     {o.gallery.map((g) => (
                       <div key={g.src} data-big={g === o.gallery[0] ? "" : undefined}>
                         <Image

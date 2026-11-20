@@ -164,7 +164,7 @@
   background: var(--sand);
   overflow: hidden;
 }
-.mosaic {
+.offerMosaic {
   position: absolute;
   inset: 0;
   display: grid;
@@ -172,11 +172,11 @@
   grid-template-rows: 1fr 1fr;
   gap: 2px;
 }
-.mosaic > div {
+.offerMosaic > div {
   position: relative;
   overflow: hidden;
 }
-.mosaic > div[data-big] {
+.offerMosaic > div[data-big] {
   grid-row: span 2;
 }
 .num {
