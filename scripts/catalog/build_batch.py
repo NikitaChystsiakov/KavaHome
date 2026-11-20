@@ -74,7 +74,14 @@ COLL3 = {
           "персиковый": _mg(9432, 9427, 9428, 9429, 9430, 9431),
           "лаванда": _mg(9433, 9434, 9435, 9436, 9437)}, no_sets=True),
 }
-BATCHES = {"batch1": COLL, "batch2": COLL2, "qd1": COLL3}
+# 2026-11-20: QD Annasi — 14 фото в одной папке без разбивки по цветам, цвета разобраны по кадрам.
+# Бежевый с розовым подтоном (_MG_9376, 9378) в прайсе не назван — заведён как «персиковый» с ценами группы 21/40, уточнить у Эллы.
+COLL4 = {
+ "QD-ANNASI": dict(slug="qd-annasi", title="QD Annasi", table="QD Annasi", folder=SRC/"QD-ANNASI ", cats="Ванная", name="Полотенце махровое", text=_QD_TXT.format(d=500),
+   names={"какао": _mg(9366, 9368, 9369), "графит": _mg(9371, 9372, 9373, 9374), "персиковый": _mg(9376, 9378), "ваниль": _mg(9379, 9380, 9381, 9382, 9383)}, no_sets=True,
+   drop_bc=["4816149304321"]),  # графит 70×140 есть дважды (40 и 46) — берём 40 как у остальных цветов группы
+}
+BATCHES = {"batch1": COLL, "batch2": COLL2, "qd1": COLL3, "qd2": COLL4}
 
 def sheet_files(sheet):
     idx = dict(l.split("\t", 1) for l in (ROOT / "import" / "_sheets" / f"{sheet}_index.txt").read_text().splitlines())
@@ -137,6 +144,10 @@ EXTRA_PRICE = [
  dict(collection="QD-TANGAEV", name=None, is_set=False, composition="100% хлопок", density=550, size=sz, color="персиковый", barcode=None, price_site=pr)
  for sz, pr in [("50×90", 16), ("70×140", 33)]
 ] + [
+ # 2026-11-20: QD Annasi персиковый есть на фото, в прайсе такого цвета нет — цены группы 50×90 / 70×140 (21 / 40), уточнить у Эллы
+ dict(collection="QD-ANNASI", name=None, is_set=False, composition="100% хлопок", density=500, size=sz, color="персиковый", barcode=None, price_site=pr)
+ for sz, pr in [("50×90", 21), ("70×140", 40)]
+] + [
  # 2026-11-12: Флоренция во всех цветах в трёх размерах 30×60, 50×90, 70×140
  dict(collection="Флоренция", name="Полотенце махровое", is_set=False, composition="100% хлопок", density=450, size=sz, color=c, barcode=None, price_site=pr)
  for c, sz, pr in [("графит", "50×90", 16), ("бежевый", "30×60", 7), ("серый", "50×90", 16)]
@@ -185,6 +196,7 @@ def build(batch):
             for n, f in enumerate(files, 1):
                 fn = f"{base}-{n:02d}.webp"; to_webp(f, outdir / fn); names.append(fn)
             var = sorted([r for r in towels if r["color"].strip() == color and model_kind(r["name"]) == kind], key=lambda r: size_key(r["size"]))
+            var = [r for r in var if r["barcode"] not in cfg.get("drop_bc", [])]
             if not cfg.get("noprice") and any(not r["price_site"] for r in var): report.append(f"{coll} {key}: есть размер без цены")
             if not cfg.get("noprice"): var = [r for r in var if r["price_site"]]
             if not var: continue
