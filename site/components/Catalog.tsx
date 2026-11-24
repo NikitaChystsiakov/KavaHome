@@ -5,6 +5,7 @@ import { warm } from "@/lib/warm";
 import { slugify } from "@/lib/colors";
 import { SwapPhoto } from "./SwapPhoto";
 import {
+  catHref,
   catalogIntro,
   categoryByPath,
   categoryBySlug,
@@ -49,15 +50,14 @@ type Filters = {
   sort: Sort;
   vid: number | null;
 };
+const ALL_CATEGORIES = { kat: null, nazn: null, tkan: null } as const;
 const EMPTY: Filters = {
+  ...ALL_CATEGORIES,
   q: "",
   razmer: "",
   plotnost: "",
   min: "",
   max: "",
-  kat: null,
-  nazn: null,
-  tkan: null,
   kol: null,
   cvet: null,
   sort: "pop",
@@ -354,10 +354,21 @@ export function Catalog({
 
   const cols = mobile ? (f.vid === 1 ? 1 : 2) : f.vid === 1 ? 2 : (f.vid ?? 4);
   const views = mobile ? [1, 2] : [2, 4, 6];
+  const allCategories = !f.kat && !f.nazn && !f.tkan;
+  const legacyCategoryPath = f.kat && !f.nazn && !f.tkan ? catHref(f.kat) : null;
+  const selectedCategory = categoryPages.find(({ preset }) =>
+    (preset.kat ?? null) === f.kat &&
+    (preset.nazn ?? null) === f.nazn &&
+    (preset.tkan ?? null) === f.tkan,
+  ) ?? categoryPages.find((c) => categoryPath(c) === legacyCategoryPath);
   const active = [
     f.kat && {
       key: "kat",
       label: categories.find((c) => c.id === f.kat)!.label,
+    },
+    f.nazn && {
+      key: "nazn",
+      label: selectedCategory?.label ?? purposeChips.find((p) => p.id === f.nazn)!.label,
     },
     f.tkan && { key: "tkan", label: "Вафельные" },
     f.kol && {
@@ -418,19 +429,19 @@ export function Catalog({
               <li>
                 <button
                   type="button"
-                  aria-pressed={!f.kat}
-                  onClick={() => update({ kat: null })}
+                  aria-pressed={allCategories}
+                  onClick={() => update(ALL_CATEGORIES)}
                 >
                   Все товары
                 </button>
               </li>
-              {categories.map((c) => (
-                <li key={c.id}>
+              {categoryPages.map((c) => (
+                <li key={c.slug}>
                   <button
                     type="button"
-                    aria-pressed={f.kat === c.id}
+                    aria-pressed={selectedCategory === c}
                     onClick={() =>
-                      update({ kat: f.kat === c.id ? null : c.id })
+                      update(selectedCategory === c ? ALL_CATEGORIES : { ...ALL_CATEGORIES, ...c.preset })
                     }
                   >
                     {c.label}
@@ -534,7 +545,7 @@ export function Catalog({
           </ul>
 
           <div className={s.panelFoot}>
-            {(active.length > 0 || f.nazn) && (
+            {active.length > 0 && (
               <button
                 type="button"
                 className={s.panelReset}
@@ -650,7 +661,7 @@ export function Catalog({
               <span className="visually-hidden">убрать фильтр</span>
             </button>
           ))}
-          {(active.length > 0 || f.nazn) && (
+          {active.length > 0 && (
             <button
               type="button"
               className={s.reset}
